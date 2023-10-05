@@ -2,8 +2,8 @@ from google.cloud import storage
 
 project_id = "legal-management-system-399510"
 
-def authenticate_implicit_with_adc(project_id=project_id):
-    # This snippet demonstrates how to list buckets.
+def list_buckets(project_id=project_id):
+    """This function will list all buckets. """
     storage_client = storage.Client(project=project_id)
     buckets = storage_client.list_buckets()
     print("Buckets:")
@@ -13,8 +13,9 @@ def authenticate_implicit_with_adc(project_id=project_id):
     
     
 def create_new_bucket(project_id=project_id):
-    # Creates a Client object that allows the script to communicate
-    # with Google Cloud Storage and perform operations on it (like creating a bucket).
+    """ Creates a Client object that allows the script to communicate 
+        with Google Cloud Storage and perform operations on it (like 
+        creating a bucket). """
     storage_client = storage.Client(project=project_id)
 
     # Creates a new bucket with a specified name
@@ -26,7 +27,7 @@ def create_new_bucket(project_id=project_id):
 
 
 def upload_object_from_filename(project_id=project_id):
-    
+    """Uploads a file from your computer as a blob object"""
     client = storage.Client(project=project_id)
 
     # Get a reference to the bucket you want to upload to
@@ -36,12 +37,16 @@ def upload_object_from_filename(project_id=project_id):
     blob = bucket.blob("file2.txt")
 
     # Upload the file to the bucket
+    # TODO: popup to select file from computer
     if blob.upload_from_filename("./files_to_upload/file2.txt"): # It works but still goes to else statement 
         print("File successfully uploaded to bucket.")
     else:
         print("Error uploading file to bucket.")
 
+def download_object(project_id=project_id):
+    """Downloads a file from the cloud"""
+    pass
     
-authenticate_implicit_with_adc()
+list_buckets()
 # create_new_bucket()
 upload_object_from_filename()

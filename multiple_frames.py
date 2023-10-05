@@ -44,7 +44,7 @@ class App(customtkinter.CTk):
         self.create_nav( self.left_side_panel, "frame3", self.color_by_id(3))
         self.create_nav( self.left_side_panel, "frame4", self.color_by_id(4))
         self.create_nav( self.left_side_panel, "frame5", self.color_by_id(5))
-        self.btn_create( self.left_side_panel, "frame6", self.color_by_id(6))
+        self.create_nav( self.left_side_panel, "frame6", self.color_by_id(6))
 
 
     def color_by_id(self, id):
