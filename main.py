@@ -2,7 +2,6 @@ import tkinter
 from PIL import Image
 from PIL import ImageTk
 import customtkinter
-import popup_window as pw
 from add_to_db import *
 
 # Initialise Appearance for customtkinter
@@ -15,11 +14,9 @@ class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()       
         self.title("Main Program")
-
-        
+      
         # Dimensions relating to screen size (Overlaps with taskbar)
         self.geometry("{0}x{1}+0+0".format(self.winfo_screenwidth(), self.winfo_screenheight()-75))
-        # self.geometry("800x600")
 
         # root page
         self.main_container = customtkinter.CTkFrame(self, corner_radius=10)
@@ -40,7 +37,7 @@ class App(customtkinter.CTk):
         self.logo_label = customtkinter.CTkLabel(self.left_side_panel, text="Options: \n", font=customtkinter.CTkFont(size=20, weight="bold"))
         self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
         
-        # Load Image from resources/icons
+        # Load Images from resources/icons
         try:
             # TODO: Convert this to CTkImage
             img= (Image.open("resources/icons/dashboard.png"))
@@ -75,8 +72,7 @@ class App(customtkinter.CTk):
             pass
         
         
-        # button to select correct frame IN self.left_side_panel WIDGET
-        
+        # button to select correct frame IN self.left_side_panel WIDGET       
         self.bt_dashboard = customtkinter.CTkButton(self.left_side_panel, image=btnImg_dashboard, text="", command=self.dashboard)
         self.bt_dashboard.grid(row=1, column=0, padx=20, pady=10)
 
