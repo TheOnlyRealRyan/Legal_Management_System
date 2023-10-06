@@ -4,6 +4,12 @@ import hashlib
 from datetime import datetime, date
 
 
+# TODO: Error handling of inputs
+# TODO: Fix auto-increment
+# TODO: check that a case already doesnt have an assignment to it (case has a location already)
+
+
+# Conenct to database
 mydb = mysql.connector.connect(
     host = "localhost",
     user = "root",
@@ -11,12 +17,9 @@ mydb = mysql.connector.connect(
     database="projectdb"
 )
 
+
 # Initialise cursor:
 mycursor = mydb.cursor()
-
-# TODO: Error handling of inputs
-# TODO: Fix auto-increment
-# TODO: check that a case already doesnt have an assignment to it (case has a location already)
 
 
 def hash_password(password):
@@ -24,6 +27,7 @@ def hash_password(password):
     password_bytes = password.encode('utf-8')
     hash_object = hashlib.sha256(password_bytes)
     return hash_object.hexdigest()
+
 
 def add_years(input_date):
     """ Takes in YYYY-MM-DD string and converts to datetime object then outputs formatted string YYY-MM-DD with added 7 years"""
@@ -102,6 +106,7 @@ def add_to_user_login_data(employeeId, username, password) -> None:
     mydb.commit()
 
     tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
+    
     
 def add_to_client_information(firstName, lastName, gender, dateOfBirth) -> None:
     """Inserts login details into client_information database"""
@@ -226,7 +231,6 @@ def add_to_deletion_confirmation(caseId, employeeId1, employeeId2, employee1Conf
     tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
     
 
-
 def add_to_deletion_logging(caseId, employeeId1, employeeId2, deletionDate, deletionConfirmed) -> None:
     """Inserts login details into deletion_logging database"""
     sqlFormula = "INSERT INTO deletion_logging (caseId, employeeId1, employeeId2, deletionDate, deletionConfirmed) VALUE (%s, %s, %s, %s, %s)"
@@ -273,17 +277,4 @@ def add_to_case_drawn_history(archiveNumber, employeeId, dateDrawnOut, dateDrawn
     mydb.commit()
 
     tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
-    
-"""
-# TODO: Fix check_password()
-def check_password() -> None:
-    
-    username = list('ryan')
-    sqlFormula = "SELECT passwordHash FROM user_login_data WHERE username = (%s))"
-    mycursor.execute(sqlFormula, username)
-    myresult = mycursor.fetchall()
-    for x in myresult:
-        print(x)
-check_password()
 
-"""
