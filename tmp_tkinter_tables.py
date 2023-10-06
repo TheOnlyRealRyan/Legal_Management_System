@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from random import choice
-import mysql_test_connection as db_conn
+import tmp_mysql_connection as db_conn
 
 # window
 window = tk.Tk()

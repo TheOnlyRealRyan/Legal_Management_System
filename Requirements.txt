@@ -4,4 +4,4 @@ mysql-connector==2.2.9
 mysql-connector-python==8.1.0
 pandas==2.1.0
 google-cloud-storage==2.10.0
-
+pillow==10.0.1
