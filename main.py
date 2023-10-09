@@ -3,12 +3,43 @@ from PIL import Image
 from PIL import ImageTk
 import customtkinter
 from add_to_db import *
+from validatePassword import *
+
+# TODO: validate Login into main page
 
 # Initialise Appearance for customtkinter
 DARK_MODE = "dark"
 customtkinter.set_appearance_mode(DARK_MODE)
 customtkinter.set_default_color_theme("dark-blue")
 
+
+class Login(customtkinter.CTk):
+    """Login Page"""
+    def __init__(self):
+        super().__init__()       
+        self.title("Login Page")
+        self.geometry("500x350")
+        
+        # root page
+        self.main_container = customtkinter.CTkFrame(self, corner_radius=10)
+
+        self.main_container.pack(pady=20, padx=60, fill="both", expand=True)
+
+        label = customtkinter.CTkLabel(self.main_container, text="Login Page", font=("Roboto", 24))
+        label.pack(pady=12, padx=10)
+
+        username = customtkinter.CTkEntry(self.main_container, placeholder_text="Username")
+        username.pack(pady=12, padx=10)
+
+        password = customtkinter.CTkEntry(self.main_container, placeholder_text="Password", show="*")
+        password.pack(pady=12, padx=10)
+
+        button = customtkinter.CTkButton(self.main_container, text="Login", command=lambda: validate(username.get(), password.get())) # Do login command/function here
+        button.pack(pady=12, padx=10)
+
+        checkbox = customtkinter.CTkCheckBox(self.main_container, text="Remember me") 
+        
+        
 
 class App(customtkinter.CTk):
     def __init__(self):
@@ -150,8 +181,14 @@ class App(customtkinter.CTk):
 
         # Add to user login data
         Label = customtkinter.CTkLabel(self.right_dashboard, text="Add to User Login Data", font=('Roboto', 24))
-        Label.grid(row=4, column=0, padx=20, pady=(10, 0))
+        Label.grid(row=6, column=0, padx=20, pady=(10, 0))
         button = customtkinter.CTkButton(self.right_dashboard, text= "User Login Data", command= self.open_add_to_user_login_data)
+        button.grid(row=7, column=0, padx=20, pady=(10, 0))
+        
+        # Add to client info
+        Label = customtkinter.CTkLabel(self.right_dashboard, text="Add to Client Information", font=('Roboto', 24))
+        Label.grid(row=4, column=0, padx=20, pady=(10, 0))
+        button = customtkinter.CTkButton(self.right_dashboard, text= "Client Information", command= self.open_add_to_client_information)
         button.grid(row=5, column=0, padx=20, pady=(10, 0))
         
     def user(self):
@@ -159,9 +196,7 @@ class App(customtkinter.CTk):
         self.clear_frame()
         # Decorate Right Frame
         
-        
-
-                         
+                             
     def clear_frame(self):
         """ Clears frame from self.right_dashboard(frame) before loading the widget of the concerned page """
         for widget in self.right_dashboard.winfo_children():
@@ -169,28 +204,39 @@ class App(customtkinter.CTk):
      
             
     def open_add_to_employee_roles(self):
-        # TODO: Fix focusing on main app instead of popup window
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
             self.toplevel_window = popup_add_to_employee_roles(self)  # create window if its None or destroyed
+            self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
+            print("actually here")
         else:
+            print("here")
             self.toplevel_window.focus()  # if window exists focus it
             
             
     def open_add_to_employee_account(self):
-        # TODO: Fix focusing on main app instead of popup window
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
             self.toplevel_window = popup_add_to_employee_account(self)  # create window if its None or destroyed
+            self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
         else:
             self.toplevel_window.focus()  # if window exists focus it
         
             
     def open_add_to_user_login_data(self):
-        # TODO: Fix focusing on main app instead of popup window
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
             self.toplevel_window = popup_add_to_user_login_data(self)  # create window if its None or destroyed
+            self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
         else:
             self.toplevel_window.focus()  # if window exists focus it
 
+
+    def open_add_to_client_information(self):
+            if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+                self.toplevel_window = popup_add_to_client_information(self)  # create window if its None or destroyed
+                self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
+                print("actually here")
+            else:
+                print("here")
+                self.toplevel_window.focus()  # if window exists focus it
 
 class popup_add_to_employee_roles(customtkinter.CTkToplevel):
     """ add a role to employee_role database"""
@@ -204,7 +250,6 @@ class popup_add_to_employee_roles(customtkinter.CTkToplevel):
         txtRoleDescription = customtkinter.CTkEntry(self, placeholder_text="Role Description")
         txtRoleDescription.pack(pady=12, padx=10)
         
-        print(txtRoleDescription)
         customtkinter.CTkButton(self, text="Submit", command=lambda: add_to_employee_roles(txtRoleDescription.get())).pack(pady=12, padx=10)
 
  
@@ -244,7 +289,6 @@ class popup_add_to_employee_account(customtkinter.CTkToplevel):
         customtkinter.CTkButton(self, text="Submit", command=lambda: add_to_employee_account(txtAge.get(), txtName.get(), txtSurname.get(), txtGender.get(), txtBirth.get(), txtRoleId.get())).pack(pady=12, padx=10)
 
 
-
 class popup_add_to_user_login_data(customtkinter.CTkToplevel):
     """ Popup window to add a new employee to employee_account database"""
     def __init__(self, *args, **kwargs):
@@ -267,9 +311,48 @@ class popup_add_to_user_login_data(customtkinter.CTkToplevel):
         
         # Submit Button
         customtkinter.CTkButton(self, text="Submit", command=lambda: add_to_user_login_data(txtemployeeId.get(), txtUsername.get(), txtpassword.get())).pack(pady=12, padx=10)
+      
+      
+class popup_add_to_client_information(customtkinter.CTkToplevel):
+    """ Popup window to add a new client to client_information database"""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.geometry("750x750")
+        self.title("Client Information Input")
+     
+        # Decorate here
+        customtkinter.CTkLabel(self, text="Client First Name", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtName = customtkinter.CTkEntry(self, placeholder_text="First Name")
+        txtName.pack(pady=12, padx=10)
+        
+        
+        customtkinter.CTkLabel(self, text="Client Last Name", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtSurname = customtkinter.CTkEntry(self, placeholder_text="Last Name")
+        txtSurname.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Client Gender", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtGender = customtkinter.CTkEntry(self, placeholder_text="Gender")
+        txtGender.pack(pady=12, padx=10)
+
+        
+        customtkinter.CTkLabel(self, text="Date Of Birth (YYYY-MM-DD)", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtDOB = customtkinter.CTkEntry(self, placeholder_text="DOB")
+        txtDOB.pack(pady=12, padx=10)
+        
+        # Submit Button
+        customtkinter.CTkButton(self, text="Submit", command=lambda: add_to_client_information(txtName.get(), txtSurname.get(), txtGender.get(), txtDOB.get())).pack(pady=12, padx=10)
         
         
 # Main Function
 if __name__ == "__main__":
+    
+    # login = Login()
+    # login.mainloop()
     app = App()
-    app.mainloop()
+    app.mainloop()  
+    
+    
+    
+    
+    
+    
