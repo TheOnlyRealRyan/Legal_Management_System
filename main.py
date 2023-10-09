@@ -94,7 +94,7 @@ class App(customtkinter.CTk):
             
             img= (Image.open("resources/icons/customer.png"))
             resized_image= img.resize((25,25), Image.LANCZOS)
-            btnImg_customer= ImageTk.PhotoImage(resized_image)  
+            btnImg_client= ImageTk.PhotoImage(resized_image)  
             
             img= (Image.open("resources/icons/admin.png"))
             resized_image= img.resize((25,25), Image.LANCZOS)
@@ -121,8 +121,8 @@ class App(customtkinter.CTk):
         self.bt_files = customtkinter.CTkButton(self.left_side_panel, image=btnImg_files, text="", command=self.files)
         self.bt_files.grid(row=4, column=0, padx=20, pady=10)
         
-        self.bt_customer = customtkinter.CTkButton(self.left_side_panel, image=btnImg_customer, text="", command=self.customer)
-        self.bt_customer.grid(row=5, column=0, padx=20, pady=10)
+        self.bt_client = customtkinter.CTkButton(self.left_side_panel, image=btnImg_client, text="", command=self.client)
+        self.bt_client.grid(row=5, column=0, padx=20, pady=10)
         
         self.bt_admin = customtkinter.CTkButton(self.left_side_panel, image=btnImg_admin, text="", command=self.admin)
         self.bt_admin.grid(row=6, column=0, padx=20, pady=10)
@@ -144,22 +144,28 @@ class App(customtkinter.CTk):
 
         
         self.toplevel_window = None
-        
-    # Functions for navigating to and decorating different frames   
+    
+    
+    # --------------------------------------------------------------------------------------------------
+    # Functions for navigating to and decorating different frames 
+    # --------------------------------------------------------------------------------------------------  
     def dashboard(self):
         """ self.right_dashboard   ----> dashboard widget """
         self.clear_canvas()
         # Decorate Right Frame
+     
         
     def archive(self):
         """ self.right_dashboard   ----> archive widget """
         self.clear_canvas()
         # Decorate Right Frame
+    
         
     def case(self):
         """ self.right_dashboard   ----> case widget """
         self.clear_canvas()
         # Decorate Right Frame
+    
         
     def files(self):
         """ self.right_dashboard   ----> files widget """
@@ -176,11 +182,11 @@ class App(customtkinter.CTk):
         # Decorate Right Frame      
         Label = customtkinter.CTkLabel(self.right_dashboard, text="Upload File", font=('Roboto', 24))
         Label.grid(row=0, column=0, padx=20, pady=(10, 0))
-        button = customtkinter.CTkButton(self.right_dashboard, text= "", image=btnImg_add, command= print("hello"))
+        button = customtkinter.CTkButton(self.right_dashboard, text= "", image=btnImg_add, command= self.open_add_to_file_upload_data)
         button.grid(row=1, column=0, padx=20, pady=(10, 0))
         
         # grab data 
-        data = db_conn.all_client_information()
+        data = db_conn.all_file_upload_data()
         headers = ['fileId', 'fileName', 'caseId', 'recievedDate', 'dateUploaded']
         
         # Create table
@@ -189,7 +195,7 @@ class App(customtkinter.CTk):
         self.sheet.headers((f" {x}" for x in headers))
         
         # populate Table
-        self.sheet.set_sheet_data([[f"{a}", f"{b}",f"{c}",f"{d}",f"{e}"] for a,b,c,d,e in data ])
+        self.sheet.set_sheet_data([[f"{a}", f"{b}", f"{c}", f"{d}", f"{e}"] for a,b,c,d,e in data ])
         
         # table enable choices listed below:
         self.sheet.enable_bindings(("single_select",
@@ -199,10 +205,8 @@ class App(customtkinter.CTk):
                             "copy"))
 
 
-
-        
-    def customer(self):
-        """ self.right_dashboard   ----> dashbcustomeroard widget """
+    def client(self):
+        """ self.right_dashboard   ----> dashboard widget """
         self.clear_canvas()
         # Load image
         try:
@@ -216,7 +220,7 @@ class App(customtkinter.CTk):
         # Decorate Right Frame
         Label = customtkinter.CTkLabel(self.right_dashboard, text="New Client", font=('Roboto', 24))
         Label.grid(row=0, column=0, padx=20, pady=(10, 0))
-        button = customtkinter.CTkButton(self.right_dashboard, text= "", image=btnImg_add, command= popup_add_to_client_information)
+        button = customtkinter.CTkButton(self.right_dashboard, text= "", image=btnImg_add, command= self.open_add_to_client_information)
         button.grid(row=1, column=0, padx=20, pady=(10, 0))
         
         # grab data 
