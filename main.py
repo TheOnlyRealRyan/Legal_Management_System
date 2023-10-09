@@ -179,6 +179,24 @@ class App(customtkinter.CTk):
         button = customtkinter.CTkButton(self.right_dashboard, text= "", image=btnImg_add, command= print("hello"))
         button.grid(row=1, column=0, padx=20, pady=(10, 0))
         
+        # grab data 
+        data = db_conn.all_client_information()
+        headers = ['fileId', 'fileName', 'caseId', 'recievedDate', 'dateUploaded']
+        
+        # Create table
+        self.sheet = tksheet.Sheet(self.right_dashboard, height = 500, width = 1000)
+        self.sheet.grid(row=3, column =0)
+        self.sheet.headers((f" {x}" for x in headers))
+        
+        # populate Table
+        self.sheet.set_sheet_data([[f"{a}", f"{b}",f"{c}",f"{d}",f"{e}"] for a,b,c,d,e in data ])
+        
+        # table enable choices listed below:
+        self.sheet.enable_bindings(("single_select",
+                            "row_select",
+                            "column_width_resize",
+                            "arrowkeys",
+                            "copy"))
 
 
 
@@ -218,16 +236,7 @@ class App(customtkinter.CTk):
                             "row_select",
                             "column_width_resize",
                             "arrowkeys",
-                            "right_click_popup_menu",
-                            "rc_select",
-                            "rc_insert_row",
-                            "rc_delete_row",
-                            "copy",
-                            "cut",
-                            "paste",
-                            "delete",
-                            "undo",
-                            "edit_cell"))
+                            "copy"))
 
     
     def admin(self):
