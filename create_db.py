@@ -45,7 +45,7 @@ mycursor.execute("CREATE TABLE case_location(caseId INTEGER(10), location VARCHA
 mycursor.execute("CREATE TABLE case_drawn_by(caseId INTEGER(10), employeeId INTEGER, dateDrawnOut DATE, PRIMARY KEY (caseId), FOREIGN KEY (caseId) REFERENCES case_data(caseId), FOREIGN KEY (employeeId) REFERENCES employee_account(employeeId))")
 mycursor.execute("CREATE TABLE case_drawn_history(caseId INTEGER(10), employeeId INTEGER(10), dateDrawnOut DATE, dateDrawnIn DATE, PRIMARY KEY (caseId), FOREIGN KEY (caseId) REFERENCES case_data(caseId), FOREIGN KEY (employeeId) REFERENCES employee_account(employeeId))")
 mycursor.execute("CREATE TABLE file_upload_data(fileId INTEGER(10), fileName VARCHAR(100), caseId INTEGER(10), recievedDate DATE, dateUploaded DATETIME, PRIMARY KEY (fileId), FOREIGN KEY (caseId) REFERENCES case_data(caseId))")
-mycursor.execute("CREATE TABLE archived_case_request(archiveNumber INTEGER(10), employeeId INTEGER(10), dateRequested DATETIME, PRIMARY KEY (caseId), FOREIGN KEY (caseId) REFERENCES case_data(caseId), FOREIGN KEY (employeeId) REFERENCES employee_account(employeeId) )")
+mycursor.execute("CREATE TABLE archived_case_request(archiveNumber INTEGER(10), employeeId INTEGER(10), dateRequested DATETIME, PRIMARY KEY (archiveNumber), FOREIGN KEY (employeeId) REFERENCES employee_account(employeeId), FOREIGN KEY (archiveNumber) REFERENCES archived_state(archiveNumber))")
 
 
 # Display Tables 

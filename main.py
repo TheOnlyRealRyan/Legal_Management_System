@@ -6,7 +6,7 @@ from customtkinter import CTkEntry
 from add_to_db import *
 from validatePassword import *
 import grab_from_db as db_conn
-
+import tksheet
 
 # TODO: validate Login into main page
 
@@ -24,7 +24,7 @@ class Login(customtkinter.CTk):
         self.geometry("500x350")
         
         # root page
-        self.main_container = customtkinter.CTkFrame(self, corner_radius=10)
+        self.main_container = customtkinter.CTkCanvas(self, bg="#AAAAAA")
 
         self.main_container.pack(pady=20, padx=60, fill="both", expand=True)
 
@@ -53,11 +53,11 @@ class App(customtkinter.CTk):
         self.geometry("{0}x{1}+0+0".format(self.winfo_screenwidth(), self.winfo_screenheight()-75))
 
         # root page
-        self.main_container = customtkinter.CTkFrame(self, corner_radius=10)
+        self.main_container = customtkinter.CTkCanvas(self, bg="#AAAAAA")
         self.main_container.pack(fill=tkinter.BOTH, expand=True, padx=10, pady=10)
 
         # left side panel -> for frame selection
-        self.left_side_panel = customtkinter.CTkFrame(self.main_container, width=150, corner_radius=10)
+        self.left_side_panel = customtkinter.CTkCanvas(self.main_container, width=150, bg="#AAAAAA")
         self.left_side_panel.pack(side=tkinter.LEFT, fill=tkinter.Y, expand=False, padx=5, pady=5)
         
         self.left_side_panel.grid_columnconfigure(0, weight=0)
@@ -132,33 +132,38 @@ class App(customtkinter.CTk):
         
 
         # right side panel -> have self.right_dashboard inside it
-        self.right_side_panel = customtkinter.CTkFrame(self.main_container, corner_radius=10, fg_color="#000811")
+        self.right_side_panel = customtkinter.CTkCanvas(self.main_container, bg="#000811")
         self.right_side_panel.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True, padx=5, pady=5)
                 
-        self.right_dashboard = customtkinter.CTkFrame(self.main_container, corner_radius=10, fg_color="#000811")
+        self.right_dashboard = customtkinter.CTkCanvas(self.main_container, bg="#000811")
         self.right_dashboard.pack(in_=self.right_side_panel, side=tkinter.TOP, fill=tkinter.BOTH, expand=True, padx=0, pady=0)
+        
+        # scroll_x = tkinter.Scrollbar(self.right_dashboard, orient="horizontal", command=self.right_dashboard.xview)
+        # scroll_x.grid(row=1, column=6, sticky="ew")
+
+
         
         self.toplevel_window = None
         
     # Functions for navigating to and decorating different frames   
     def dashboard(self):
         """ self.right_dashboard   ----> dashboard widget """
-        self.clear_frame()
+        self.clear_canvas()
         # Decorate Right Frame
         
     def archive(self):
         """ self.right_dashboard   ----> archive widget """
-        self.clear_frame()
+        self.clear_canvas()
         # Decorate Right Frame
         
     def case(self):
         """ self.right_dashboard   ----> case widget """
-        self.clear_frame()
+        self.clear_canvas()
         # Decorate Right Frame
         
     def files(self):
         """ self.right_dashboard   ----> files widget """
-        self.clear_frame()
+        self.clear_canvas()
         # Load image
         try:
             img= (Image.open("resources/icons/add.png"))
@@ -180,7 +185,7 @@ class App(customtkinter.CTk):
         
     def customer(self):
         """ self.right_dashboard   ----> dashbcustomeroard widget """
-        self.clear_frame()
+        self.clear_canvas()
         # Load image
         try:
             img= (Image.open("resources/icons/add.png"))
@@ -196,38 +201,38 @@ class App(customtkinter.CTk):
         button = customtkinter.CTkButton(self.right_dashboard, text= "", image=btnImg_add, command= popup_add_to_client_information)
         button.grid(row=1, column=0, padx=20, pady=(10, 0))
         
-        # data 
-        ids = []
-        names = []
-        surnames = []
-        genders = []
-        dobs = []
+        # grab data 
         data = db_conn.all_client_information()
-
-        for id, name, surname, gender, dob in data:
-            ids.append(id) 
-            names.append(name)
-            surnames.append(surname)
-            genders.append(gender)
-            dobs.append(dob)
-
-        # Table 
         headers = ['id', 'Name', 'Surname', 'Gender', 'Date of Birth']
-        for col, header in enumerate(headers):
-            label = customtkinter.CTkLabel(self.right_dashboard, text=header, font=("Roboto", 24))
-            label.grid(row=2, column=col, padx=10, pady=5)
+        
+        # Create table
+        self.sheet = tksheet.Sheet(self.right_dashboard, height = 500, width = 1000)
+        self.sheet.grid(row=3, column =0)
+        self.sheet.headers((f" {x}" for x in headers))
+        
+        # populate Table
+        self.sheet.set_sheet_data([[f"{a}", f"{b}",f"{c}",f"{d}",f"{e}"] for a,b,c,d,e in data ])
+        
+        # table enable choices listed below:
+        self.sheet.enable_bindings(("single_select",
+                            "row_select",
+                            "column_width_resize",
+                            "arrowkeys",
+                            "right_click_popup_menu",
+                            "rc_select",
+                            "rc_insert_row",
+                            "rc_delete_row",
+                            "copy",
+                            "cut",
+                            "paste",
+                            "delete",
+                            "undo",
+                            "edit_cell"))
 
-        widths = [50, 100, 100, 100, 100] # Column Widths
-        for row, row_data in enumerate(data, start=3):
-            for col, value in enumerate(row_data):
-                entry = CTkEntry(self.right_dashboard, width=widths[col])
-                entry.insert(tkinter.END, value)
-                entry.grid(row=row, column=col, padx=10, pady=5)
-    
     
     def admin(self):
         """ self.right_dashboard   ----> Admin widget """
-        self.clear_frame()
+        self.clear_canvas()
         
         # Decorate Right Frame
         # Add to employee Roles
@@ -317,11 +322,11 @@ class App(customtkinter.CTk):
 
     def user(self):
         """ self.right_dashboard   ----> dashboard widget """
-        self.clear_frame()
+        self.clear_canvas()
         # Decorate Right Frame
         
                              
-    def clear_frame(self):
+    def clear_canvas(self):
         """ Clears frame from self.right_dashboard(frame) before loading the widget of the concerned page """
         for widget in self.right_dashboard.winfo_children():
             widget.destroy()
@@ -950,9 +955,3 @@ if __name__ == "__main__":
     # login.mainloop()
     app = App()
     app.mainloop()  
-    
-    
-    
-    
-    
-    
