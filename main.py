@@ -2,8 +2,11 @@ import tkinter
 from PIL import Image
 from PIL import ImageTk
 import customtkinter
+from customtkinter import CTkEntry
 from add_to_db import *
 from validatePassword import *
+import grab_from_db as db_conn
+
 
 # TODO: validate Login into main page
 
@@ -99,7 +102,7 @@ class App(customtkinter.CTk):
             
             img= (Image.open("resources/icons/user.png"))
             resized_image= img.resize((25,25), Image.LANCZOS)
-            btnImg_user= ImageTk.PhotoImage(resized_image)              
+            btnImg_user= ImageTk.PhotoImage(resized_image)     
         except IOError:
             print("File not found") 
             pass
@@ -156,12 +159,70 @@ class App(customtkinter.CTk):
     def files(self):
         """ self.right_dashboard   ----> files widget """
         self.clear_frame()
-        # Decorate Right Frame
+        # Load image
+        try:
+            img= (Image.open("resources/icons/add.png"))
+            resized_image= img.resize((25,25), Image.LANCZOS)
+            btnImg_add= ImageTk.PhotoImage(resized_image)        
+        except IOError:
+            print("File not found") 
+            pass
+        
+        # Decorate Right Frame      
+        Label = customtkinter.CTkLabel(self.right_dashboard, text="Upload File", font=('Roboto', 24))
+        Label.grid(row=0, column=0, padx=20, pady=(10, 0))
+        button = customtkinter.CTkButton(self.right_dashboard, text= "", image=btnImg_add, command= print("hello"))
+        button.grid(row=1, column=0, padx=20, pady=(10, 0))
+        
+
+
+
         
     def customer(self):
         """ self.right_dashboard   ----> dashbcustomeroard widget """
         self.clear_frame()
+        # Load image
+        try:
+            img= (Image.open("resources/icons/add.png"))
+            resized_image= img.resize((25,25), Image.LANCZOS)
+            btnImg_add= ImageTk.PhotoImage(resized_image)        
+        except IOError:
+            print("File not found") 
+            pass
+        
         # Decorate Right Frame
+        Label = customtkinter.CTkLabel(self.right_dashboard, text="New Client", font=('Roboto', 24))
+        Label.grid(row=0, column=0, padx=20, pady=(10, 0))
+        button = customtkinter.CTkButton(self.right_dashboard, text= "", image=btnImg_add, command= popup_add_to_client_information)
+        button.grid(row=1, column=0, padx=20, pady=(10, 0))
+        
+        # data 
+        ids = []
+        names = []
+        surnames = []
+        genders = []
+        dobs = []
+        data = db_conn.all_client_information()
+
+        for id, name, surname, gender, dob in data:
+            ids.append(id) 
+            names.append(name)
+            surnames.append(surname)
+            genders.append(gender)
+            dobs.append(dob)
+
+        # Table 
+        headers = ['id', 'Name', 'Surname', 'Gender', 'Date of Birth']
+        for col, header in enumerate(headers):
+            label = customtkinter.CTkLabel(self.right_dashboard, text=header, font=("Roboto", 24))
+            label.grid(row=2, column=col, padx=10, pady=5)
+
+        widths = [50, 100, 100, 100, 100] # Column Widths
+        for row, row_data in enumerate(data, start=3):
+            for col, value in enumerate(row_data):
+                entry = CTkEntry(self.right_dashboard, width=widths[col])
+                entry.insert(tkinter.END, value)
+                entry.grid(row=row, column=col, padx=10, pady=5)
     
     
     def admin(self):
@@ -353,7 +414,7 @@ class App(customtkinter.CTk):
     
     def open_add_to_arcived_case_request(self):
             if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
-                self.toplevel_window = popup_add_to_arcived_case_request(self)  # create window if its None or destroyed
+                self.toplevel_window = popup_add_to_archived_case_request(self)  # create window if its None or destroyed
                 self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
                 print("actually here")
             else:
@@ -812,6 +873,42 @@ class popup_add_to_case_drawn_by(customtkinter.CTkToplevel):
 
 class popup_add_to_case_drawn_history(customtkinter.CTkToplevel):
     """ Popup window to add a new employee to employee_account database"""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.geometry("750x750")
+        self.title("Employee Account")
+     
+        # Decorate here
+        customtkinter.CTkLabel(self, text="Enter first name", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtName = customtkinter.CTkEntry(self, placeholder_text="Name")
+        txtName.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter surname", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtSurname = customtkinter.CTkEntry(self, placeholder_text="surname")
+        txtSurname.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter date of birth (YYYY-MM-DD)", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtBirth = customtkinter.CTkEntry(self, placeholder_text="DOB")
+        txtBirth.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter role ID", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtRoleId = customtkinter.CTkEntry(self, placeholder_text="Role ID")
+        txtRoleId.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter Gender (M/F)", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtGender = customtkinter.CTkEntry(self, placeholder_text="Gender")
+        txtGender.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter Age", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtAge = customtkinter.CTkEntry(self, placeholder_text="Age")
+        txtAge.pack(pady=12, padx=10)
+        
+        # Submit Button
+        customtkinter.CTkButton(self, text="Submit", command=lambda: add_to_employee_account(txtAge.get(), txtName.get(), txtSurname.get(), txtGender.get(), txtBirth.get(), txtRoleId.get())).pack(pady=12, padx=10)
+
+
+class popup_add_to_archived_case_request(customtkinter.CTkToplevel):
+    """ Popup window to add a new employee to archived_case_request database"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.geometry("750x750")

@@ -129,8 +129,8 @@ def add_to_client_information(firstName, lastName, gender, dateOfBirth) -> None:
         mydb.commit()
         tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
     except Exception as e:
-            tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
-            print(e)    
+        tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
+        print(e)    
     
 
 
@@ -268,9 +268,9 @@ def add_to_deletion_logging(caseId, employeeId1, employeeId2, deletionDate, dele
         print(e) 
 
 
-def add_to_arcived_case_request(archiveNumber, employeeId, dateRequested) -> None:
-    """Inserts login details into arcived_case_request database"""
-    sqlFormula = "INSERT INTO arcived_case_request (archiveNumber, employeeId, dateRequested) VALUE (%s, %s, %s)"
+def add_to_archived_case_request(archiveNumber, employeeId, dateRequested) -> None:
+    """Inserts login details into archived_case_request database"""
+    sqlFormula = "INSERT INTO archived_case_request (archiveNumber, employeeId, dateRequested) VALUE (%s, %s, %s)"
                 
     # Insert into Db
     try:     
