@@ -63,6 +63,8 @@ class App(customtkinter.CTk):
         # Left Frame - Placed lower down
         self.left_side_panel.grid_rowconfigure((6, 7), weight=1)
         
+
+
         
         # self.left_side_panel WIDGET
         self.logo_label = customtkinter.CTkLabel(self.left_side_panel, text="Options: \n", font=customtkinter.CTkFont(size=20, weight="bold"))
@@ -181,16 +183,77 @@ class App(customtkinter.CTk):
 
         # Add to user login data
         Label = customtkinter.CTkLabel(self.right_dashboard, text="Add to User Login Data", font=('Roboto', 24))
-        Label.grid(row=6, column=0, padx=20, pady=(10, 0))
+        Label.grid(row=4, column=0, padx=20, pady=(10, 0))
         button = customtkinter.CTkButton(self.right_dashboard, text= "User Login Data", command= self.open_add_to_user_login_data)
-        button.grid(row=7, column=0, padx=20, pady=(10, 0))
+        button.grid(row=5, column=0, padx=20, pady=(10, 0))
         
         # Add to client info
         Label = customtkinter.CTkLabel(self.right_dashboard, text="Add to Client Information", font=('Roboto', 24))
-        Label.grid(row=4, column=0, padx=20, pady=(10, 0))
+        Label.grid(row=6, column=0, padx=20, pady=(10, 0))
         button = customtkinter.CTkButton(self.right_dashboard, text= "Client Information", command= self.open_add_to_client_information)
-        button.grid(row=5, column=0, padx=20, pady=(10, 0))
+        button.grid(row=7, column=0, padx=20, pady=(10, 0))
         
+        # Add to case_data
+        Label = customtkinter.CTkLabel(self.right_dashboard, text="Add to Client Information", font=('Roboto', 24))
+        Label.grid(row=8, column=0, padx=20, pady=(10, 0))
+        button = customtkinter.CTkButton(self.right_dashboard, text= "Client Information", command= self.open_add_to_client_information)
+        button.grid(row=9, column=0, padx=20, pady=(10, 0))
+        
+        # Add to archived_state
+        Label = customtkinter.CTkLabel(self.right_dashboard, text="Add to Client Information", font=('Roboto', 24))
+        Label.grid(row=10, column=0, padx=20, pady=(10, 0))
+        button = customtkinter.CTkButton(self.right_dashboard, text= "Client Information", command= self.open_add_to_client_information)
+        button.grid(row=11, column=0, padx=20, pady=(10, 0))
+        
+        # Add to case_location
+        Label = customtkinter.CTkLabel(self.right_dashboard, text="Add to Client Information", font=('Roboto', 24))
+        Label.grid(row=12, column=0, padx=20, pady=(10, 0))
+        button = customtkinter.CTkButton(self.right_dashboard, text= "Client Information", command= self.open_add_to_client_information)
+        button.grid(row=13, column=0, padx=20, pady=(10, 0))
+        
+        # Add to destruction_state
+        Label = customtkinter.CTkLabel(self.right_dashboard, text="Add to Client Information", font=('Roboto', 24))
+        Label.grid(row=0, column=1, padx=20, pady=(10, 0))
+        button = customtkinter.CTkButton(self.right_dashboard, text= "Client Information", command= self.open_add_to_client_information)
+        button.grid(row=1, column=1, padx=20, pady=(10, 0))
+        
+        # Add to file_upload_data
+        Label = customtkinter.CTkLabel(self.right_dashboard, text="Add to Client Information", font=('Roboto', 24))
+        Label.grid(row=2, column=1, padx=20, pady=(10, 0))
+        button = customtkinter.CTkButton(self.right_dashboard, text= "Client Information", command= self.open_add_to_client_information)
+        button.grid(row=3, column=1, padx=20, pady=(10, 0))
+        
+        # Add to deletion_confirmation
+        Label = customtkinter.CTkLabel(self.right_dashboard, text="Add to Client Information", font=('Roboto', 24))
+        Label.grid(row=4, column=1, padx=20, pady=(10, 0))
+        button = customtkinter.CTkButton(self.right_dashboard, text= "Client Information", command= self.open_add_to_client_information)
+        button.grid(row=5, column=1, padx=20, pady=(10, 0))
+        
+        # Add to deletion_logging
+        Label = customtkinter.CTkLabel(self.right_dashboard, text="Add to Client Information", font=('Roboto', 24))
+        Label.grid(row=6, column=1, padx=20, pady=(10, 0))
+        button = customtkinter.CTkButton(self.right_dashboard, text= "Client Information", command= self.open_add_to_client_information)
+        button.grid(row=7, column=1, padx=20, pady=(10, 0))
+        
+        # Add to arcived_case_request
+        Label = customtkinter.CTkLabel(self.right_dashboard, text="Add to Client Information", font=('Roboto', 24))
+        Label.grid(row=8, column=1, padx=20, pady=(10, 0))
+        button = customtkinter.CTkButton(self.right_dashboard, text= "Client Information", command= self.open_add_to_client_information)
+        button.grid(row=9, column=1, padx=20, pady=(10, 0))
+        
+        # Add to case_drawn_by
+        Label = customtkinter.CTkLabel(self.right_dashboard, text="Add to Client Information", font=('Roboto', 24))
+        Label.grid(row=10, column=1, padx=20, pady=(10, 0))
+        button = customtkinter.CTkButton(self.right_dashboard, text= "Client Information", command= self.open_add_to_client_information)
+        button.grid(row=11, column=1, padx=20, pady=(10, 0))
+        
+        # Add to case_drawn_history
+        Label = customtkinter.CTkLabel(self.right_dashboard, text="Add to Client Information", font=('Roboto', 24))
+        Label.grid(row=12, column=1, padx=20, pady=(10, 0))
+        button = customtkinter.CTkButton(self.right_dashboard, text= "Client Information", command= self.open_add_to_client_information)
+        button.grid(row=13, column=1, padx=20, pady=(10, 0))
+        
+
     def user(self):
         """ self.right_dashboard   ----> dashboard widget """
         self.clear_frame()
@@ -237,7 +300,88 @@ class App(customtkinter.CTk):
             else:
                 print("here")
                 self.toplevel_window.focus()  # if window exists focus it
+                
+    def open_add_to_case_data(self):
+            if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+                self.toplevel_window = popup_add_to_case_data(self)  # create window if its None or destroyed
+                self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
+                print("actually here")
+            else:
+                print("here")
+                self.toplevel_window.focus()  # if window exists focus it
+    
+    
+    def open_add_to_archived_state(self):
+            if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+                self.toplevel_window = popup_add_to_archived_state(self)  # create window if its None or destroyed
+                self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
+                print("actually here")
+            else:
+                print("here")
+                self.toplevel_window.focus()  # if window exists focus it
+                
+                
+    def open_add_to_destruction_state(self):
+            if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+                self.toplevel_window = popup_add_to_destruction_state(self)  # create window if its None or destroyed
+                self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
+                print("actually here")
+            else:
+                print("here")
+                self.toplevel_window.focus()  # if window exists focus it
+                
+                
+    def open_add_to_file_upload_data(self):
+            if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+                self.toplevel_window = popup_add_to_file_upload_data(self)  # create window if its None or destroyed
+                self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
+                print("actually here")
+            else:
+                print("here")
+                self.toplevel_window.focus()  # if window exists focus it
+                
+                
+    def open_add_to_deletion_confirmation(self):
+            if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+                self.toplevel_window = popup_add_to_deletion_confirmation(self)  # create window if its None or destroyed
+                self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
+                print("actually here")
+            else:
+                print("here")
+                self.toplevel_window.focus()  # if window exists focus it
+                
+    
+    def open_add_to_arcived_case_request(self):
+            if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+                self.toplevel_window = popup_add_to_arcived_case_request(self)  # create window if its None or destroyed
+                self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
+                print("actually here")
+            else:
+                print("here")
+                self.toplevel_window.focus()  # if window exists focus it
+                
+                
+    def open_add_to_case_drawn_by(self):
+            if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+                self.toplevel_window = popup_add_to_case_drawn_by(self)  # create window if its None or destroyed
+                self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
+                print("actually here")
+            else:
+                print("here")
+                self.toplevel_window.focus()  # if window exists focus it
+                
+    
+    def open_add_to_case_drawn_history(self):
+        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+            self.toplevel_window = popup_add_to_case_drawn_history(self)  # create window if its None or destroyed
+            self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
+            print("actually here")
+        else:
+            print("here")
+            self.toplevel_window.focus()  # if window exists focus it
 
+
+# ----- POPUP windows Decoration classes
 class popup_add_to_employee_roles(customtkinter.CTkToplevel):
     """ add a role to employee_role database"""
     def __init__(self, *args, **kwargs):
@@ -341,7 +485,366 @@ class popup_add_to_client_information(customtkinter.CTkToplevel):
         
         # Submit Button
         customtkinter.CTkButton(self, text="Submit", command=lambda: add_to_client_information(txtName.get(), txtSurname.get(), txtGender.get(), txtDOB.get())).pack(pady=12, padx=10)
+
+
+class popup_add_to_case_data(customtkinter.CTkToplevel):
+    """ Popup window to add a case to case_data database"""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.geometry("750x750")
+        self.title("Employee Account")
+     
+        # Decorate here
+        customtkinter.CTkLabel(self, text="Enter first name", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtName = customtkinter.CTkEntry(self, placeholder_text="Name")
+        txtName.pack(pady=12, padx=10)
         
+        customtkinter.CTkLabel(self, text="Enter surname", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtSurname = customtkinter.CTkEntry(self, placeholder_text="surname")
+        txtSurname.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter date of birth (YYYY-MM-DD)", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtBirth = customtkinter.CTkEntry(self, placeholder_text="DOB")
+        txtBirth.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter role ID", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtRoleId = customtkinter.CTkEntry(self, placeholder_text="Role ID")
+        txtRoleId.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter Gender (M/F)", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtGender = customtkinter.CTkEntry(self, placeholder_text="Gender")
+        txtGender.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter Age", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtAge = customtkinter.CTkEntry(self, placeholder_text="Age")
+        txtAge.pack(pady=12, padx=10)
+        
+        # Submit Button
+        customtkinter.CTkButton(self, text="Submit", command=lambda: add_to_employee_account(txtAge.get(), txtName.get(), txtSurname.get(), txtGender.get(), txtBirth.get(), txtRoleId.get())).pack(pady=12, padx=10)
+
+
+class popup_add_to_archived_state(customtkinter.CTkToplevel):
+    """ Popup window to add a new employee to archived_state database"""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.geometry("750x750")
+        self.title("Employee Account")
+     
+        # Decorate here
+        customtkinter.CTkLabel(self, text="Enter first name", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtName = customtkinter.CTkEntry(self, placeholder_text="Name")
+        txtName.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter surname", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtSurname = customtkinter.CTkEntry(self, placeholder_text="surname")
+        txtSurname.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter date of birth (YYYY-MM-DD)", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtBirth = customtkinter.CTkEntry(self, placeholder_text="DOB")
+        txtBirth.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter role ID", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtRoleId = customtkinter.CTkEntry(self, placeholder_text="Role ID")
+        txtRoleId.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter Gender (M/F)", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtGender = customtkinter.CTkEntry(self, placeholder_text="Gender")
+        txtGender.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter Age", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtAge = customtkinter.CTkEntry(self, placeholder_text="Age")
+        txtAge.pack(pady=12, padx=10)
+        
+        # Submit Button
+        customtkinter.CTkButton(self, text="Submit", command=lambda: add_to_employee_account(txtAge.get(), txtName.get(), txtSurname.get(), txtGender.get(), txtBirth.get(), txtRoleId.get())).pack(pady=12, padx=10)
+
+
+class popup_add_to_case_location(customtkinter.CTkToplevel):
+    """ Popup window to add a new employee to case_location database"""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.geometry("750x750")
+        self.title("Employee Account")
+     
+        # Decorate here
+        customtkinter.CTkLabel(self, text="Enter first name", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtName = customtkinter.CTkEntry(self, placeholder_text="Name")
+        txtName.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter surname", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtSurname = customtkinter.CTkEntry(self, placeholder_text="surname")
+        txtSurname.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter date of birth (YYYY-MM-DD)", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtBirth = customtkinter.CTkEntry(self, placeholder_text="DOB")
+        txtBirth.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter role ID", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtRoleId = customtkinter.CTkEntry(self, placeholder_text="Role ID")
+        txtRoleId.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter Gender (M/F)", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtGender = customtkinter.CTkEntry(self, placeholder_text="Gender")
+        txtGender.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter Age", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtAge = customtkinter.CTkEntry(self, placeholder_text="Age")
+        txtAge.pack(pady=12, padx=10)
+        
+        # Submit Button
+        customtkinter.CTkButton(self, text="Submit", command=lambda: add_to_employee_account(txtAge.get(), txtName.get(), txtSurname.get(), txtGender.get(), txtBirth.get(), txtRoleId.get())).pack(pady=12, padx=10)
+
+class popup_add_to_destruction_state(customtkinter.CTkToplevel):
+    """ Popup window to add a new employee to destruction_state database"""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.geometry("750x750")
+        self.title("Employee Account")
+     
+        # Decorate here
+        customtkinter.CTkLabel(self, text="Enter first name", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtName = customtkinter.CTkEntry(self, placeholder_text="Name")
+        txtName.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter surname", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtSurname = customtkinter.CTkEntry(self, placeholder_text="surname")
+        txtSurname.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter date of birth (YYYY-MM-DD)", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtBirth = customtkinter.CTkEntry(self, placeholder_text="DOB")
+        txtBirth.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter role ID", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtRoleId = customtkinter.CTkEntry(self, placeholder_text="Role ID")
+        txtRoleId.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter Gender (M/F)", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtGender = customtkinter.CTkEntry(self, placeholder_text="Gender")
+        txtGender.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter Age", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtAge = customtkinter.CTkEntry(self, placeholder_text="Age")
+        txtAge.pack(pady=12, padx=10)
+        
+        # Submit Button
+        customtkinter.CTkButton(self, text="Submit", command=lambda: add_to_employee_account(txtAge.get(), txtName.get(), txtSurname.get(), txtGender.get(), txtBirth.get(), txtRoleId.get())).pack(pady=12, padx=10)
+
+
+class popup_add_to_file_upload_data(customtkinter.CTkToplevel):
+    """ Popup window to add a new employee to employee_account database"""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.geometry("750x750")
+        self.title("Employee Account")
+     
+        # Decorate here
+        customtkinter.CTkLabel(self, text="Enter first name", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtName = customtkinter.CTkEntry(self, placeholder_text="Name")
+        txtName.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter surname", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtSurname = customtkinter.CTkEntry(self, placeholder_text="surname")
+        txtSurname.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter date of birth (YYYY-MM-DD)", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtBirth = customtkinter.CTkEntry(self, placeholder_text="DOB")
+        txtBirth.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter role ID", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtRoleId = customtkinter.CTkEntry(self, placeholder_text="Role ID")
+        txtRoleId.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter Gender (M/F)", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtGender = customtkinter.CTkEntry(self, placeholder_text="Gender")
+        txtGender.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter Age", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtAge = customtkinter.CTkEntry(self, placeholder_text="Age")
+        txtAge.pack(pady=12, padx=10)
+        
+        # Submit Button
+        customtkinter.CTkButton(self, text="Submit", command=lambda: add_to_employee_account(txtAge.get(), txtName.get(), txtSurname.get(), txtGender.get(), txtBirth.get(), txtRoleId.get())).pack(pady=12, padx=10)
+
+
+class popup_add_to_deletion_confirmation(customtkinter.CTkToplevel):
+    """ Popup window to add a new employee to employee_account database"""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.geometry("750x750")
+        self.title("Employee Account")
+     
+        # Decorate here
+        customtkinter.CTkLabel(self, text="Enter first name", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtName = customtkinter.CTkEntry(self, placeholder_text="Name")
+        txtName.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter surname", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtSurname = customtkinter.CTkEntry(self, placeholder_text="surname")
+        txtSurname.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter date of birth (YYYY-MM-DD)", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtBirth = customtkinter.CTkEntry(self, placeholder_text="DOB")
+        txtBirth.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter role ID", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtRoleId = customtkinter.CTkEntry(self, placeholder_text="Role ID")
+        txtRoleId.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter Gender (M/F)", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtGender = customtkinter.CTkEntry(self, placeholder_text="Gender")
+        txtGender.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter Age", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtAge = customtkinter.CTkEntry(self, placeholder_text="Age")
+        txtAge.pack(pady=12, padx=10)
+        
+        # Submit Button
+        customtkinter.CTkButton(self, text="Submit", command=lambda: add_to_employee_account(txtAge.get(), txtName.get(), txtSurname.get(), txtGender.get(), txtBirth.get(), txtRoleId.get())).pack(pady=12, padx=10)
+
+
+class popup_add_to_deletion_logging(customtkinter.CTkToplevel):
+    """ Popup window to add a new employee to employee_account database"""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.geometry("750x750")
+        self.title("Employee Account")
+     
+        # Decorate here
+        customtkinter.CTkLabel(self, text="Enter first name", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtName = customtkinter.CTkEntry(self, placeholder_text="Name")
+        txtName.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter surname", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtSurname = customtkinter.CTkEntry(self, placeholder_text="surname")
+        txtSurname.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter date of birth (YYYY-MM-DD)", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtBirth = customtkinter.CTkEntry(self, placeholder_text="DOB")
+        txtBirth.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter role ID", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtRoleId = customtkinter.CTkEntry(self, placeholder_text="Role ID")
+        txtRoleId.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter Gender (M/F)", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtGender = customtkinter.CTkEntry(self, placeholder_text="Gender")
+        txtGender.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter Age", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtAge = customtkinter.CTkEntry(self, placeholder_text="Age")
+        txtAge.pack(pady=12, padx=10)
+        
+        # Submit Button
+        customtkinter.CTkButton(self, text="Submit", command=lambda: add_to_employee_account(txtAge.get(), txtName.get(), txtSurname.get(), txtGender.get(), txtBirth.get(), txtRoleId.get())).pack(pady=12, padx=10)
+
+
+class popup_add_to_case_request(customtkinter.CTkToplevel):
+    """ Popup window to add a new employee to employee_account database"""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.geometry("750x750")
+        self.title("Employee Account")
+     
+        # Decorate here
+        customtkinter.CTkLabel(self, text="Enter first name", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtName = customtkinter.CTkEntry(self, placeholder_text="Name")
+        txtName.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter surname", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtSurname = customtkinter.CTkEntry(self, placeholder_text="surname")
+        txtSurname.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter date of birth (YYYY-MM-DD)", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtBirth = customtkinter.CTkEntry(self, placeholder_text="DOB")
+        txtBirth.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter role ID", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtRoleId = customtkinter.CTkEntry(self, placeholder_text="Role ID")
+        txtRoleId.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter Gender (M/F)", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtGender = customtkinter.CTkEntry(self, placeholder_text="Gender")
+        txtGender.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter Age", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtAge = customtkinter.CTkEntry(self, placeholder_text="Age")
+        txtAge.pack(pady=12, padx=10)
+        
+        # Submit Button
+        customtkinter.CTkButton(self, text="Submit", command=lambda: add_to_employee_account(txtAge.get(), txtName.get(), txtSurname.get(), txtGender.get(), txtBirth.get(), txtRoleId.get())).pack(pady=12, padx=10)
+
+
+class popup_add_to_case_drawn_by(customtkinter.CTkToplevel):
+    """ Popup window to add a new employee to employee_account database"""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.geometry("750x750")
+        self.title("Employee Account")
+     
+        # Decorate here
+        customtkinter.CTkLabel(self, text="Enter first name", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtName = customtkinter.CTkEntry(self, placeholder_text="Name")
+        txtName.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter surname", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtSurname = customtkinter.CTkEntry(self, placeholder_text="surname")
+        txtSurname.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter date of birth (YYYY-MM-DD)", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtBirth = customtkinter.CTkEntry(self, placeholder_text="DOB")
+        txtBirth.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter role ID", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtRoleId = customtkinter.CTkEntry(self, placeholder_text="Role ID")
+        txtRoleId.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter Gender (M/F)", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtGender = customtkinter.CTkEntry(self, placeholder_text="Gender")
+        txtGender.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter Age", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtAge = customtkinter.CTkEntry(self, placeholder_text="Age")
+        txtAge.pack(pady=12, padx=10)
+        
+        # Submit Button
+        customtkinter.CTkButton(self, text="Submit", command=lambda: add_to_employee_account(txtAge.get(), txtName.get(), txtSurname.get(), txtGender.get(), txtBirth.get(), txtRoleId.get())).pack(pady=12, padx=10)
+
+
+class popup_add_to_case_drawn_history(customtkinter.CTkToplevel):
+    """ Popup window to add a new employee to employee_account database"""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.geometry("750x750")
+        self.title("Employee Account")
+     
+        # Decorate here
+        customtkinter.CTkLabel(self, text="Enter first name", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtName = customtkinter.CTkEntry(self, placeholder_text="Name")
+        txtName.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter surname", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtSurname = customtkinter.CTkEntry(self, placeholder_text="surname")
+        txtSurname.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter date of birth (YYYY-MM-DD)", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtBirth = customtkinter.CTkEntry(self, placeholder_text="DOB")
+        txtBirth.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter role ID", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtRoleId = customtkinter.CTkEntry(self, placeholder_text="Role ID")
+        txtRoleId.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter Gender (M/F)", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtGender = customtkinter.CTkEntry(self, placeholder_text="Gender")
+        txtGender.pack(pady=12, padx=10)
+        
+        customtkinter.CTkLabel(self, text="Enter Age", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtAge = customtkinter.CTkEntry(self, placeholder_text="Age")
+        txtAge.pack(pady=12, padx=10)
+        
+        # Submit Button
+        customtkinter.CTkButton(self, text="Submit", command=lambda: add_to_employee_account(txtAge.get(), txtName.get(), txtSurname.get(), txtGender.get(), txtBirth.get(), txtRoleId.get())).pack(pady=12, padx=10)
+
         
 # Main Function
 if __name__ == "__main__":
