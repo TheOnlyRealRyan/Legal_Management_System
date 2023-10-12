@@ -23,7 +23,7 @@ class Login(customtkinter.CTk):
         self.geometry("500x350")
         
         # root page
-        self.main_container = customtkinter.CTkCanvas(self, bg="#AAAAAA")
+        self.main_container = customtkinter.CTkCanvas(self, bg="#00253e")
 
         self.main_container.pack(pady=20, padx=60, fill="both", expand=True)
 
@@ -52,29 +52,37 @@ class App(customtkinter.CTk):
         self.geometry("{0}x{1}+0+0".format(self.winfo_screenwidth(), self.winfo_screenheight()-75))
 
         # root page
-        self.main_container = customtkinter.CTkCanvas(self, bg="#AAAAAA")
+        self.main_container = customtkinter.CTkCanvas(self, bg="#00253e")
         self.main_container.pack(fill=tkinter.BOTH, expand=True, padx=10, pady=10)
 
         # left side panel -> for frame selection
-        self.left_side_panel = customtkinter.CTkCanvas(self.main_container, width=125, bg="#8d93e0")
+        self.left_side_panel = customtkinter.CTkCanvas(self.main_container, width=125, bg="#00406c")
         self.left_side_panel.pack(side=tkinter.LEFT, fill=tkinter.Y, expand=False, padx=5, pady=5)
+       
+        # Configure the weights of rows in left_side_panel
+        self.left_side_panel.grid_rowconfigure((0,1,2,3,4,5), weight=0)
+        self.left_side_panel.grid_rowconfigure((6), weight=3)
+        self.left_side_panel.grid_rowconfigure((7,8), weight=0)
         
-        self.left_side_panel.grid_columnconfigure(0, weight=0)
-        # Left Frame - Placed higher up
-        self.left_side_panel.grid_rowconfigure((0, 1, 2, 3, 4, 5), weight=0)
-        # Left Frame - Placed lower down
-        self.left_side_panel.grid_rowconfigure((6, 7), weight=1)
+        # right_side_panel has right_dashboard inside
+        self.right_side_panel = customtkinter.CTkCanvas(self.main_container, bg="#003356")
+        self.right_side_panel.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True, padx=5, pady=5)
+                
+        self.right_dashboard = customtkinter.CTkCanvas(self.main_container, bg="#003356")
+        self.right_dashboard.pack(in_=self.right_side_panel, side=tkinter.TOP, fill=tkinter.BOTH, expand=True, padx=0, pady=0)
         
-
-
+        # Configure the weights of rows in right_dashboard
+        self.right_dashboard.grid_rowconfigure((0,1,2,3), weight=0)
+        self.right_dashboard.grid_rowconfigure((4), weight=1)   
+        self.right_dashboard.grid_rowconfigure((5), weight=0)
+        # self.right_dashboard.grid_columnconfigure((0,1,2,3), weight=0)   
         
-        # self.left_side_panel WIDGET
-        self.logo_label = customtkinter.CTkLabel(self.left_side_panel, text="Menu", font=customtkinter.CTkFont(size=20, weight="bold"))
-        self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
+        # left_side_panel Menu
+        self.menu_label = customtkinter.CTkLabel(self.left_side_panel, text="Menu", font=customtkinter.CTkFont(size=20, weight="bold"))
+        self.menu_label.grid(row=0, column=0, padx=20, pady=(20, 10))
         
         # Load Images from resources/icons
         try:
-            # TODO: Convert this to CTkImage
             img= (Image.open("resources/icons/dashboard.png"))
             resized_image= img.resize((30,30), Image.LANCZOS)
             btnImg_dashboard= customtkinter.CTkImage(resized_image)   
@@ -111,32 +119,27 @@ class App(customtkinter.CTk):
         self.bt_dashboard = customtkinter.CTkButton(self.left_side_panel, image=btnImg_dashboard, fg_color="transparent", width=45, text="", command=self.dashboard)
         self.bt_dashboard.grid(row=1, column=0, padx=20, pady=10)
 
-        self.bt_archive = customtkinter.CTkButton(self.left_side_panel, image=btnImg_archive,fg_color="transparent", width=45, text="", command=self.archive)
+        self.bt_archive = customtkinter.CTkButton(self.left_side_panel, image=btnImg_archive, fg_color="transparent", width=45, text="", command=self.archive)
         self.bt_archive.grid(row=2, column=0, padx=20, pady=10)
         
-        self.bt_case = customtkinter.CTkButton(self.left_side_panel, image=btnImg_case,fg_color="transparent", width=45, text="", command=self.case)
+        self.bt_case = customtkinter.CTkButton(self.left_side_panel, image=btnImg_case, fg_color="transparent", width=45, text="", command=self.case)
         self.bt_case.grid(row=3, column=0, padx=20, pady=10)
         
-        self.bt_files = customtkinter.CTkButton(self.left_side_panel, image=btnImg_files,fg_color="transparent", width=45, text="", command=self.files)
+        self.bt_files = customtkinter.CTkButton(self.left_side_panel, image=btnImg_files, fg_color="transparent", width=45, text="", command=self.files)
         self.bt_files.grid(row=4, column=0, padx=20, pady=10)
         
-        self.bt_client = customtkinter.CTkButton(self.left_side_panel, image=btnImg_client,fg_color="transparent", width=45, text="", command=self.client)
+        self.bt_client = customtkinter.CTkButton(self.left_side_panel, image=btnImg_client, fg_color="transparent", width=45, text="", command=self.client)
         self.bt_client.grid(row=5, column=0, padx=20, pady=10)
         
-        self.bt_admin = customtkinter.CTkButton(self.left_side_panel, image=btnImg_admin,fg_color="transparent", width=45, text="", command=self.admin)
-        self.bt_admin.grid(row=6, column=0, padx=20, pady=10)
+        # TODO: If statement here to see if admin
+        self.bt_admin = customtkinter.CTkButton(self.left_side_panel, image=btnImg_admin, fg_color="transparent", width=45, text="", command=self.admin)
+        self.bt_admin.grid(row=7, column=0, padx=20, pady=10)
         
-        self.bt_user = customtkinter.CTkButton(self.left_side_panel, image=btnImg_user,fg_color="transparent", width=45, text="", command=self.user)
-        self.bt_user.grid(row=7, column=0, padx=20, pady=10)
+        self.bt_user = customtkinter.CTkButton(self.left_side_panel, image=btnImg_user, fg_color="transparent", width=45, text="", command=self.user)
+        self.bt_user.grid(row=8, column=0, padx=20, pady=10)
         
         
-        # right_side_panel has right_dashboard inside
-        self.right_side_panel = customtkinter.CTkCanvas(self.main_container, bg="#000811")
-        self.right_side_panel.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True, padx=5, pady=5)
-                
-        self.right_dashboard = customtkinter.CTkCanvas(self.main_container, bg="#000811")
-        self.right_dashboard.pack(in_=self.right_side_panel, side=tkinter.TOP, fill=tkinter.BOTH, expand=True, padx=0, pady=0)
-        
+
         self.toplevel_window = None
     
     
@@ -153,25 +156,29 @@ class App(customtkinter.CTk):
         # Load image
         try:
             img= (Image.open("resources/icons/add.png"))
-            resized_image= img.resize((30,30), Image.LANCZOS)
+            resized_image= img.resize((30, 30), Image.LANCZOS)
             btnImg_add= customtkinter.CTkImage(resized_image)        
         except IOError:
             print("File not found") 
             pass
         
         # Decorate Right Frame
+        Label = customtkinter.CTkLabel(self.right_dashboard, text="Archive", font=('Roboto', 30))
+        Label.grid(row=0, column=0, padx=10, pady=10 )
         Label = customtkinter.CTkLabel(self.right_dashboard, text="New Archive", font=('Roboto', 24))
-        Label.grid(row=0, column=0, padx=20, pady=(10, 0))
-        button = customtkinter.CTkButton(self.right_dashboard, text= "", image=btnImg_add, command= self.open_add_to_archived_state)
-        button.grid(row=1, column=0, padx=20, pady=(10, 0))
+        Label.grid(row=0, column=38, padx=0, pady=10 )
+        button = customtkinter.CTkButton(self.right_dashboard, text= "", image=btnImg_add, fg_color="transparent", width=50, height=50, command= self.open_add_to_archived_state)
+        button.grid(row=0, column=39, padx=0, pady=0)
         
         # grab data 
         data = db_conn.all_client_information()
         headers = ['id', 'Name', 'Surname', 'Gender', 'Date of Birth']
         
         # Create table
-        self.sheet = tksheet.Sheet(self.right_dashboard, height = 500, width = 1000)
-        self.sheet.grid(row=3, column =0)
+        self.sheet = tksheet.Sheet(self.right_dashboard, height = 800, width = 1750)
+        self.sheet.grid(row=4, column =0, padx = 20, pady = 20, columnspan = 40)
+
+        
         self.sheet.headers((f" {x}" for x in headers))
         
         # populate Table
@@ -204,7 +211,7 @@ class App(customtkinter.CTk):
         # Decorate Right Frame      
         Label = customtkinter.CTkLabel(self.right_dashboard, text="Upload File", font=('Roboto', 24))
         Label.grid(row=0, column=0, padx=20, pady=(10, 0))
-        button = customtkinter.CTkButton(self.right_dashboard, text= "", image=btnImg_add, command= self.open_add_to_file_upload_data)
+        button = customtkinter.CTkButton(self.right_dashboard, text= "", image=btnImg_add, fg_color="transparent", width=45, command= self.open_add_to_file_upload_data)
         button.grid(row=1, column=0, padx=20, pady=(10, 0))
         
         # grab data 
@@ -241,7 +248,7 @@ class App(customtkinter.CTk):
         # Decorate Right Frame
         Label = customtkinter.CTkLabel(self.right_dashboard, text="New Client", font=('Roboto', 24))
         Label.grid(row=0, column=0, padx=20, pady=(10, 0))
-        button = customtkinter.CTkButton(self.right_dashboard, text= "", image=btnImg_add, command= self.open_add_to_client_information)
+        button = customtkinter.CTkButton(self.right_dashboard, text= "", image=btnImg_add, fg_color="transparent", width=45, command= self.open_add_to_client_information)
         button.grid(row=1, column=0, padx=20, pady=(10, 0))
         
         # grab data 

@@ -1,7 +1,7 @@
 import customtkinter
 import add_to_db as db_conn
 
-# ----- POPUP windows Decoration classes
+# POPUP windows Decoration classes
 class popup_add_to_employee_roles(customtkinter.CTkToplevel):
     """ add a role to employee_role database"""
     def __init__(self, *args, **kwargs):
