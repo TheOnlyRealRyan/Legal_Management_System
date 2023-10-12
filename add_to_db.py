@@ -46,14 +46,27 @@ def add_years(input_date):
         
 def add_to_employee_roles(roleDescription) -> None:
     """Inserts a role description and roleId into employee_roles database"""
-       
+     
     if roleDescription == "" or len(roleDescription)>49:
         print("Redo")
-    else:         
+    else:  
+        """        
+        # Without Auto-Increment:
+        sqlFormula = "INSERT INTO employee_roles (roleDescription) VALUE (%s)" # %s = placeholders - replace with anything
+        # Insert into Db     
+        try: 
+            details = list(roleDescription)
+            mycursor.execute(sqlFormula, details)      
+            mydb.commit()
+            tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
+        except Exception as e:
+            tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
+            print(e)
+        """
         # sqlFormula = Anti-SQL Injection           
         sqlFormula = "INSERT INTO employee_roles (roleId, roleDescription) VALUE (%s, %s)" # %s = placeholders - replace with anything
         
-        # Auto Increment done manually cause it doesnt work :(
+        # Auto Increment done manually cause it doesnt work
         # Grab last added roleId and add 1
         
         mycursor.execute("SELECT roleId FROM employee_roles ORDER BY roleId DESC LIMIT 1") 
@@ -65,14 +78,13 @@ def add_to_employee_roles(roleDescription) -> None:
                 id = x[0]+1
                
         # Insert into Db     
-        # print(type(roleDescription))
         try: 
             details = (id, roleDescription)
             mycursor.execute(sqlFormula, details)      
             mydb.commit()
-            # tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
+            tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
         except Exception as e:
-            # tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
+            tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
             print(e)
         
         

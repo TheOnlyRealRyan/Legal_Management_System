@@ -23,22 +23,24 @@ def create_new_bucket(project_id=project_id):
     bucket = storage_client.create_bucket(name)
     
     # Prints a message indicating the bucket was successfully created.
-    print("Bucket {} created.".format(bucket.name))
+    bucketName = bucket.name
+    print(f"Bucket {bucketName} created.")
 
 
 def upload_object_from_filename(project_id=project_id):
     """Uploads a file from your computer as a blob object"""
     client = storage.Client(project=project_id)
-
+    bucket_name = "my-first-test-bucket-146541"
     # Get a reference to the bucket you want to upload to
-    bucket = client.bucket("my-first-test-bucket-146541")
+    bucket = client.bucket(f"{bucket_name}")
 
     # Create a new blob object
-    blob = bucket.blob("file2.txt")
+    fileName =  "./files_to_upload/file2.txt"
+    blob = bucket.blob(f"{fileName}")
 
     # Upload the file to the bucket
     # TODO: popup to select file from computer
-    if blob.upload_from_filename("./files_to_upload/file2.txt"): # It works but still goes to else statement 
+    if blob.upload_from_filename(f"{fileName}"): # It works but still goes to else statement 
         print("File successfully uploaded to bucket.")
     else:
         print("Error uploading file to bucket.")
