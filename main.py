@@ -153,6 +153,9 @@ class App(customtkinter.CTk):
         
     def archive(self):
         self.clear_canvas()
+        self.right_dashboard.grid_rowconfigure((0,1,2,3), weight=0)
+        self.right_dashboard.grid_rowconfigure((4), weight=1)   
+        self.right_dashboard.grid_rowconfigure((5), weight=0)
         # Load image
         try:
             img= (Image.open("resources/icons/add.png"))
@@ -273,91 +276,115 @@ class App(customtkinter.CTk):
     
     def admin(self):
         self.clear_canvas()
+      
+        def optionmenu_insert(choice):
+            print("optionmenu dropdown clicked:", choice)
+            if choice == "Employee Roles":
+                return self.open_add_to_employee_roles()
+            elif choice == "Employee Account":
+                return self.open_add_to_employee_account()
+            elif choice == "User Login Data":
+                return self.open_add_to_user_login_data()
+            elif choice == "Client Information":
+                return self.open_add_to_client_information()
+            elif choice == "Case data":
+                return self.open_add_to_case_data()
+            elif choice == "Archived State":
+                return self.open_add_to_archived_state()
+            elif choice == "Case Location":
+                return self.open_add_to_case_location()
+            elif choice == "Destruction State":
+                return self.open_add_to_destruction_state()
+            elif choice == "File Upload Data":
+                return self.open_add_to_file_upload_data()
+            elif choice == "Deletion Confirmation":
+                return self.open_add_to_deletion_confirmation()
+            elif choice == "Deletion Logging":
+                return self.open_add_to_deletion_logging()
+            elif choice == "Case Request":
+                return self.open_add_to_archived_case_request()
+            elif choice == "Case Drawn By":
+                return self.open_add_to_case_drawn_by()
+            elif choice == "Case Drawn History":
+                return self.open_add_to_case_drawn_history()
         
-        # Decorate Right Frame
-        # Add to employee Roles
-        Label = customtkinter.CTkLabel(self.right_dashboard, text="Add to Employee Roles:", font=('Roboto', 24))
+        
+        # Decorate Right Frame    
+        optionmenu_var = customtkinter.StringVar(value="Insert Into")
+        optionmenu = customtkinter.CTkOptionMenu(self.right_dashboard, values=["Employee Roles", 
+                                                                               "Employee Account", 
+                                                                               "User Login Data", 
+                                                                               "Client Information", 
+                                                                               "Case data", 
+                                                                               "Archived State", 
+                                                                               "Case Location", 
+                                                                               "Destruction State", 
+                                                                               "File Upload Data", 
+                                                                               "Deletion Confirmation", 
+                                                                               "Deletion Logging", 
+                                                                               "Case Request", 
+                                                                               "Case Drawn By", 
+                                                                               "Case Drawn History"],
+                                                command=optionmenu_insert,
+                                                variable=optionmenu_var)
+        Label = customtkinter.CTkLabel(self.right_dashboard, text="Insert into Database:", font=('Roboto', 24))
         Label.grid(row=0, column=0, padx=20, pady=(10, 0))
-        button = customtkinter.CTkButton(self.right_dashboard, text= "Roles", command= self.open_add_to_employee_roles)
-        button.grid(row=1, column=0, padx=20, pady=(10, 0))
-
-        # Add to employee account
-        Label = customtkinter.CTkLabel(self.right_dashboard, text="Add to Employee Account", font=('Roboto', 24))
-        Label.grid(row=2, column=0, padx=20, pady=(10, 0))
-        button = customtkinter.CTkButton(self.right_dashboard, text= "Account", command= self.open_add_to_employee_account)
-        button.grid(row=3, column=0, padx=20, pady=(10, 0))
-
-        # Add to user login data
-        Label = customtkinter.CTkLabel(self.right_dashboard, text="Add to User Login Data", font=('Roboto', 24))
-        Label.grid(row=4, column=0, padx=20, pady=(10, 0))
-        button = customtkinter.CTkButton(self.right_dashboard, text= "User Login Data", command= self.open_add_to_user_login_data)
-        button.grid(row=5, column=0, padx=20, pady=(10, 0))
+        optionmenu.grid(row=1, column=0, padx=20, pady=(10, 0))
         
-        # Add to client info
-        Label = customtkinter.CTkLabel(self.right_dashboard, text="Add to Client Information", font=('Roboto', 24))
-        Label.grid(row=6, column=0, padx=20, pady=(10, 0))
-        button = customtkinter.CTkButton(self.right_dashboard, text= "Client Information", command= self.open_add_to_client_information)
-        button.grid(row=7, column=0, padx=20, pady=(10, 0))
         
-        # Add to case_data
-        Label = customtkinter.CTkLabel(self.right_dashboard, text="Add to Client Information", font=('Roboto', 24))
-        Label.grid(row=8, column=0, padx=20, pady=(10, 0))
-        button = customtkinter.CTkButton(self.right_dashboard, text= "Client Information", command= self.open_add_to_client_information)
-        button.grid(row=9, column=0, padx=20, pady=(10, 0))
         
-        # Add to archived_state
-        Label = customtkinter.CTkLabel(self.right_dashboard, text="Add to Client Information", font=('Roboto', 24))
-        Label.grid(row=10, column=0, padx=20, pady=(10, 0))
-        button = customtkinter.CTkButton(self.right_dashboard, text= "Client Information", command= self.open_add_to_client_information)
-        button.grid(row=11, column=0, padx=20, pady=(10, 0))
+        def optionmenu_delete(choice):
+            print("optionmenu dropdown clicked:", choice)
+            if choice == "Employee Roles":
+                return self.open_add_to_employee_roles()
+            elif choice == "Employee Account":
+                return self.open_add_to_employee_account()
+            elif choice == "User Login Data":
+                return self.open_add_to_user_login_data()
+            elif choice == "Client Information":
+                return self.open_add_to_client_information()
+            elif choice == "Case data":
+                return self.open_add_to_case_data()
+            elif choice == "Archived State":
+                return self.open_add_to_archived_state()
+            elif choice == "Case Location":
+                return self.open_add_to_case_location()
+            elif choice == "Destruction State":
+                return self.open_add_to_destruction_state()
+            elif choice == "File Upload Data":
+                return self.open_add_to_file_upload_data()
+            elif choice == "Deletion Confirmation":
+                return self.open_add_to_deletion_confirmation()
+            elif choice == "Deletion Logging":
+                return self.open_add_to_deletion_logging()
+            elif choice == "Case Request":
+                return self.open_add_to_archived_case_request()
+            elif choice == "Case Drawn By":
+                return self.open_add_to_case_drawn_by()
+            elif choice == "Case Drawn History":
+                return self.open_add_to_case_drawn_history()
         
-        # Add to case_location
-        Label = customtkinter.CTkLabel(self.right_dashboard, text="Add to Client Information", font=('Roboto', 24))
-        Label.grid(row=12, column=0, padx=20, pady=(10, 0))
-        button = customtkinter.CTkButton(self.right_dashboard, text= "Client Information", command= self.open_add_to_client_information)
-        button.grid(row=13, column=0, padx=20, pady=(10, 0))
-        
-        # Add to destruction_state
-        Label = customtkinter.CTkLabel(self.right_dashboard, text="Add to Client Information", font=('Roboto', 24))
-        Label.grid(row=0, column=1, padx=20, pady=(10, 0))
-        button = customtkinter.CTkButton(self.right_dashboard, text= "Client Information", command= self.open_add_to_client_information)
-        button.grid(row=1, column=1, padx=20, pady=(10, 0))
-        
-        # Add to file_upload_data
-        Label = customtkinter.CTkLabel(self.right_dashboard, text="Add to Client Information", font=('Roboto', 24))
-        Label.grid(row=2, column=1, padx=20, pady=(10, 0))
-        button = customtkinter.CTkButton(self.right_dashboard, text= "Client Information", command= self.open_add_to_client_information)
-        button.grid(row=3, column=1, padx=20, pady=(10, 0))
-        
-        # Add to deletion_confirmation
-        Label = customtkinter.CTkLabel(self.right_dashboard, text="Add to Client Information", font=('Roboto', 24))
-        Label.grid(row=4, column=1, padx=20, pady=(10, 0))
-        button = customtkinter.CTkButton(self.right_dashboard, text= "Client Information", command= self.open_add_to_client_information)
-        button.grid(row=5, column=1, padx=20, pady=(10, 0))
-        
-        # Add to deletion_logging
-        Label = customtkinter.CTkLabel(self.right_dashboard, text="Add to Client Information", font=('Roboto', 24))
-        Label.grid(row=6, column=1, padx=20, pady=(10, 0))
-        button = customtkinter.CTkButton(self.right_dashboard, text= "Client Information", command= self.open_add_to_client_information)
-        button.grid(row=7, column=1, padx=20, pady=(10, 0))
-        
-        # Add to arcived_case_request
-        Label = customtkinter.CTkLabel(self.right_dashboard, text="Add to Client Information", font=('Roboto', 24))
-        Label.grid(row=8, column=1, padx=20, pady=(10, 0))
-        button = customtkinter.CTkButton(self.right_dashboard, text= "Client Information", command= self.open_add_to_client_information)
-        button.grid(row=9, column=1, padx=20, pady=(10, 0))
-        
-        # Add to case_drawn_by
-        Label = customtkinter.CTkLabel(self.right_dashboard, text="Add to Client Information", font=('Roboto', 24))
-        Label.grid(row=10, column=1, padx=20, pady=(10, 0))
-        button = customtkinter.CTkButton(self.right_dashboard, text= "Client Information", command= self.open_add_to_client_information)
-        button.grid(row=11, column=1, padx=20, pady=(10, 0))
-        
-        # Add to case_drawn_history
-        Label = customtkinter.CTkLabel(self.right_dashboard, text="Add to Client Information", font=('Roboto', 24))
-        Label.grid(row=12, column=1, padx=20, pady=(10, 0))
-        button = customtkinter.CTkButton(self.right_dashboard, text= "Client Information", command= self.open_add_to_client_information)
-        button.grid(row=13, column=1, padx=20, pady=(10, 0))
+         
+        optionmenu_var = customtkinter.StringVar(value="Delete from")
+        optionmenu = customtkinter.CTkOptionMenu(self.right_dashboard, values=["Employee Roles", 
+                                                                               "Employee Account", 
+                                                                               "User Login Data", 
+                                                                               "Client Information", 
+                                                                               "Case data", 
+                                                                               "Archived State", 
+                                                                               "Case Location", 
+                                                                               "Destruction State", 
+                                                                               "File Upload Data", 
+                                                                               "Deletion Confirmation", 
+                                                                               "Deletion Logging", 
+                                                                               "Case Request", 
+                                                                               "Case Drawn By", 
+                                                                               "Case Drawn History"],
+                                                command=optionmenu_delete,
+                                                variable=optionmenu_var)
+        Label = customtkinter.CTkLabel(self.right_dashboard, text="Delete from Database", font=('Roboto', 24))
+        Label.grid(row=2, column=0, padx=20, pady=(10, 0))      
+        optionmenu.grid(row=3, column=0, padx=20, pady=(10, 0))
         
 
     def user(self):
@@ -367,6 +394,8 @@ class App(customtkinter.CTk):
                              
     def clear_canvas(self):
         """ Clears canvas from right_dashboard before loading the new canvas """
+        self.right_dashboard.grid_rowconfigure((0,1,2,3,4,5,6,7,8), weight=0)
+        self.right_dashboard.grid_columnconfigure((0,1,2,3,4,5,6,7,8), weight=0)
         for widget in self.right_dashboard.winfo_children():
             widget.destroy()
     
@@ -445,7 +474,7 @@ class App(customtkinter.CTk):
                 self.toplevel_window.focus()  # if window exists focus it
                 
     
-    def open_add_to_arcived_case_request(self):
+    def open_add_to_archived_case_request(self):
             if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
                 self.toplevel_window = popup.popup_add_to_archived_case_request(self)  # create window if its None or destroyed
                 self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
@@ -464,6 +493,22 @@ class App(customtkinter.CTk):
     def open_add_to_case_drawn_history(self):
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
             self.toplevel_window = popup.popup_add_to_case_drawn_history(self)  # create window if its None or destroyed
+            self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
+        else:
+            self.toplevel_window.focus()  # if window exists focus it
+            
+    
+    def open_add_to_case_location(self):
+        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+            self.toplevel_window = popup.popup_add_to_case_location(self)  # create window if its None or destroyed
+            self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
+        else:
+            self.toplevel_window.focus()  # if window exists focus it
+            
+            
+    def open_add_to_deletion_logging(self):
+        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+            self.toplevel_window = popup.popup_add_to_deletion_logging(self)  # create window if its None or destroyed
             self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
         else:
             self.toplevel_window.focus()  # if window exists focus it

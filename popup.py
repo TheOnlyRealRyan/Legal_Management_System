@@ -287,7 +287,7 @@ class popup_add_to_file_upload_data(customtkinter.CTkToplevel):
 
 
 class popup_add_to_deletion_confirmation(customtkinter.CTkToplevel):
-    """ Popup window to add a new employee to employee_account database"""
+    """ Popup window to add a new employee to deletion_confirmation database"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.geometry("750x750")
@@ -323,7 +323,7 @@ class popup_add_to_deletion_confirmation(customtkinter.CTkToplevel):
 
 
 class popup_add_to_deletion_logging(customtkinter.CTkToplevel):
-    """ Popup window to add a new employee to employee_account database"""
+    """ Popup window to add a new employee to deletion_logging database"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.geometry("750x750")
@@ -358,7 +358,7 @@ class popup_add_to_deletion_logging(customtkinter.CTkToplevel):
         customtkinter.CTkButton(self, text="Submit", command=lambda: db_conn.add_to_employee_account(txtAge.get(), txtName.get(), txtSurname.get(), txtGender.get(), txtBirth.get(), txtRoleId.get())).pack(pady=12, padx=10)
 
 
-class popup_add_to_case_request(customtkinter.CTkToplevel):
+class popup_add_to_archived_case_request(customtkinter.CTkToplevel):
     """ Popup window to add a new employee to employee_account database"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
