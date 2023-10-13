@@ -1,7 +1,7 @@
 import mysql.connector
 import tkinter.messagebox 
 import hashlib
-from datetime import datetime, date
+from datetime import datetime
 
 
 # TODO: Error handling of inputs
@@ -98,9 +98,9 @@ def add_to_employee_account(age, firstname, lastname, gender, dateOfBirth, roleI
         details = (age, firstname, lastname, gender, dateOfBirth, roleId)
         mycursor.execute(sqlFormula, details)   
         mydb.commit()
-        # tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
+        tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
     except Exception as e:
-        # tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
+        tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
         print(e) 
     
     
@@ -116,9 +116,9 @@ def add_to_user_login_data(employeeId, username, password) -> None:
         details = (employeeId, username, passwordHash)
         mycursor.execute(sqlFormula, details)   
         mydb.commit()
-        # tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
+        tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
     except Exception as e:
-        # tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
+        tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
         print(e) 
     
 def add_to_client_information(firstName, lastName, gender, dateOfBirth) -> None:
@@ -139,9 +139,9 @@ def add_to_client_information(firstName, lastName, gender, dateOfBirth) -> None:
         details = (firstName, lastName, gender, dateOfBirth)
         mycursor.execute(sqlFormula, details)   
         mydb.commit()
-        # tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
+        tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
     except Exception as e:
-        # tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
+        tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
         print(e)    
     
 
@@ -164,14 +164,14 @@ def add_to_case_data(clientId, employeeId, description, department, dateOfCaseOp
         details = (caseId, clientId, employeeId, description, department, dateOfCaseOpen, dateUploaded)
         mycursor.execute(sqlFormula, details)   
         mydb.commit()
-        # tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
+        tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
     except Exception as e:
-                # tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
-                print(e)  
+        tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
+        print(e)  
 
 def add_to_archived_state(caseId, archivedState, archivedDate) -> None:
     """Inserts login details into archived_state database"""
-    sqlFormula = "INSERT INTO archived_state (caseId, archivedState, archiveNumber, archivedDate, archivedDate) VALUE (%s, %s, %s, %s, %s)"
+    sqlFormula = "INSERT INTO archived_state (caseId, archivedState, archiveNumber, archivedDate, dateToBeDestroyed) VALUE (%s, %s, %s, %s, %s)"
      
     # Determine when the file should be destroyed (7 years)
     dateToBeDeestroyed = add_years(archivedDate)
@@ -188,28 +188,42 @@ def add_to_archived_state(caseId, archivedState, archivedDate) -> None:
             
     # Insert into Db 
     try:    
-        details = (caseId, archivedState, archiveNumber, archivedDate, archivedDate)
+        details = (caseId, archivedState, archiveNumber, archivedDate, dateToBeDeestroyed)
         mycursor.execute(sqlFormula, details)   
         mydb.commit()
-        # tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
+        tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
     except Exception as e:
-        # tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
+        tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
         print(e)  
   
     
 def add_to_case_location(caseId, location) -> None:
     """Inserts login details into case_location database"""
-    sqlFormula = "INSERT INTO case_location (caseId, location) VALUE (%s, %s)"
-                
-    # Insert into Db  
-    try:   
-        details = (caseId, location)
-        mycursor.execute(sqlFormula, details)   
-        mydb.commit()
-        # tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
-    except Exception as e:
-        # tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
-        print(e) 
+    # TODO: FIX THIS
+    find = f"SELECT caseId FROM case_location WHERE caseId = '{caseId}'"  
+    exists = mycursor.execute(find) 
+    print(exists)
+    if exists != None:
+        NewsqlFormula = f"UPDATE case_location SET location = '{location}' WHERE caseId = '{caseId}'"  
+        # Insert into Db  
+        try: 
+            mycursor.execute(NewsqlFormula)       
+            mydb.commit()
+            tkinter.messagebox.showinfo("Success",  "Succesfully updated Database")
+        except Exception as e:
+            tkinter.messagebox.showinfo("Failed",  "Failed to update Database")
+            print(e)
+    else:
+        # Insert into Db  
+        try:   
+            sqlFormula = "INSERT INTO case_location (caseId, location) VALUE (%s, %s)"
+            details = (caseId, location)
+            mycursor.execute(sqlFormula, details)   
+            mydb.commit()
+            tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
+        except Exception as e:
+            tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
+            print(e) 
     
 
 def add_to_destruction_state(caseId, destructionState) -> None:
@@ -221,13 +235,13 @@ def add_to_destruction_state(caseId, destructionState) -> None:
         details = (caseId, destructionState)
         mycursor.execute(sqlFormula, details)   
         mydb.commit()
-        # tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
+        tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
     except Exception as e:
-        # tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
+        tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
         print(e) 
     
 
-def add_to_file_upload_data(fileName, caseId, recievedDate, dateUploaded) -> None:
+def add_to_file_upload_data(fileName, caseId, recievedDate) -> None:
     """Inserts login details into file_upload_data database"""
     sqlFormula = "INSERT INTO file_upload_data (fileId, fileName, caseId, recievedDate, dateUploaded) VALUE (%s, %s, %s, %s, %s)"
     
@@ -241,12 +255,12 @@ def add_to_file_upload_data(fileName, caseId, recievedDate, dateUploaded) -> Non
             fileId = x[0]+1
     # Insert into Db     
     try:
-        details = (fileId, fileName, caseId, recievedDate, dateUploaded)
+        details = (fileId, fileName, caseId, recievedDate, datetime.today().strftime('%Y-%m-%d %H:%M:%S'))
         mycursor.execute(sqlFormula, details)   
         mydb.commit()
-        # tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
+        tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
     except Exception as e:
-        # tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
+        tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
         print(e) 
 
 
@@ -259,9 +273,9 @@ def add_to_deletion_confirmation(caseId, employeeId1, employeeId2, employee1Conf
         details = (caseId, employeeId1, employeeId2, employee1Confirmed, employee2Confirmed)
         mycursor.execute(sqlFormula, details)   
         mydb.commit()
-        # tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
+        tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
     except Exception as e:
-        # tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
+        tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
         print(e) 
     
 
@@ -274,24 +288,24 @@ def add_to_deletion_logging(caseId, employeeId1, employeeId2, deletionDate, dele
         details = (caseId, employeeId1, employeeId2, deletionDate, deletionConfirmed)
         mycursor.execute(sqlFormula, details)   
         mydb.commit()
-        # tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
+        tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
     except Exception as e:
-        # tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
+        tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
         print(e) 
 
 
-def add_to_archived_case_request(archiveNumber, employeeId, dateRequested) -> None:
+def add_to_archived_case_request(archiveNumber, employeeId) -> None:
     """Inserts login details into archived_case_request database"""
     sqlFormula = "INSERT INTO archived_case_request (archiveNumber, employeeId, dateRequested) VALUE (%s, %s, %s)"
                 
     # Insert into Db
     try:     
-        details = (archiveNumber, employeeId, dateRequested)
+        details = (archiveNumber, employeeId, datetime.today().strftime('%Y-%m-%d'))
         mycursor.execute(sqlFormula, details)   
         mydb.commit()
-        # tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
+        tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
     except Exception as e:
-        # tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
+        tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
         print(e) 
     
     
@@ -304,9 +318,9 @@ def add_to_case_drawn_by(archiveNumber, employeeId, dateDrawnOut) -> None:
         details = (archiveNumber, employeeId, dateDrawnOut)
         mycursor.execute(sqlFormula, details)   
         mydb.commit()
-        # tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
+        tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
     except Exception as e:
-        # tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
+        tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
         print(e) 
     
     
@@ -319,8 +333,8 @@ def add_to_case_drawn_history(archiveNumber, employeeId, dateDrawnOut, dateDrawn
         details = (archiveNumber, employeeId, dateDrawnOut, dateDrawnIn)
         mycursor.execute(sqlFormula, details)   
         mydb.commit()
-        # tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
+        tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
     except Exception as e:
-        # tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
+        tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
         print(e) 
 

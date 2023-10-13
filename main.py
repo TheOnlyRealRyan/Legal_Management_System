@@ -278,7 +278,6 @@ class App(customtkinter.CTk):
         self.clear_canvas()
       
         def optionmenu_insert(choice):
-            print("optionmenu dropdown clicked:", choice)
             if choice == "Employee Roles":
                 return self.open_add_to_employee_roles()
             elif choice == "Employee Account":
@@ -331,10 +330,8 @@ class App(customtkinter.CTk):
         Label.grid(row=0, column=0, padx=20, pady=(10, 0))
         optionmenu.grid(row=1, column=0, padx=20, pady=(10, 0))
         
-        
-        
+             
         def optionmenu_delete(choice):
-            print("optionmenu dropdown clicked:", choice)
             if choice == "Employee Roles":
                 return self.open_add_to_employee_roles()
             elif choice == "Employee Account":
