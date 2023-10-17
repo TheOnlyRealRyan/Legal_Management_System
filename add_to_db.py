@@ -200,6 +200,7 @@ def add_to_archived_state(caseId, archivedState, archivedDate) -> None:
 def add_to_case_location(caseId, location) -> None:
     """Inserts login details into case_location database"""
     # TODO: FIX THIS
+    """
     find = f"SELECT caseId FROM case_location WHERE caseId = '{caseId}'"  
     exists = mycursor.execute(find) 
     print(exists)
@@ -224,7 +225,17 @@ def add_to_case_location(caseId, location) -> None:
         except Exception as e:
             tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
             print(e) 
-    
+    """
+    # Insert into Db  
+    try:   
+        sqlFormula = "INSERT INTO case_location (caseId, location) VALUE (%s, %s)"
+        details = (caseId, location)
+        mycursor.execute(sqlFormula, details)   
+        mydb.commit()
+        tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
+    except Exception as e:
+        tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
+        print(e) 
 
 def add_to_destruction_state(caseId, destructionState) -> None:
     """Inserts login details into destruction_state database"""
@@ -242,7 +253,7 @@ def add_to_destruction_state(caseId, destructionState) -> None:
     
 
 def add_to_file_upload_data(fileName, caseId, recievedDate) -> None:
-    """Inserts login details into file_upload_data database"""
+    """Inserts file_upload_data database"""
     sqlFormula = "INSERT INTO file_upload_data (fileId, fileName, caseId, recievedDate, dateUploaded) VALUE (%s, %s, %s, %s, %s)"
     
      # Manual auto-increment            

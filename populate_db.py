@@ -1,6 +1,23 @@
 import add_to_db as add
 import time
+
+
+
+
+archiveNumner = 0
+location = "Cupboard 12"
+add.add_to_case_location(archiveNumner, location)
+print("success")
+time.sleep(0.1)
 """
+
+# for i in range(10):
+archiveNumner = 0
+employeeId = 1
+add.add_to_archived_case_request(archiveNumner, employeeId)
+print("success")
+time.sleep(0.1)
+
 
 for i in range(50):
     name = f"ryan{i}"
@@ -51,7 +68,7 @@ for i in range(10):
     add.add_to_file_upload_data(fileName, caseId, recievedDate)
     print("success")
     time.sleep(0.1)    
- """
+
     
 for i in range(10):
     caseId = i
@@ -60,3 +77,5 @@ for i in range(10):
     add.add_to_archived_state(caseId, archivedState, archivedDate)
     print("success")
     time.sleep(0.1)    
+    
+"""

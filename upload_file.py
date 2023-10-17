@@ -27,7 +27,7 @@ def create_new_bucket(project_id=project_id):
     print(f"Bucket {bucketName} created.")
 
 
-def upload_object_from_filename(project_id=project_id):
+def upload_object_from_filename(fileLocation ):
     """Uploads a file from your computer as a blob object"""
     client = storage.Client(project=project_id)
     bucket_name = "my-first-test-bucket-146541"
@@ -35,7 +35,7 @@ def upload_object_from_filename(project_id=project_id):
     bucket = client.bucket(f"{bucket_name}")
 
     # Create a new blob object
-    fileName =  "./files_to_upload/file2.txt"
+    fileName =  f"{fileLocation}"
     blob = bucket.blob(f"{fileName}")
 
     # Upload the file to the bucket
@@ -45,10 +45,18 @@ def upload_object_from_filename(project_id=project_id):
     else:
         print("Error uploading file to bucket.")
 
-def download_object(project_id=project_id):
+def download_object_from_bucket(blob_name, file_path):
     """Downloads a file from the cloud"""
-    pass
+    try:
+        client = storage.Client(project=project_id)
+        bucket_name = "my-first-test-bucket-146541"
+        blob = bucket.blob(blob_name)
+        with open(file_path, "wb") as f:
+            storage_client.download_object_from_bucket(blob, f)
+        pass
+    except:    
+        pass
     
-list_buckets()
+# list_buckets()
 # create_new_bucket()
-upload_object_from_filename()
+# upload_object_from_filename()

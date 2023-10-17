@@ -1,7 +1,9 @@
 import customtkinter
 import add_to_db as db_conn
 from tkcalendar import Calendar
-from tkinter.filedialog import askopenfilename
+from tkinter.filedialog import askopenfile
+import upload_file
+
 
 # POPUP windows Decoration classes
 class popup_add_to_employee_roles(customtkinter.CTkToplevel):
@@ -251,7 +253,9 @@ class popup_add_to_file_upload_data(customtkinter.CTkToplevel):
         
         def get_file():            
             # TODO: Call Upload to cloud function here
-            filename = askopenfilename() # open file explorer and return the path
+            filename = askopenfile() # open file explorer and return the path
+            upload_file.upload_object_from_filename(filename)
+            
             
         customtkinter.CTkButton(self, text="Grab from Computer", command=lambda: get_file()).pack(pady=12, padx=10)
         # Submit Button

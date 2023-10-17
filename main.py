@@ -114,29 +114,31 @@ class App(customtkinter.CTk):
             print("File not found") 
             pass
         
+        # Focus on dashboard first
+        self.dashboard()
         
         # buttons on left_side_panel to select canvas     
-        self.bt_dashboard = customtkinter.CTkButton(self.left_side_panel, image=btnImg_dashboard, fg_color="transparent", width=45, text="", command=self.dashboard)
-        self.bt_dashboard.grid(row=1, column=0, padx=20, pady=10)
+        self.btn_dashboard = customtkinter.CTkButton(self.left_side_panel, image=btnImg_dashboard, fg_color="transparent", width=45, text="", command=self.dashboard)
+        self.btn_dashboard.grid(row=1, column=0, padx=20, pady=10)
 
-        self.bt_archive = customtkinter.CTkButton(self.left_side_panel, image=btnImg_archive, fg_color="transparent", width=45, text="", command=self.archive)
-        self.bt_archive.grid(row=2, column=0, padx=20, pady=10)
+        self.btn_archive = customtkinter.CTkButton(self.left_side_panel, image=btnImg_archive, fg_color="transparent", width=45, text="", command=self.archive)
+        self.btn_archive.grid(row=2, column=0, padx=20, pady=10)
         
-        self.bt_case = customtkinter.CTkButton(self.left_side_panel, image=btnImg_case, fg_color="transparent", width=45, text="", command=self.case)
-        self.bt_case.grid(row=3, column=0, padx=20, pady=10)
+        self.btn_case = customtkinter.CTkButton(self.left_side_panel, image=btnImg_case, fg_color="transparent", width=45, text="", command=self.case)
+        self.btn_case.grid(row=3, column=0, padx=20, pady=10)
         
-        self.bt_files = customtkinter.CTkButton(self.left_side_panel, image=btnImg_files, fg_color="transparent", width=45, text="", command=self.files)
-        self.bt_files.grid(row=4, column=0, padx=20, pady=10)
+        self.btn_files = customtkinter.CTkButton(self.left_side_panel, image=btnImg_files, fg_color="transparent", width=45, text="", command=self.files)
+        self.btn_files.grid(row=4, column=0, padx=20, pady=10)
         
-        self.bt_client = customtkinter.CTkButton(self.left_side_panel, image=btnImg_client, fg_color="transparent", width=45, text="", command=self.client)
-        self.bt_client.grid(row=5, column=0, padx=20, pady=10)
+        self.btn_client = customtkinter.CTkButton(self.left_side_panel, image=btnImg_client, fg_color="transparent", width=45, text="", command=self.client)
+        self.btn_client.grid(row=5, column=0, padx=20, pady=10)
         
         # TODO: If statement here to see if admin
-        self.bt_admin = customtkinter.CTkButton(self.left_side_panel, image=btnImg_admin, fg_color="transparent", width=45, text="", command=self.admin)
-        self.bt_admin.grid(row=7, column=0, padx=20, pady=10)
+        self.btn_admin = customtkinter.CTkButton(self.left_side_panel, image=btnImg_admin, fg_color="transparent", width=45, text="", command=self.admin)
+        self.btn_admin.grid(row=7, column=0, padx=20, pady=10)
         
-        self.bt_user = customtkinter.CTkButton(self.left_side_panel, image=btnImg_user, fg_color="transparent", width=45, text="", command=self.user)
-        self.bt_user.grid(row=8, column=0, padx=20, pady=10)
+        self.btn_user = customtkinter.CTkButton(self.left_side_panel, image=btnImg_user, fg_color="transparent", width=45, text="", command=self.user)
+        self.btn_user.grid(row=8, column=0, padx=20, pady=10)
         
         
 
@@ -148,8 +150,67 @@ class App(customtkinter.CTk):
     # --------------------------------------------------------------------------------------------------  
     def dashboard(self):
         self.clear_canvas()
-        # Decorate Right Frame
-     
+        # Load image
+        try:
+            img= (Image.open("resources/icons/add.png"))
+            resized_image= img.resize((30, 30), Image.LANCZOS)
+            btnImg_add= customtkinter.CTkImage(resized_image)        
+        except IOError:
+            print("File not found") 
+            pass
+        
+        # Layout
+        self.heading_banner = customtkinter.CTkCanvas(self.right_dashboard, height = 50, bg="#00253e")
+        self.heading_banner.pack(side=tkinter.TOP, fill=tkinter.X, expand=False, padx=10, pady=10)
+        
+        self.notifications = customtkinter.CTkCanvas(self.right_dashboard,width=250, bg="#00253e")
+        self.notifications.pack(side=tkinter.LEFT, fill=tkinter.Y, expand=False, padx=10, pady=10)
+        
+        self.inner_right_panel = customtkinter.CTkCanvas(self.right_dashboard, width=1500, bg="#00253e")
+        self.inner_right_panel.pack(side=tkinter.RIGHT, fill=tkinter.Y, expand=False, padx=10, pady=10)
+       
+        # Decorate Heading Banner
+        self.heading_banner.grid_columnconfigure((1,2,3), weight=2)
+        Label = customtkinter.CTkLabel(self.heading_banner, text="Dashboard", font=('Roboto', 30))
+        Label.grid(row=0, column=0, padx=10, pady=10 )
+        
+        # Label = customtkinter.CTkLabel(self.heading_banner, text="Add", font=('Roboto', 30))
+        # Label.grid(row=0, column=10, padx=10, pady=10 )
+        
+        # button = customtkinter.CTkButton(self.heading_banner, text= "", image=btnImg_add, fg_color="transparent", width=30, height=30, command= self.open_add_to_archived_state)
+        # button.grid(row=0, column=11, padx=5, pady=5)
+        
+        # Decorate Notification Bar
+        # TODO: Replace this table with notifications (archive requests)
+        # grab data 
+        data = db_conn.all_archived_case_request()
+        location = db_conn.all_case_location()
+        new_data = []
+        headers = ['archiveNumber', 'employeeId', 'dateRequested', 'Location']
+
+        # Link location to archiveNumber
+        for id_location,location_data in location:
+            for id_data,y,z in data:               
+                if id_location == id_data:
+                    new_data.append(location_data)
+
+        # Create table
+        self.sheet = tksheet.Sheet(self.notifications, height = 800)
+        self.sheet.grid(row=0, column =0, padx = 10, pady = 10)
+       
+        self.sheet.headers((f" {x}" for x in headers))
+        
+        # populate Table
+        self.sheet.set_sheet_data([[f"{a}", f"{b}", f"{c}", f"{d}"] for a,b,c in data for d in new_data])
+        
+        # table enable choices listed below:
+        self.sheet.enable_bindings(("single_select",
+                            "row_select",
+                            "column_width_resize",
+                            "arrowkeys",
+                            "copy"))
+        
+        # Decorate Main dashboard page
         
     def archive(self):
         self.clear_canvas()
