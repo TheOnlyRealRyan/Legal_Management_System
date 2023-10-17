@@ -169,16 +169,10 @@ class App(customtkinter.CTk):
         self.inner_right_panel = customtkinter.CTkCanvas(self.right_dashboard, width=1500, bg="#00253e")
         self.inner_right_panel.pack(side=tkinter.RIGHT, fill=tkinter.Y, expand=False, padx=10, pady=10)
        
-        # Decorate Heading Banner
-        self.heading_banner.grid_columnconfigure((1,2,3), weight=2)
+        # Decorate Heading Banner       
         Label = customtkinter.CTkLabel(self.heading_banner, text="Dashboard", font=('Roboto', 30))
         Label.grid(row=0, column=0, padx=10, pady=10 )
         
-        # Label = customtkinter.CTkLabel(self.heading_banner, text="Add", font=('Roboto', 30))
-        # Label.grid(row=0, column=10, padx=10, pady=10 )
-        
-        # button = customtkinter.CTkButton(self.heading_banner, text= "", image=btnImg_add, fg_color="transparent", width=30, height=30, command= self.open_add_to_archived_state)
-        # button.grid(row=0, column=11, padx=5, pady=5)
         
         # Decorate Notification Bar
         # TODO: Replace this table with notifications (archive requests)
@@ -211,12 +205,19 @@ class App(customtkinter.CTk):
                             "copy"))
         
         # Decorate Main dashboard page
+        # TODO: Analytics here
+        
         
     def archive(self):
         self.clear_canvas()
-        self.right_dashboard.grid_rowconfigure((0,1,2,3), weight=0)
-        self.right_dashboard.grid_rowconfigure((4), weight=1)   
-        self.right_dashboard.grid_rowconfigure((5), weight=0)
+        
+        # Layout
+        self.heading_banner = customtkinter.CTkCanvas(self.right_dashboard, height = 50, bg="#00253e")
+        self.heading_banner.pack(side=tkinter.TOP, fill=tkinter.X, expand=False, padx=10, pady=10)
+        
+        self.inner_right_panel = customtkinter.CTkCanvas(self.right_dashboard, width=1500, bg="#00253e")
+        self.inner_right_panel.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+        
         # Load image
         try:
             img= (Image.open("resources/icons/add.png"))
@@ -226,23 +227,26 @@ class App(customtkinter.CTk):
             print("File not found") 
             pass
         
-        # Decorate Right Frame
-        Label = customtkinter.CTkLabel(self.right_dashboard, text="Archive", font=('Roboto', 30))
+        # Decorate heading Banner   
+        self.heading_banner.grid_columnconfigure((1,2,3), weight=2)     
+        Label = customtkinter.CTkLabel(self.heading_banner, text="Archive", font=('Roboto', 30))
         Label.grid(row=0, column=0, padx=10, pady=10 )
-        Label = customtkinter.CTkLabel(self.right_dashboard, text="New Archive", font=('Roboto', 24))
-        Label.grid(row=0, column=38, padx=0, pady=10 )
-        button = customtkinter.CTkButton(self.right_dashboard, text= "", image=btnImg_add, fg_color="transparent", width=50, height=50, command= self.open_add_to_archived_state)
-        button.grid(row=0, column=39, padx=0, pady=0)
         
+        Label = customtkinter.CTkLabel(self.heading_banner, text="New Archive", font=('Roboto', 24))
+        Label.grid(row=0, column=4, padx=10, pady=10 )
+        
+        button = customtkinter.CTkButton(self.heading_banner, text= "", image=btnImg_add, fg_color="transparent", width=30, height=30, command= self.open_add_to_archived_state)
+        button.grid(row=0, column=5, padx=5, pady=5)
+        
+        # Decorate Main Page
         # grab data 
         data = db_conn.all_client_information()
         headers = ['id', 'Name', 'Surname', 'Gender', 'Date of Birth']
         
         # Create table
-        self.sheet = tksheet.Sheet(self.right_dashboard, height = 800, width = 1750)
-        self.sheet.grid(row=4, column =0, padx = 20, pady = 20, columnspan = 40)
-
-        
+        self.sheet = tksheet.Sheet(self.inner_right_panel, height = 800, width = 1750)
+        self.sheet.grid(row=0, column =0, padx = 10, pady = 10)
+     
         self.sheet.headers((f" {x}" for x in headers))
         
         # populate Table
@@ -258,11 +262,45 @@ class App(customtkinter.CTk):
         
     def case(self):
         self.clear_canvas()
-        # Decorate Right Frame
+        # Layout
+        self.heading_banner = customtkinter.CTkCanvas(self.right_dashboard, height = 50, bg="#00253e")
+        self.heading_banner.pack(side=tkinter.TOP, fill=tkinter.X, expand=False, padx=10, pady=10)
+        
+        self.inner_right_panel = customtkinter.CTkCanvas(self.right_dashboard, width=1500, bg="#00253e")
+        self.inner_right_panel.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+        
+        # Load image
+        try:
+            img= (Image.open("resources/icons/add.png"))
+            resized_image= img.resize((30, 30), Image.LANCZOS)
+            btnImg_add= customtkinter.CTkImage(resized_image)        
+        except IOError:
+            print("File not found") 
+            pass
+        
+        # Decorate heading Banner   
+        self.heading_banner.grid_columnconfigure((1,2,3), weight=2)     
+        Label = customtkinter.CTkLabel(self.heading_banner, text="Cases", font=('Roboto', 30))
+        Label.grid(row=0, column=0, padx=10, pady=10 )
+        
+        Label = customtkinter.CTkLabel(self.heading_banner, text="New Case", font=('Roboto', 24))
+        Label.grid(row=0, column=4, padx=10, pady=10 )
+        
+        button = customtkinter.CTkButton(self.heading_banner, text= "", image=btnImg_add, fg_color="transparent", width=30, height=30, command= self.open_add_to_case_data)
+        button.grid(row=0, column=5, padx=5, pady=5)
     
         
     def files(self):
         self.clear_canvas()
+        
+        # Layout
+        self.heading_banner = customtkinter.CTkCanvas(self.right_dashboard, height = 50, bg="#00253e")
+        self.heading_banner.pack(side=tkinter.TOP, fill=tkinter.X, expand=False, padx=10, pady=10)
+        
+        self.inner_right_panel = customtkinter.CTkCanvas(self.right_dashboard, width=1500, bg="#00253e")
+        self.inner_right_panel.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+
+
         # Load image
         try:
             img= (Image.open("resources/icons/add.png"))
@@ -272,19 +310,28 @@ class App(customtkinter.CTk):
             print("File not found") 
             pass
         
-        # Decorate Right Frame      
-        Label = customtkinter.CTkLabel(self.right_dashboard, text="Upload File", font=('Roboto', 24))
-        Label.grid(row=0, column=0, padx=20, pady=(10, 0))
-        button = customtkinter.CTkButton(self.right_dashboard, text= "", image=btnImg_add, fg_color="transparent", width=45, command= self.open_add_to_file_upload_data)
-        button.grid(row=1, column=0, padx=20, pady=(10, 0))
+        # Decorate Right Frame     
+        
+        # Decorate heading Banner   
+        self.heading_banner.grid_columnconfigure((1,2,3), weight=2)     
+        Label = customtkinter.CTkLabel(self.heading_banner, text="Cloud Upload", font=('Roboto', 30))
+        Label.grid(row=0, column=0, padx=10, pady=10 )
+        
+        Label = customtkinter.CTkLabel(self.heading_banner, text="Upload File", font=('Roboto', 24))
+        Label.grid(row=0, column=4, padx=10, pady=10 )
+        
+        button = customtkinter.CTkButton(self.heading_banner, text= "", image=btnImg_add, fg_color="transparent", width=30, height=30, command= self.open_add_to_file_upload_data)
+        button.grid(row=0, column=5, padx=5, pady=5) 
+
         
         # grab data 
         data = db_conn.all_file_upload_data()
         headers = ['fileId', 'fileName', 'caseId', 'recievedDate', 'dateUploaded']
         
         # Create table
-        self.sheet = tksheet.Sheet(self.right_dashboard, height = 500, width = 1000)
-        self.sheet.grid(row=3, column =0)
+        self.sheet = tksheet.Sheet(self.inner_right_panel, height = 800, width = 1750)
+        self.sheet.grid(row=0, column =0, padx = 10, pady = 10)
+        
         self.sheet.headers((f" {x}" for x in headers))
         
         # populate Table
@@ -300,6 +347,15 @@ class App(customtkinter.CTk):
 
     def client(self):
         self.clear_canvas()
+        
+        # Layout
+        self.heading_banner = customtkinter.CTkCanvas(self.right_dashboard, height = 50, bg="#00253e")
+        self.heading_banner.pack(side=tkinter.TOP, fill=tkinter.X, expand=False, padx=10, pady=10)
+        
+        self.inner_right_panel = customtkinter.CTkCanvas(self.right_dashboard, width=1500, bg="#00253e")
+        self.inner_right_panel.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+
+
         # Load image
         try:
             img= (Image.open("resources/icons/add.png"))
@@ -307,21 +363,29 @@ class App(customtkinter.CTk):
             btnImg_add= customtkinter.CTkImage(resized_image)        
         except IOError:
             print("File not found") 
-            pass
+            pass  
         
-        # Decorate Right Frame
-        Label = customtkinter.CTkLabel(self.right_dashboard, text="New Client", font=('Roboto', 24))
-        Label.grid(row=0, column=0, padx=20, pady=(10, 0))
-        button = customtkinter.CTkButton(self.right_dashboard, text= "", image=btnImg_add, fg_color="transparent", width=45, command= self.open_add_to_client_information)
-        button.grid(row=1, column=0, padx=20, pady=(10, 0))
+        # Decorate heading Banner   
+        self.heading_banner.grid_columnconfigure((1,2,3), weight=2)    
+         
+        Label = customtkinter.CTkLabel(self.heading_banner, text="Client", font=('Roboto', 30))
+        Label.grid(row=0, column=0, padx=10, pady=10 )
         
+        Label = customtkinter.CTkLabel(self.heading_banner, text="New Client", font=('Roboto', 24))
+        Label.grid(row=0, column=4, padx=10, pady=10 )
+        
+        button = customtkinter.CTkButton(self.heading_banner, text= "", image=btnImg_add, fg_color="transparent", width=30, height=30, command= self.open_add_to_client_information)
+        button.grid(row=0, column=5, padx=5, pady=5) 
+
+        # Decorate inner right panel
         # grab data 
         data = db_conn.all_client_information()
         headers = ['id', 'Name', 'Surname', 'Gender', 'Date of Birth']
         
         # Create table
-        self.sheet = tksheet.Sheet(self.right_dashboard, height = 500, width = 1000)
-        self.sheet.grid(row=3, column =0)
+        self.sheet = tksheet.Sheet(self.inner_right_panel, height = 500, width = 1000)
+        self.sheet.grid(row=0, column = 0, padx = 10, pady = 10)
+        
         self.sheet.headers((f" {x}" for x in headers))
         
         # populate Table
@@ -337,7 +401,20 @@ class App(customtkinter.CTk):
     
     def admin(self):
         self.clear_canvas()
-      
+              # Layout
+        self.heading_banner = customtkinter.CTkCanvas(self.right_dashboard, height = 50, bg="#00253e")
+        self.heading_banner.pack(side=tkinter.TOP, fill=tkinter.X, expand=False, padx=10, pady=10)
+        
+        self.inner_right_panel = customtkinter.CTkCanvas(self.right_dashboard, width=1500, bg="#00253e")
+        self.inner_right_panel.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+
+        
+        # Decorate heading Banner   
+        self.heading_banner.grid_columnconfigure((1,2,3), weight=2)    
+         
+        Label = customtkinter.CTkLabel(self.heading_banner, text="Admin Page", font=('Roboto', 30))
+        Label.grid(row=0, column=0, padx=10, pady=10 )
+
         def optionmenu_insert(choice):
             if choice == "Employee Roles":
                 return self.open_add_to_employee_roles()
@@ -371,7 +448,7 @@ class App(customtkinter.CTk):
         
         # Decorate Right Frame    
         optionmenu_var = customtkinter.StringVar(value="Insert Into")
-        optionmenu = customtkinter.CTkOptionMenu(self.right_dashboard, values=["Employee Roles", 
+        optionmenu = customtkinter.CTkOptionMenu(self.inner_right_panel, values=["Employee Roles", 
                                                                                "Employee Account", 
                                                                                "User Login Data", 
                                                                                "Client Information", 
@@ -387,7 +464,7 @@ class App(customtkinter.CTk):
                                                                                "Case Drawn History"],
                                                 command=optionmenu_insert,
                                                 variable=optionmenu_var)
-        Label = customtkinter.CTkLabel(self.right_dashboard, text="Insert into Database:", font=('Roboto', 24))
+        Label = customtkinter.CTkLabel(self.inner_right_panel, text="Insert into Database:", font=('Roboto', 24))
         Label.grid(row=0, column=0, padx=20, pady=(10, 0))
         optionmenu.grid(row=1, column=0, padx=20, pady=(10, 0))
         
@@ -424,7 +501,7 @@ class App(customtkinter.CTk):
         
          
         optionmenu_var = customtkinter.StringVar(value="Delete from")
-        optionmenu = customtkinter.CTkOptionMenu(self.right_dashboard, values=["Employee Roles", 
+        optionmenu = customtkinter.CTkOptionMenu(self.inner_right_panel, values=["Employee Roles", 
                                                                                "Employee Account", 
                                                                                "User Login Data", 
                                                                                "Client Information", 
@@ -440,7 +517,7 @@ class App(customtkinter.CTk):
                                                                                "Case Drawn History"],
                                                 command=optionmenu_delete,
                                                 variable=optionmenu_var)
-        Label = customtkinter.CTkLabel(self.right_dashboard, text="Delete from Database", font=('Roboto', 24))
+        Label = customtkinter.CTkLabel(self.inner_right_panel, text="Delete from Database", font=('Roboto', 24))
         Label.grid(row=2, column=0, padx=20, pady=(10, 0))      
         optionmenu.grid(row=3, column=0, padx=20, pady=(10, 0))
         

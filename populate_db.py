@@ -12,9 +12,9 @@ time.sleep(0.1)
 """
 
 # for i in range(10):
-archiveNumner = 0
+archiveNumber = 0
 employeeId = 1
-add.add_to_archived_case_request(archiveNumner, employeeId)
+add.add_to_archived_case_request(archiveNumber, employeeId)
 print("success")
 time.sleep(0.1)
 
