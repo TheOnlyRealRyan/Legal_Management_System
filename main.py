@@ -47,6 +47,7 @@ class Login(customtkinter.CTk):
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()       
+             
         self.title("Main Program")
       
         # Dimensions relating to screen size (Overlaps with taskbar)
@@ -75,82 +76,56 @@ class App(customtkinter.CTk):
         # Configure the weights of rows in right_dashboard
         self.right_dashboard.grid_rowconfigure((0,1,2,3), weight=0)
         self.right_dashboard.grid_rowconfigure((4), weight=1)   
-        self.right_dashboard.grid_rowconfigure((5), weight=0)
-        # self.right_dashboard.grid_columnconfigure((0,1,2,3), weight=0)   
+        self.right_dashboard.grid_rowconfigure((5), weight=0)  
         
         # left_side_panel Menu
         self.menu_label = customtkinter.CTkLabel(self.left_side_panel, text="Menu", font=customtkinter.CTkFont(size=20, weight="bold"))
-        self.menu_label.grid(row=0, column=0, padx=20, pady=(20, 10))
-        
-        # Load Images from resources/icons
-        try:
-            img= (Image.open("resources/icons/dashboard.png"))
-            resized_image= img.resize((30,30), Image.LANCZOS)
-            btnImg_dashboard= customtkinter.CTkImage(resized_image)   
-            
-            img= (Image.open("resources/icons/archive.png"))
-            resized_image= img.resize((30,30), Image.LANCZOS)
-            btnImg_archive= customtkinter.CTkImage(resized_image)  
-            
-            img= (Image.open("resources/icons/case.png"))
-            resized_image= img.resize((30,30), Image.LANCZOS)
-            btnImg_case= customtkinter.CTkImage(resized_image)  
-            
-            img= (Image.open("resources/icons/files.png"))
-            resized_image= img.resize((30,30), Image.LANCZOS)
-            btnImg_files= customtkinter.CTkImage(resized_image)  
-            
-            img= (Image.open("resources/icons/customer.png"))
-            resized_image= img.resize((30,30), Image.LANCZOS)
-            btnImg_client= customtkinter.CTkImage(resized_image)  
-            
-            img= (Image.open("resources/icons/admin.png"))
-            resized_image= img.resize((30,30), Image.LANCZOS)
-            btnImg_admin= customtkinter.CTkImage(resized_image)  
-            
-            img= (Image.open("resources/icons/user.png"))
-            resized_image= img.resize((30,30), Image.LANCZOS)
-            btnImg_user= customtkinter.CTkImage(resized_image)     
-        except IOError:
-            print("File not found") 
-            pass
+        self.menu_label.grid(row=0, column=0, padx=20, pady=(20, 10))      
         
         # Focus on dashboard first
         self.dashboard()
         
         # buttons on left_side_panel to select canvas     
-        self.btn_dashboard = customtkinter.CTkButton(self.left_side_panel, image=btnImg_dashboard, fg_color="transparent", width=45, text="", command=lambda: self.dashboard())
+        self.btn_dashboard = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("dashboard"), fg_color="transparent", width=45, text="", command=lambda: self.dashboard())
         self.btn_dashboard.grid(row=1, column=0, padx=20, pady=10)
 
-        self.btn_archive = customtkinter.CTkButton(self.left_side_panel, image=btnImg_archive, fg_color="transparent", width=45, text="", command=self.archive)
+        self.btn_archive = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("archive"), fg_color="transparent", width=45, text="", command=self.archive)
         self.btn_archive.grid(row=2, column=0, padx=20, pady=10)
         
-        self.btn_case = customtkinter.CTkButton(self.left_side_panel, image=btnImg_case, fg_color="transparent", width=45, text="", command=self.case)
+        self.btn_case = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("case"), fg_color="transparent", width=45, text="", command=self.case)
         self.btn_case.grid(row=3, column=0, padx=20, pady=10)
         
-        self.btn_files = customtkinter.CTkButton(self.left_side_panel, image=btnImg_files, fg_color="transparent", width=45, text="", command=self.files)
+        self.btn_files = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("files"), fg_color="transparent", width=45, text="", command=self.files)
         self.btn_files.grid(row=4, column=0, padx=20, pady=10)
         
-        self.btn_client = customtkinter.CTkButton(self.left_side_panel, image=btnImg_client, fg_color="transparent", width=45, text="", command=self.client)
+        self.btn_client = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("customer"), fg_color="transparent", width=45, text="", command=self.client)
         self.btn_client.grid(row=5, column=0, padx=20, pady=10)
         
         # TODO: If statement here to see if admin
-        self.btn_admin = customtkinter.CTkButton(self.left_side_panel, image=btnImg_admin, fg_color="transparent", width=45, text="", command=self.admin)
+        self.btn_admin = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("admin"), fg_color="transparent", width=45, text="", command=self.admin)
         self.btn_admin.grid(row=7, column=0, padx=20, pady=10)
         
-        self.btn_user = customtkinter.CTkButton(self.left_side_panel, image=btnImg_user, fg_color="transparent", width=45, text="", command=self.user)
+        self.btn_user = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("user"), fg_color="transparent", width=45, text="", command=self.user)
         self.btn_user.grid(row=8, column=0, padx=20, pady=10)
         
-        
-
         self.toplevel_window = None
-    
+        
+        
+    def load_image(self, img_picked):
+        """Load an image only if its called"""
+        try:
+            resource_path = "resources/icons_variation_2/"                
+            img= (Image.open(f"{resource_path}{img_picked}.png"))
+            resized_image= img.resize((30,30), Image.LANCZOS)
+            return customtkinter.CTkImage(resized_image)             
+        except IOError:
+            print("File not found") 
+            pass
     
     # --------------------------------------------------------------------------------------------------
     # Functions for navigating to and decorating different frames 
     # --------------------------------------------------------------------------------------------------  
-    # grab data 
-    
+        
     # TODO: See if this cant be a class
     def dashboard(self):
         self.clear_canvas()
@@ -158,16 +133,6 @@ class App(customtkinter.CTk):
         def refresh_data(): 
             # TODO: The table should update somehow
             return db_conn.all_archived_case_request()
-            
-        
-        # Load image
-        try:
-            img= (Image.open("resources/icons/add.png"))
-            resized_image= img.resize((30, 30), Image.LANCZOS)
-            btnImg_add= customtkinter.CTkImage(resized_image)        
-        except IOError:
-            print("File not found") 
-            pass
         
         # Layout
         self.heading_banner = customtkinter.CTkCanvas(self.right_dashboard, height = 50, bg="#00253e")
@@ -301,8 +266,7 @@ class App(customtkinter.CTk):
                             "copy"))
         """
         
-        
-        
+               
     def archive(self):
         self.clear_canvas()
         
@@ -313,15 +277,6 @@ class App(customtkinter.CTk):
         self.inner_right_panel = customtkinter.CTkCanvas(self.right_dashboard, width=1500, bg="#00253e")
         self.inner_right_panel.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
         
-        # Load image
-        try:
-            img= (Image.open("resources/icons/add.png"))
-            resized_image= img.resize((30, 30), Image.LANCZOS)
-            btnImg_add= customtkinter.CTkImage(resized_image)        
-        except IOError:
-            print("File not found") 
-            pass
-        
         # Decorate heading Banner   
         self.heading_banner.grid_columnconfigure((1,2,3), weight=2)     
         Label = customtkinter.CTkLabel(self.heading_banner, text="Archive", font=('Roboto', 30))
@@ -330,13 +285,13 @@ class App(customtkinter.CTk):
         Label = customtkinter.CTkLabel(self.heading_banner, text="New Archive", font=('Roboto', 24))
         Label.grid(row=0, column=4, padx=10, pady=10 )
         
-        button = customtkinter.CTkButton(self.heading_banner, text= "", image=btnImg_add, fg_color="transparent", width=30, height=30, command= self.open_add_to_archived_state)
+        button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= self.open_add_to_archived_state)
         button.grid(row=0, column=5, padx=5, pady=5)
         
         Label = customtkinter.CTkLabel(self.heading_banner, text="Request Archive", font=('Roboto', 24))
         Label.grid(row=0, column=6, padx=10, pady=10 )
         
-        button = customtkinter.CTkButton(self.heading_banner, text= "", image=btnImg_add, fg_color="transparent", width=30, height=30, command= self.open_add_to_archived_case_request)
+        button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= self.open_add_to_archived_case_request)
         button.grid(row=0, column=7, padx=5, pady=5)
         
         # Decorate Main Page
@@ -373,15 +328,6 @@ class App(customtkinter.CTk):
         self.inner_right_panel = customtkinter.CTkCanvas(self.right_dashboard, width=1500, bg="#00253e")
         self.inner_right_panel.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
         
-        # Load image
-        try:
-            img= (Image.open("resources/icons/add.png"))
-            resized_image= img.resize((30, 30), Image.LANCZOS)
-            btnImg_add= customtkinter.CTkImage(resized_image)        
-        except IOError:
-            print("File not found") 
-            pass
-        
         # Decorate heading Banner   
         self.heading_banner.grid_columnconfigure((1,2,3), weight=2)     
         Label = customtkinter.CTkLabel(self.heading_banner, text="Cases", font=('Roboto', 30))
@@ -390,7 +336,7 @@ class App(customtkinter.CTk):
         Label = customtkinter.CTkLabel(self.heading_banner, text="New Case", font=('Roboto', 24))
         Label.grid(row=0, column=4, padx=10, pady=10 )
         
-        button = customtkinter.CTkButton(self.heading_banner, text= "", image=btnImg_add, fg_color="transparent", width=30, height=30, command= self.open_add_to_case_data)
+        button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= self.open_add_to_case_data)
         button.grid(row=0, column=5, padx=5, pady=5)
         
         # Decorate inner right panel
@@ -426,16 +372,6 @@ class App(customtkinter.CTk):
         
         self.inner_right_panel = customtkinter.CTkCanvas(self.right_dashboard, width=1500, bg="#00253e")
         self.inner_right_panel.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
-
-
-        # Load image
-        try:
-            img= (Image.open("resources/icons/add.png"))
-            resized_image= img.resize((25,25), Image.LANCZOS)
-            btnImg_add= customtkinter.CTkImage(resized_image)        
-        except IOError:
-            print("File not found") 
-            pass
         
         # Decorate Right Frame     
         
@@ -447,13 +383,13 @@ class App(customtkinter.CTk):
         Label = customtkinter.CTkLabel(self.heading_banner, text="Download File", font=('Roboto', 24))
         Label.grid(row=0, column=4, padx=10, pady=10 )
         # TODO: change this button to download from cloud
-        button = customtkinter.CTkButton(self.heading_banner, text= "", image=btnImg_add, fg_color="transparent", width=30, height=30, command= self.open_add_to_file_upload_data)
+        button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= self.open_add_to_file_upload_data)
         button.grid(row=0, column=5, padx=5, pady=5) 
         
         Label = customtkinter.CTkLabel(self.heading_banner, text="Upload File", font=('Roboto', 24))
         Label.grid(row=0, column=6, padx=10, pady=10 )
         
-        button = customtkinter.CTkButton(self.heading_banner, text= "", image=btnImg_add, fg_color="transparent", width=30, height=30, command= self.open_add_to_file_upload_data)
+        button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= self.open_add_to_file_upload_data)
         button.grid(row=0, column=7, padx=5, pady=5) 
         
 
@@ -490,16 +426,6 @@ class App(customtkinter.CTk):
         
         self.inner_right_panel = customtkinter.CTkCanvas(self.right_dashboard, width=1500, bg="#00253e")
         self.inner_right_panel.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
-
-
-        # Load image
-        try:
-            img= (Image.open("resources/icons/add.png"))
-            resized_image= img.resize((25,25), Image.LANCZOS)
-            btnImg_add= customtkinter.CTkImage(resized_image)        
-        except IOError:
-            print("File not found") 
-            pass  
         
         # Decorate heading Banner   
         self.heading_banner.grid_columnconfigure((1,2,3), weight=2)    
@@ -510,7 +436,7 @@ class App(customtkinter.CTk):
         Label = customtkinter.CTkLabel(self.heading_banner, text="New Client", font=('Roboto', 24))
         Label.grid(row=0, column=4, padx=10, pady=10 )
         
-        button = customtkinter.CTkButton(self.heading_banner, text= "", image=btnImg_add, fg_color="transparent", width=30, height=30, command= self.open_add_to_client_information)
+        button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= self.open_add_to_client_information)
         button.grid(row=0, column=5, padx=5, pady=5) 
 
         # Decorate inner right panel
