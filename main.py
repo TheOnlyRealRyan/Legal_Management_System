@@ -6,9 +6,10 @@ from validatePassword import *
 import grab_from_db as db_conn
 import tksheet
 import popup
+import numpy as np
 
 # TODO: validate Login into main page
-
+# TODO: change title headings from database titles to normal titles
 # Initialise Appearance for customtkinter
 DARK_MODE = "dark"
 customtkinter.set_appearance_mode(DARK_MODE)
@@ -118,7 +119,7 @@ class App(customtkinter.CTk):
         self.dashboard()
         
         # buttons on left_side_panel to select canvas     
-        self.btn_dashboard = customtkinter.CTkButton(self.left_side_panel, image=btnImg_dashboard, fg_color="transparent", width=45, text="", command=self.dashboard)
+        self.btn_dashboard = customtkinter.CTkButton(self.left_side_panel, image=btnImg_dashboard, fg_color="transparent", width=45, text="", command=lambda: self.dashboard())
         self.btn_dashboard.grid(row=1, column=0, padx=20, pady=10)
 
         self.btn_archive = customtkinter.CTkButton(self.left_side_panel, image=btnImg_archive, fg_color="transparent", width=45, text="", command=self.archive)
@@ -148,8 +149,16 @@ class App(customtkinter.CTk):
     # --------------------------------------------------------------------------------------------------
     # Functions for navigating to and decorating different frames 
     # --------------------------------------------------------------------------------------------------  
+    # grab data 
+    
+    
     def dashboard(self):
         self.clear_canvas()
+        
+        def refresh_data():
+            # TODO: The table should update somehow
+            return db_conn.all_archived_case_request()
+        
         # Load image
         try:
             img= (Image.open("resources/icons/add.png"))
@@ -163,49 +172,95 @@ class App(customtkinter.CTk):
         self.heading_banner = customtkinter.CTkCanvas(self.right_dashboard, height = 50, bg="#00253e")
         self.heading_banner.pack(side=tkinter.TOP, fill=tkinter.X, expand=False, padx=10, pady=10)
         
-        self.notifications = customtkinter.CTkCanvas(self.right_dashboard,width=250, bg="#00253e")
+        self.notifications = customtkinter.CTkCanvas(self.right_dashboard,width=300, bg="#00253e")
         self.notifications.pack(side=tkinter.LEFT, fill=tkinter.Y, expand=False, padx=10, pady=10)
         
         self.inner_right_panel = customtkinter.CTkCanvas(self.right_dashboard, width=1500, bg="#00253e")
         self.inner_right_panel.pack(side=tkinter.RIGHT, fill=tkinter.Y, expand=False, padx=10, pady=10)
        
-        # Decorate Heading Banner       
+        # Decorate Heading Banner    
         Label = customtkinter.CTkLabel(self.heading_banner, text="Dashboard", font=('Roboto', 30))
-        Label.grid(row=0, column=0, padx=10, pady=10 )
-        
+        Label.grid(row=0, column=0, padx=10, pady=10 )    
         
         # Decorate Notification Bar
-        # TODO: Replace this table with notifications (archive requests)
-        # grab data 
-        data = db_conn.all_archived_case_request()
-        location = db_conn.all_case_location()
-        new_data = []
-        headers = ['archiveNumber', 'employeeId', 'dateRequested', 'Location']
-
-        # Link location to archiveNumber
-        for id_location,location_data in location:
-            for id_data,y,z in data:               
-                if id_location == id_data:
-                    new_data.append(location_data)
+        
+        headers = ['archiveNumber', 'employee', 'dateRequested', 'Location']
 
         # Create table
+        # populate Table  
         self.sheet = tksheet.Sheet(self.notifications, height = 800)
-        self.sheet.grid(row=0, column =0, padx = 10, pady = 10)
-       
-        self.sheet.headers((f" {x}" for x in headers))
-        
-        # populate Table
-        self.sheet.set_sheet_data([[f"{a}", f"{b}", f"{c}", f"{d}"] for a,b,c in data for d in new_data])
+        self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+    
+        self.sheet.headers((f"{x}" for x in headers))   
+        self.sheet.set_sheet_data([[f"{a}",f"{h} {i}",f"{c}",f"{e}"] for a,b,c,d,e,f,g,h,i,j,k,l in refresh_data()])
         
         # table enable choices listed below:
         self.sheet.enable_bindings(("single_select",
+                            "double_click_column_resize",
+                            "column_width_resize",
                             "row_select",
                             "column_width_resize",
                             "arrowkeys",
                             "copy"))
-        
+        def filter_rows():
+            display_rows(rows = None,
+                        all_rows_displayed = None,
+                        reset_col_positions = True,
+                        refresh = False,
+                        redraw = False,
+                        deselect_all = True,
+                        **kwargs)
         # Decorate Main dashboard page
-        # TODO: Analytics here
+        # If archivist, show to be deleted
+        # If attorney, show your cases/analytics
+        # If manager, show analytics
+        # TODO: User based Dashboard
+        
+        # Decorate inner right panel
+        """
+        # grab data 
+        data = list(db_conn.case_to_be_destroyed_this_month())
+        location = db_conn.all_case_location()
+        location_list = list()
+        headers = ['caseId', 'archivedState', 'archiveNumber', 'archivedDate', 'DateToBeDestroyed', 'Location']
+
+        # Link location to archiveNumber
+        for id_location,location_data in location:
+            for id_data,q,w,j,r in data:               
+                if id_location == id_data:
+                    location_list.append(location_data)
+                else:
+                    location_list.append("No Location")
+        
+        #TODO: Add location_list to data          
+        final_data = list()                      
+        for i in range(len(location_list)):
+            new_list = list(data[i]).append(location_list[i])
+            print(new_list)
+            
+        print(type(data))
+        print(location)
+        print(location_list)
+        # Create table
+        self.sheet = tksheet.Sheet(self.notifications, height = 800)
+        self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+        # self.sheet.grid(row=0, column =0, padx = 10, pady = 10)
+       
+        self.sheet.headers((f"{x}" for x in headers))
+        
+        # populate Table
+        self.sheet.set_sheet_data([[f"{a}", f"{b}", f"{c}", f"{d}",f"{e}",f"{f}"] for a,b,c,d,e,f in data])
+        
+        # table enable choices listed below:
+        self.sheet.enable_bindings(("single_select",
+                            "double_click_column_resize",
+                            "column_width_resize",
+                            "row_select",
+                            "column_width_resize",
+                            "arrowkeys",
+                            "copy"))
+        """
+        
         
         
     def archive(self):
@@ -238,22 +293,33 @@ class App(customtkinter.CTk):
         button = customtkinter.CTkButton(self.heading_banner, text= "", image=btnImg_add, fg_color="transparent", width=30, height=30, command= self.open_add_to_archived_state)
         button.grid(row=0, column=5, padx=5, pady=5)
         
+        Label = customtkinter.CTkLabel(self.heading_banner, text="Request Archive", font=('Roboto', 24))
+        Label.grid(row=0, column=6, padx=10, pady=10 )
+        
+        button = customtkinter.CTkButton(self.heading_banner, text= "", image=btnImg_add, fg_color="transparent", width=30, height=30, command= self.open_add_to_archived_case_request)
+        button.grid(row=0, column=7, padx=5, pady=5)
+        
         # Decorate Main Page
         # grab data 
-        data = db_conn.all_client_information()
+        def refresh_data():
+            return db_conn.all_client_information()
+            
         headers = ['id', 'Name', 'Surname', 'Gender', 'Date of Birth']
         
         # Create table
         self.sheet = tksheet.Sheet(self.inner_right_panel, height = 800, width = 1750)
-        self.sheet.grid(row=0, column =0, padx = 10, pady = 10)
+        self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+        # self.sheet.grid(row=0, column =0, padx = 10, pady = 10)
      
         self.sheet.headers((f" {x}" for x in headers))
         
         # populate Table
-        self.sheet.set_sheet_data([[f"{a}", f"{b}",f"{c}",f"{d}",f"{e}"] for a,b,c,d,e in data ])
+        self.sheet.set_sheet_data([[f"{a}", f"{b}",f"{c}",f"{d}",f"{e}"] for a,b,c,d,e in refresh_data() ])
         
         # table enable choices listed below:
         self.sheet.enable_bindings(("single_select",
+                            "double_click_column_resize",
+                            "column_width_resize",
                             "row_select",
                             "column_width_resize",
                             "arrowkeys",
@@ -288,6 +354,30 @@ class App(customtkinter.CTk):
         
         button = customtkinter.CTkButton(self.heading_banner, text= "", image=btnImg_add, fg_color="transparent", width=30, height=30, command= self.open_add_to_case_data)
         button.grid(row=0, column=5, padx=5, pady=5)
+        
+        # Decorate inner right panel
+        # grab data 
+        data = db_conn.all_case_data()
+        headers = ['id', 'client', 'employee', 'Description', 'Department', 'Date of Open', 'Date of Upload']
+        
+        # Create table
+        self.sheet = tksheet.Sheet(self.inner_right_panel, height = 800, width = 1750)
+        self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+        # self.sheet.grid(row=0, column = 0, padx = 10, pady = 10)
+        
+        self.sheet.headers((f"{x}" for x in headers))
+        
+        # populate Table
+        self.sheet.set_sheet_data([[f"{a}",f"{b}",f"{c}",f"{d}",f"{e}",f"{f}",f"{g}"] for a,b,c,d,e,f,g in data ])
+        
+        # table enable choices listed below:
+        self.sheet.enable_bindings(("single_select",
+                            "double_click_column_resize",
+                            "column_width_resize",
+                            "row_select",
+                            "column_width_resize",
+                            "arrowkeys",
+                            "copy"))
     
         
     def files(self):
@@ -330,7 +420,8 @@ class App(customtkinter.CTk):
         
         # Create table
         self.sheet = tksheet.Sheet(self.inner_right_panel, height = 800, width = 1750)
-        self.sheet.grid(row=0, column =0, padx = 10, pady = 10)
+        self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+        # self.sheet.grid(row=0, column =0, padx = 10, pady = 10)
         
         self.sheet.headers((f" {x}" for x in headers))
         
@@ -339,6 +430,8 @@ class App(customtkinter.CTk):
         
         # table enable choices listed below:
         self.sheet.enable_bindings(("single_select",
+                            "double_click_column_resize",
+                            "column_width_resize",
                             "row_select",
                             "column_width_resize",
                             "arrowkeys",
@@ -383,8 +476,9 @@ class App(customtkinter.CTk):
         headers = ['id', 'Name', 'Surname', 'Gender', 'Date of Birth']
         
         # Create table
-        self.sheet = tksheet.Sheet(self.inner_right_panel, height = 500, width = 1000)
-        self.sheet.grid(row=0, column = 0, padx = 10, pady = 10)
+        self.sheet = tksheet.Sheet(self.inner_right_panel, height = 800, width = 1750)
+        self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+        # self.sheet.grid(row=0, column = 0, padx = 10, pady = 10)
         
         self.sheet.headers((f" {x}" for x in headers))
         
@@ -393,6 +487,8 @@ class App(customtkinter.CTk):
         
         # table enable choices listed below:
         self.sheet.enable_bindings(("single_select",
+                            "double_click_column_resize",
+                            "column_width_resize",
                             "row_select",
                             "column_width_resize",
                             "arrowkeys",

@@ -82,7 +82,7 @@ def all_deletion_logging():
 
 
 def all_archived_case_request():
-    mycursor.execute("SELECT * FROM archived_case_request")
+    mycursor.execute("SELECT * FROM archived_case_request LEFT JOIN case_location ON archived_case_request.archiveNumber=case_location.caseId LEFT JOIN employee_account ON archived_case_request.employeeId=employee_account.employeeId")
     myresult = mycursor.fetchall()
     return myresult
 
@@ -103,3 +103,40 @@ def all_employees():
     mycursor.execute("SELECT * FROM employee_information")
     myresult = mycursor.fetchall()
     return myresult
+
+
+def case_to_be_destroyed_this_month():
+    # TODO: check that case is already not destroyed
+    current_year = date.today().year
+    current_month = date.today().month
+    # Grab all items that need to be destoyed
+    mycursor.execute(f"SELECT * FROM archived_state WHERE (MONTH(dateToBeDestroyed) <= {current_month} AND YEAR(dateToBeDestroyed) = {current_year}) OR (YEAR(dateToBeDestroyed) < {current_year})")
+    myresult = mycursor.fetchall()
+    
+    myresult2 = list()
+    myresult3 = list()
+    
+    # Grab all cases that have already been destroyed
+    for a,b,c,d,e in myresult:
+        mycursor.execute(f"SELECT caseId FROM destruction_state WHERE caseId = {a} AND destructionState = 'Destroyed'")
+        myresult2.append(mycursor.fetchone())
+        
+    # convert (1,) to 1 if not None from already Destroyed list
+    for a in myresult2:
+        if a != None:       
+            myresult3.append(sum(a)) 
+            
+    # If a case has already been destroyed, then remove that case from the to be destroyed list
+    for a in myresult3:
+        for b,c,d,e,f in myresult:           
+            if (b == a):
+                final_list = [x for x in myresult if x[0] != a]   
+                break
+   
+    # If list is empty        
+    if len(final_list) > 0:      
+        return final_list
+    else:
+        print("Doesnt exist")
+        pass
+    

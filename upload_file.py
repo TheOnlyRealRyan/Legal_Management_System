@@ -1,7 +1,7 @@
 from google.cloud import storage
 
 project_id = "legal-management-system-399510"
-
+#TODO: FIX Cloud Functions
 def list_buckets(project_id=project_id):
     """This function will list all buckets. """
     storage_client = storage.Client(project=project_id)

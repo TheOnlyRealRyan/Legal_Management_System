@@ -1,15 +1,43 @@
 import add_to_db as add
 import time
 
+id= 1
+state = "Destroyed"
+add.add_to_destruction_state(id, state)
+print("success")
+time.sleep(0.1)
 
+"""
+for i in range(5):
+    id= i+1
+    archivedState = "Archived"
 
+    dateOfBirth = f"200{i}-06-06"
+    roleId = 1
+    add.add_to_archived_state(id, archivedState, dateOfBirth)
+    print("success")
+    time.sleep(0.1)  
+    
+id= 8
+archivedState = "Archived"
+dateOfBirth = "2016-11-06"
+add.add_to_archived_state(id, archivedState, dateOfBirth)
+print("success")
+time.sleep(0.1)
+
+id= 9
+archivedState = "Archived"
+dateOfBirth = "2016-09-06"
+add.add_to_archived_state(id, archivedState, dateOfBirth)
+print("success")
+time.sleep(0.1)
 
 archiveNumner = 0
 location = "Cupboard 12"
 add.add_to_case_location(archiveNumner, location)
 print("success")
 time.sleep(0.1)
-"""
+
 
 # for i in range(10):
 archiveNumber = 0
