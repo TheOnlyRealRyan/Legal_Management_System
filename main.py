@@ -151,13 +151,14 @@ class App(customtkinter.CTk):
     # --------------------------------------------------------------------------------------------------  
     # grab data 
     
-    
+    # TODO: See if this cant be a class
     def dashboard(self):
         self.clear_canvas()
         
-        def refresh_data():
+        def refresh_data(): 
             # TODO: The table should update somehow
             return db_conn.all_archived_case_request()
+            
         
         # Load image
         try:
@@ -172,12 +173,12 @@ class App(customtkinter.CTk):
         self.heading_banner = customtkinter.CTkCanvas(self.right_dashboard, height = 50, bg="#00253e")
         self.heading_banner.pack(side=tkinter.TOP, fill=tkinter.X, expand=False, padx=10, pady=10)
         
-        self.notifications = customtkinter.CTkCanvas(self.right_dashboard,width=300, bg="#00253e")
+        self.notifications = customtkinter.CTkCanvas(self.right_dashboard,width=500, bg="#00253e")
         self.notifications.pack(side=tkinter.LEFT, fill=tkinter.Y, expand=False, padx=10, pady=10)
         
         self.inner_right_panel = customtkinter.CTkCanvas(self.right_dashboard, width=1500, bg="#00253e")
         self.inner_right_panel.pack(side=tkinter.RIGHT, fill=tkinter.Y, expand=False, padx=10, pady=10)
-       
+        
         # Decorate Heading Banner    
         Label = customtkinter.CTkLabel(self.heading_banner, text="Dashboard", font=('Roboto', 30))
         Label.grid(row=0, column=0, padx=10, pady=10 )    
@@ -185,14 +186,13 @@ class App(customtkinter.CTk):
         # Decorate Notification Bar
         
         headers = ['archiveNumber', 'employee', 'dateRequested', 'Location']
-
+        self.data = [[f"{a}",f"{h} {i}",f"{c}",f"{e}"] for a,b,c,d,e,f,g,h,i,j,k,l in refresh_data()]
         # Create table
         # populate Table  
-        self.sheet = tksheet.Sheet(self.notifications, height = 800)
+        self.sheet = tksheet.Sheet(self.notifications, data = self.data, height = 800, theme = "dark")
         self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
-    
+
         self.sheet.headers((f"{x}" for x in headers))   
-        self.sheet.set_sheet_data([[f"{a}",f"{h} {i}",f"{c}",f"{e}"] for a,b,c,d,e,f,g,h,i,j,k,l in refresh_data()])
         
         # table enable choices listed below:
         self.sheet.enable_bindings(("single_select",
@@ -201,15 +201,55 @@ class App(customtkinter.CTk):
                             "row_select",
                             "column_width_resize",
                             "arrowkeys",
-                            "copy"))
-        def filter_rows():
-            display_rows(rows = None,
-                        all_rows_displayed = None,
-                        reset_col_positions = True,
-                        refresh = False,
-                        redraw = False,
-                        deselect_all = True,
-                        **kwargs)
+                            "copy"))  
+
+
+        self.sheet.create_header_dropdown(c = 0,
+                                            values = ["all", "1", "2", "3"], # TODO: change this to variable from data[0]
+                                            set_value = "all",
+                                            selection_function = self.header_dropdown_selected,
+                                            text = headers[0])
+        self.sheet.create_header_dropdown(c = 1,
+                                            values = ["all", "a", "b", "c"],
+                                            set_value = "all",
+                                            selection_function = self.header_dropdown_selected,
+                                            text = "Header B Name")
+        self.sheet.create_header_dropdown(c = 2,
+                                            values = ["all", "x", "y", "z"],
+                                            set_value = "all",
+                                            selection_function = self.header_dropdown_selected,
+                                            text = "Header C Name")
+        self.sheet.create_header_dropdown(c = 3,
+                                            values = ["all", "x", "y", "z"],
+                                            set_value = "all",
+                                            selection_function = self.header_dropdown_selected,
+                                            text = "Header C Name")
+        self.sheet.create_header_dropdown(c = 4,
+                                            values = ["all", "x", "y", "z"],
+                                            set_value = "all",
+                                            selection_function = self.header_dropdown_selected,
+                                            text = "Header C Name")
+    
+    def header_dropdown_selected(self, event = None):
+        hdrs = self.sheet.headers()
+        # this function is run before header cell data is set by dropdown selection
+        # so we have to get the new value from the event
+        hdrs[event.column] = event.text
+        if all(dd == "all" for dd in hdrs):
+            self.sheet.display_rows("all")
+        else:
+            for c, e in enumerate(hdrs):
+                print(c,e)
+
+            # for row in enumerate(self.data):
+                # print(row[2])
+ 
+            rows = [rn for rn, row in enumerate(self.data) if all(row[c][1] == e or e == "all" for c, e in enumerate(hdrs))]
+            
+            self.sheet.display_rows(rows = rows,
+                                    all_displayed = False)
+        self.sheet.redraw()
+            
         # Decorate Main dashboard page
         # If archivist, show to be deleted
         # If attorney, show your cases/analytics
@@ -245,7 +285,7 @@ class App(customtkinter.CTk):
         self.sheet = tksheet.Sheet(self.notifications, height = 800)
         self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
         # self.sheet.grid(row=0, column =0, padx = 10, pady = 10)
-       
+        
         self.sheet.headers((f"{x}" for x in headers))
         
         # populate Table
@@ -302,19 +342,17 @@ class App(customtkinter.CTk):
         # Decorate Main Page
         # grab data 
         def refresh_data():
-            return db_conn.all_client_information()
+            return db_conn.all_archived_state()
             
-        headers = ['id', 'Name', 'Surname', 'Gender', 'Date of Birth']
-        
+        headers = ['case Id', 'State', 'Archive Number', 'Archived Date', 'Date To Be Destroyed', 'Location']
+        self.data = [[f"{a}",f"{b}",f"{c}",f"{d}",f"{e}",f"{g}"] for a,b,c,d,e,f,g in refresh_data()]
         # Create table
-        self.sheet = tksheet.Sheet(self.inner_right_panel, height = 800, width = 1750)
+        self.sheet = tksheet.Sheet(self.inner_right_panel,data = self.data, theme = "dark", height = 800, width = 1750)
         self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
-        # self.sheet.grid(row=0, column =0, padx = 10, pady = 10)
      
         self.sheet.headers((f" {x}" for x in headers))
         
         # populate Table
-        self.sheet.set_sheet_data([[f"{a}", f"{b}",f"{c}",f"{d}",f"{e}"] for a,b,c,d,e in refresh_data() ])
         
         # table enable choices listed below:
         self.sheet.enable_bindings(("single_select",
@@ -357,18 +395,17 @@ class App(customtkinter.CTk):
         
         # Decorate inner right panel
         # grab data 
-        data = db_conn.all_case_data()
+        gathered_data = db_conn.all_case_data()
         headers = ['id', 'client', 'employee', 'Description', 'Department', 'Date of Open', 'Date of Upload']
-        
+        self.data = [[f"{a}",f"{p} {q}",f"{j} {k}",f"{d}",f"{e}",f"{f}",f"{g}"] for a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s in gathered_data ]
         # Create table
-        self.sheet = tksheet.Sheet(self.inner_right_panel, height = 800, width = 1750)
+        self.sheet = tksheet.Sheet(self.inner_right_panel, data = self.data, theme = "dark", height = 800, width = 1750)
         self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
         # self.sheet.grid(row=0, column = 0, padx = 10, pady = 10)
         
         self.sheet.headers((f"{x}" for x in headers))
         
         # populate Table
-        self.sheet.set_sheet_data([[f"{a}",f"{b}",f"{c}",f"{d}",f"{e}",f"{f}",f"{g}"] for a,b,c,d,e,f,g in data ])
         
         # table enable choices listed below:
         self.sheet.enable_bindings(("single_select",
@@ -407,26 +444,32 @@ class App(customtkinter.CTk):
         Label = customtkinter.CTkLabel(self.heading_banner, text="Cloud Upload", font=('Roboto', 30))
         Label.grid(row=0, column=0, padx=10, pady=10 )
         
-        Label = customtkinter.CTkLabel(self.heading_banner, text="Upload File", font=('Roboto', 24))
+        Label = customtkinter.CTkLabel(self.heading_banner, text="Download File", font=('Roboto', 24))
         Label.grid(row=0, column=4, padx=10, pady=10 )
-        
+        # TODO: change this button to download from cloud
         button = customtkinter.CTkButton(self.heading_banner, text= "", image=btnImg_add, fg_color="transparent", width=30, height=30, command= self.open_add_to_file_upload_data)
         button.grid(row=0, column=5, padx=5, pady=5) 
+        
+        Label = customtkinter.CTkLabel(self.heading_banner, text="Upload File", font=('Roboto', 24))
+        Label.grid(row=0, column=6, padx=10, pady=10 )
+        
+        button = customtkinter.CTkButton(self.heading_banner, text= "", image=btnImg_add, fg_color="transparent", width=30, height=30, command= self.open_add_to_file_upload_data)
+        button.grid(row=0, column=7, padx=5, pady=5) 
+        
 
         
         # grab data 
-        data = db_conn.all_file_upload_data()
+        gathered_data = db_conn.all_file_upload_data()
         headers = ['fileId', 'fileName', 'caseId', 'recievedDate', 'dateUploaded']
-        
+        self.data = [[f"{a}", f"{b}", f"{c}", f"{d}", f"{e}"] for a,b,c,d,e in gathered_data ]
         # Create table
-        self.sheet = tksheet.Sheet(self.inner_right_panel, height = 800, width = 1750)
+        self.sheet = tksheet.Sheet(self.inner_right_panel,data = self.data, theme = "dark", height = 800, width = 1750)
         self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
         # self.sheet.grid(row=0, column =0, padx = 10, pady = 10)
         
         self.sheet.headers((f" {x}" for x in headers))
         
         # populate Table
-        self.sheet.set_sheet_data([[f"{a}", f"{b}", f"{c}", f"{d}", f"{e}"] for a,b,c,d,e in data ])
         
         # table enable choices listed below:
         self.sheet.enable_bindings(("single_select",
@@ -472,18 +515,18 @@ class App(customtkinter.CTk):
 
         # Decorate inner right panel
         # grab data 
-        data = db_conn.all_client_information()
+        gathered_data = db_conn.all_client_information()
         headers = ['id', 'Name', 'Surname', 'Gender', 'Date of Birth']
+        self.data = [[f"{a}", f"{b}",f"{c}",f"{d}",f"{e}"] for a,b,c,d,e in gathered_data ]
         
         # Create table
-        self.sheet = tksheet.Sheet(self.inner_right_panel, height = 800, width = 1750)
+        self.sheet = tksheet.Sheet(self.inner_right_panel,data = self.data, theme = "dark", height = 800, width = 1750)
         self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
         # self.sheet.grid(row=0, column = 0, padx = 10, pady = 10)
         
         self.sheet.headers((f" {x}" for x in headers))
         
         # populate Table
-        self.sheet.set_sheet_data([[f"{a}", f"{b}",f"{c}",f"{d}",f"{e}"] for a,b,c,d,e in data ])
         
         # table enable choices listed below:
         self.sheet.enable_bindings(("single_select",

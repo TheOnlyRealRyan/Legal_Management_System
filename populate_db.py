@@ -1,13 +1,17 @@
 import add_to_db as add
 import time
 
+
+# Just a bunch of dummy data for testing
+
+# Destruction State
 id= 1
 state = "Destroyed"
 add.add_to_destruction_state(id, state)
 print("success")
 time.sleep(0.1)
 
-"""
+# Archive State
 for i in range(5):
     id= i+1
     archivedState = "Archived"
@@ -32,12 +36,14 @@ add.add_to_archived_state(id, archivedState, dateOfBirth)
 print("success")
 time.sleep(0.1)
 
+# Case Location
 archiveNumner = 0
 location = "Cupboard 12"
 add.add_to_case_location(archiveNumner, location)
 print("success")
 time.sleep(0.1)
 
+# Archive Case Request
 
 # for i in range(10):
 archiveNumber = 0
@@ -46,7 +52,7 @@ add.add_to_archived_case_request(archiveNumber, employeeId)
 print("success")
 time.sleep(0.1)
 
-
+# Client Information
 for i in range(50):
     name = f"ryan{i}"
     surname = "Putzier"
@@ -56,14 +62,14 @@ for i in range(50):
     print("success")
     time.sleep(0.2)
     
-    
+# Employee Roles    
 for i in range(10):
     roleDescription= "New{i}"
     add.add_to_employee_roles(roleDescription)
     print("success")
     time.sleep(0.1) 
     
-
+# Employee Account
 for i in range(10):
     firstname= f"Ryan {i}"
     lastname = "Putzier"
@@ -75,7 +81,7 @@ for i in range(10):
     print("success")
     time.sleep(0.1)  
  
-
+# Case Data
 for i in range(10):
     clientId = 1
     employeeId = 1
@@ -87,7 +93,7 @@ for i in range(10):
     print("success")
     time.sleep(0.1) 
 
-    
+# File Upload Data    
 for i in range(10):
     fileName = f"File Name {i}"
     caseId = 1
@@ -97,7 +103,7 @@ for i in range(10):
     print("success")
     time.sleep(0.1)    
 
-    
+# Archived State    
 for i in range(10):
     caseId = i
     archivedState = "Archived"
@@ -106,4 +112,3 @@ for i in range(10):
     print("success")
     time.sleep(0.1)    
     
-"""

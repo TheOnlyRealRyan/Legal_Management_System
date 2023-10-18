@@ -40,13 +40,13 @@ def all_client_information():
 
 
 def all_case_data():
-    mycursor.execute("SELECT * FROM case_data")
+    mycursor.execute("SELECT * FROM case_data LEFT JOIN employee_account ON case_data.employeeId=employee_account.employeeId LEFT JOIN client_information ON case_data.clientId=client_information.clientId")
     myresult = mycursor.fetchall()
     return myresult
 
 
 def all_archived_state():
-    mycursor.execute("SELECT * FROM archived_state")
+    mycursor.execute("SELECT * FROM archived_state LEFT JOIN case_location ON archived_state.archiveNumber=case_location.caseId")
     myresult = mycursor.fetchall()
     return myresult
 

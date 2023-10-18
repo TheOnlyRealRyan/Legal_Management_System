@@ -1,17 +1,25 @@
 import mysql.connector
 
 # Connect to Database
-mydb = mysql.connector.connect(
+try:   
+    mydb = mysql.connector.connect(
+        host = "localhost",
+        user = "root",
+        passwd = "mysql",
+        database="projectdb"
+    )
+except:
+    mydb = mysql.connector.connect(
     host = "localhost",
     user = "root",
-    passwd = "mysql",
-    database="projectdb"
-)
+    passwd = "mysql",)
+    
+    mycursor = mydb.cursor()
+    # Create Database
+    mycursor.execute("CREATE DATABASE projectdb")
+
 # Initialise cursor
 mycursor = mydb.cursor()
-
-# Create Database
-# mycursor.execute("CREATE DATABASE projectdb")
 
 
 # DELETE tables
