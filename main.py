@@ -44,10 +44,13 @@ class Login(customtkinter.CTkToplevel):
 
         checkbox = customtkinter.CTkCheckBox(self.main_container, text="Remember me") 
         def login_success(self):
-            success = validate(self.username.get(), self.password.get())
+            username = self.username.get()
+            success = validate(username, self.password.get())
             if success:
                 global user_role_logged_in
                 # TODO: set role here
+                user_role_logged_in = db_conn.login_employee_roles(username)
+                print("role got: " , user_role_logged_in)
                 self.withdraw()
                 self.destroy()
                 print("success")
@@ -108,7 +111,7 @@ class App(customtkinter.CTk):
         self.btn_client = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("customer"), fg_color="transparent", width=45, text="", command=self.client)
         self.btn_client.grid(row=5, column=0, padx=20, pady=10)
         
-        # TODO: If statement here to see if admin
+        # TODO: If statement here to see if admin          
         self.btn_admin = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("admin"), fg_color="transparent", width=45, text="", command=self.admin)
         self.btn_admin.grid(row=7, column=0, padx=20, pady=10)
         
@@ -610,14 +613,7 @@ class App(customtkinter.CTk):
     # -------------------------------------------- 
     # Popup windows focus functions
     # --------------------------------------------        
-    # TODO: Combine these into one function (pass in a value maybe)
-    def open_login(self):
-        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
-            self.toplevel_window = Login(self)  # create window if its None or destroyed
-            self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
-        else:
-            self.toplevel_window.focus()  # if window exists focus it
-    
+    # TODO: Combine these into one function (pass in a value maybe)   
     def open_add_to_employee_roles(self):
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
             self.toplevel_window = popup.popup_add_to_employee_roles(self)  # create window if its None or destroyed

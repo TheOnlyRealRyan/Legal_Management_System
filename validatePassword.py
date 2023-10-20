@@ -34,7 +34,6 @@ def validate(username, password):
 
     
     if hashed_password == db_password_hash:
-        print(hashed_password, db_password_hash)
         tkinter.messagebox.showinfo("Success",  "Welcome")
         return True
     else:

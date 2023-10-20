@@ -21,6 +21,14 @@ def all_employee_roles():
     return myresult
 
 
+def login_employee_roles(username):
+    mycursor.execute(f"SELECT employeeId FROM user_login_data WHERE username = '{username}'")
+    employeeId = sum(mycursor.fetchone()) # Convert tuple to int
+    mycursor.execute(f"SELECT roleId FROM employee_account WHERE employeeId = '{employeeId}'")
+    myresult = sum(mycursor.fetchone()) # Convert tuple to int
+    return myresult
+
+
 def all_employees():
     mycursor.execute("SELECT * FROM employee_information")
     myresult = mycursor.fetchall()
