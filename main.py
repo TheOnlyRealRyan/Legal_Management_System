@@ -1,12 +1,13 @@
-import tkinter
-from PIL import Image
 import customtkinter
-from add_to_db import *
-from validatePassword import *
-import grab_from_db as db_conn
+from PIL import Image
+import tkinter
 import tksheet
+
+from add_to_db import *
+import grab_from_db as db_conn
+from validatePassword import *
 import popup
-import numpy as np
+
 
 # TODO: validate Login into main page
 # TODO: change title headings from database titles to normal titles
@@ -31,23 +32,28 @@ class Login(customtkinter.CTk):
         label = customtkinter.CTkLabel(self.main_container, text="Login Page", font=("Roboto", 24))
         label.pack(pady=12, padx=10)
 
-        username = customtkinter.CTkEntry(self.main_container, placeholder_text="Username")
-        username.pack(pady=12, padx=10)
+        self.username = customtkinter.CTkEntry(self.main_container, placeholder_text="Username")
+        self.username.pack(pady=12, padx=10)
 
-        password = customtkinter.CTkEntry(self.main_container, placeholder_text="Password", show="*")
-        password.pack(pady=12, padx=10)
+        self.password = customtkinter.CTkEntry(self.main_container, placeholder_text="Password", show="*")
+        self.password.pack(pady=12, padx=10)
 
-        button = customtkinter.CTkButton(self.main_container, text="Login", command=lambda: validate(username.get(), password.get())) # Do login command/function here
+        button = customtkinter.CTkButton(self.main_container, text="Login", command=lambda: login_success(self)) # Do login command/function here
         button.pack(pady=12, padx=10)
 
         checkbox = customtkinter.CTkCheckBox(self.main_container, text="Remember me") 
-        
-        
+        def login_success(self):
+            success = validate(self.username.get(), self.password.get())
+            if success:
+                self.destroy()
+    
 
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()       
-             
+        login = Login()
+        login.mainloop()
+        
         self.title("Main Program")
       
         # Dimensions relating to screen size (Overlaps with taskbar)
@@ -603,6 +609,7 @@ class App(customtkinter.CTk):
     # -------------------------------------------- 
     # Popup windows focus functions
     # --------------------------------------------        
+    # TODO: Combine these into one function (pass in a value maybe)
     def open_add_to_employee_roles(self):
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
             self.toplevel_window = popup.popup_add_to_employee_roles(self)  # create window if its None or destroyed
@@ -717,8 +724,5 @@ class App(customtkinter.CTk):
         
 # Main Function
 if __name__ == "__main__":
-    
-    # login = Login()
-    # login.mainloop()
     app = App()
     app.mainloop()  

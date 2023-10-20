@@ -3,6 +3,15 @@ import time
 
 
 # Just a bunch of dummy data for testing
+# login data
+id= 1
+username = "admin"
+password = "admin"
+add.add_to_user_login_data(id, username, password)
+print("success")
+time.sleep(0.1)
+
+"""
 
 # Destruction State
 id= 1
@@ -111,4 +120,4 @@ for i in range(10):
     add.add_to_archived_state(caseId, archivedState, archivedDate)
     print("success")
     time.sleep(0.1)    
-    
+ """   
