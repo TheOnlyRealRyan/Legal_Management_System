@@ -17,10 +17,11 @@ customtkinter.set_appearance_mode(DARK_MODE)
 customtkinter.set_default_color_theme("dark-blue")
 
 
-class Login(customtkinter.CTk):
+class Login(customtkinter.CTkToplevel):
     """Login Page"""
-    def __init__(self):
-        super().__init__()       
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)  
+             
         self.title("Login Page")
         self.geometry("500x350")
         
@@ -45,17 +46,17 @@ class Login(customtkinter.CTk):
         def login_success(self):
             success = validate(self.username.get(), self.password.get())
             if success:
+                global user_role_logged_in
+                # TODO: set role here
+                self.withdraw()
                 self.destroy()
+                print("success")
     
 
 class App(customtkinter.CTk):
     def __init__(self):
-        super().__init__()       
-        login = Login()
-        login.mainloop()
-        
-        self.title("Main Program")
-      
+        super().__init__()      
+        self.title("Main Program")  
         # Dimensions relating to screen size (Overlaps with taskbar)
         self.geometry("{0}x{1}+0+0".format(self.winfo_screenwidth(), self.winfo_screenheight()-75))
 
@@ -610,6 +611,13 @@ class App(customtkinter.CTk):
     # Popup windows focus functions
     # --------------------------------------------        
     # TODO: Combine these into one function (pass in a value maybe)
+    def open_login(self):
+        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+            self.toplevel_window = Login(self)  # create window if its None or destroyed
+            self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
+        else:
+            self.toplevel_window.focus()  # if window exists focus it
+    
     def open_add_to_employee_roles(self):
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
             self.toplevel_window = popup.popup_add_to_employee_roles(self)  # create window if its None or destroyed
@@ -725,4 +733,5 @@ class App(customtkinter.CTk):
 # Main Function
 if __name__ == "__main__":
     app = App()
+    run = Login(app)
     app.mainloop()  
