@@ -9,7 +9,7 @@ from datetime import datetime
 # TODO: check that a case already doesnt have an assignment to it (case has a location already)
 
 # Display messages upon successful or failed insertion
-messagebox_show = True
+messagebox_show = False
 
 # Conenct to database
 mydb = mysql.connector.connect(
@@ -199,7 +199,7 @@ def add_to_archived_state(caseId, archivedState, archivedDate) -> None:
         print(e)  
   
     
-def add_to_case_location(caseId, location) -> None:
+def add_to_case_location(archiveNumber, location) -> None:
     """Inserts login details into case_location database"""
     # TODO: FIX THIS
     """
@@ -230,8 +230,8 @@ def add_to_case_location(caseId, location) -> None:
     """
     # Insert into Db  
     try:   
-        sqlFormula = "INSERT INTO case_location (caseId, location) VALUE (%s, %s)"
-        details = (caseId, location)
+        sqlFormula = "INSERT INTO case_location (archiveNumber, location) VALUE (%s, %s)"
+        details = (archiveNumber, location)
         mycursor.execute(sqlFormula, details)   
         mydb.commit()
         if messagebox_show == True: tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")

@@ -2,64 +2,14 @@ import add_to_db as add
 import time
 
 
+
+
+
+wait_time = 0
 # Just a bunch of dummy data for testing
-# login data
-id= 1
-username = "admin"
-password = "admin"
-add.add_to_user_login_data(id, username, password)
-print("success")
-time.sleep(0.1)
 
-"""
 
-# Destruction State
-id= 1
-state = "Destroyed"
-add.add_to_destruction_state(id, state)
-print("success")
-time.sleep(0.1)
 
-# Archive State
-for i in range(5):
-    id= i+1
-    archivedState = "Archived"
-
-    dateOfBirth = f"200{i}-06-06"
-    roleId = 1
-    add.add_to_archived_state(id, archivedState, dateOfBirth)
-    print("success")
-    time.sleep(0.1)  
-    
-id= 8
-archivedState = "Archived"
-dateOfBirth = "2016-11-06"
-add.add_to_archived_state(id, archivedState, dateOfBirth)
-print("success")
-time.sleep(0.1)
-
-id= 9
-archivedState = "Archived"
-dateOfBirth = "2016-09-06"
-add.add_to_archived_state(id, archivedState, dateOfBirth)
-print("success")
-time.sleep(0.1)
-
-# Case Location
-archiveNumner = 0
-location = "Cupboard 12"
-add.add_to_case_location(archiveNumner, location)
-print("success")
-time.sleep(0.1)
-
-# Archive Case Request
-
-# for i in range(10):
-archiveNumber = 0
-employeeId = 1
-add.add_to_archived_case_request(archiveNumber, employeeId)
-print("success")
-time.sleep(0.1)
 
 # Client Information
 for i in range(50):
@@ -69,26 +19,37 @@ for i in range(50):
     dob = "2001-06-06"
     add.add_to_client_information(name, surname, gender, dob)
     print("success")
-    time.sleep(0.2)
+    time.sleep(wait_time)
     
-# Employee Roles    
+# Employee Roles  
+
 for i in range(10):
-    roleDescription= "New{i}"
+    roleDescription= "Role number {i}"
     add.add_to_employee_roles(roleDescription)
     print("success")
-    time.sleep(0.1) 
+    time.sleep(wait_time) 
     
 # Employee Account
-for i in range(10):
+firstname= "admin"
+lastname = "admin"
+gender = "M"
+age = 20
+dateOfBirth = "2022-06-06"
+roleId = 1
+add.add_to_employee_account(age, firstname, lastname, gender, dateOfBirth, roleId)
+print("success")
+time.sleep(wait_time)  
+
+for i in range(1,10):
     firstname= f"Ryan {i}"
     lastname = "Putzier"
     gender = "M"
     age = i
     dateOfBirth = "2022-06-06"
-    roleId = 1
+    roleId = 2
     add.add_to_employee_account(age, firstname, lastname, gender, dateOfBirth, roleId)
     print("success")
-    time.sleep(0.1)  
+    time.sleep(wait_time)  
  
 # Case Data
 for i in range(10):
@@ -100,7 +61,7 @@ for i in range(10):
     dateUploaded = "2022-06-06"
     add.add_to_case_data(clientId, employeeId, description, department, dateOfCaseOpen, dateUploaded)
     print("success")
-    time.sleep(0.1) 
+    time.sleep(wait_time) 
 
 # File Upload Data    
 for i in range(10):
@@ -110,7 +71,7 @@ for i in range(10):
 
     add.add_to_file_upload_data(fileName, caseId, recievedDate)
     print("success")
-    time.sleep(0.1)    
+    time.sleep(wait_time)    
 
 # Archived State    
 for i in range(10):
@@ -119,5 +80,70 @@ for i in range(10):
     archivedDate = "2001-06-06"
     add.add_to_archived_state(caseId, archivedState, archivedDate)
     print("success")
-    time.sleep(0.1)    
- """   
+    time.sleep(wait_time)    
+ 
+# login data
+
+
+id= 1
+username = "admin"
+password = "admin"
+add.add_to_user_login_data(id, username, password)
+print("success")
+time.sleep(wait_time)
+
+id= 2
+username = "ryan"
+password = "ryan"
+add.add_to_user_login_data(id, username, password)
+print("success")
+time.sleep(wait_time)
+
+# Destruction State
+id= 1
+state = "Destroyed"
+add.add_to_destruction_state(id, state)
+print("success")
+time.sleep(wait_time)
+
+# Archive State
+for i in range(5):
+    id= i+1
+    archivedState = "Archived"
+
+    dateOfBirth = f"200{i}-06-06"
+    roleId = 1
+    add.add_to_archived_state(id, archivedState, dateOfBirth)
+    print("success")
+    time.sleep(wait_time)  
+    
+id= 8
+archivedState = "Archived"
+dateOfBirth = "2016-11-06"
+add.add_to_archived_state(id, archivedState, dateOfBirth)
+print("success")
+time.sleep(wait_time)
+
+id= 9
+archivedState = "Archived"
+dateOfBirth = "2016-09-06"
+add.add_to_archived_state(id, archivedState, dateOfBirth)
+print("success")
+time.sleep(wait_time)
+
+
+# Case Location
+archiveNumner = 0
+location = "Cupboard 12"
+add.add_to_case_location(archiveNumner, location)
+print("success")
+time.sleep(wait_time)
+
+
+# Archive Case Request
+# for i in range(10):
+archiveNumber = 0
+employeeId = 1
+add.add_to_archived_case_request(archiveNumber, employeeId)
+print("success")
+time.sleep(wait_time)

@@ -11,56 +11,46 @@ import popup
 
 # TODO: validate Login into main page
 # TODO: change title headings from database titles to normal titles
+
+
 # Initialise Appearance for customtkinter
 DARK_MODE = "dark"
 customtkinter.set_appearance_mode(DARK_MODE)
 customtkinter.set_default_color_theme("dark-blue")
 
 
-class Login(customtkinter.CTkToplevel):
-    """Login Page"""
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)  
-             
-        self.title("Login Page")
-        self.geometry("500x350")
-        
-        # root page
-        self.main_container = customtkinter.CTkCanvas(self, bg="#00253e")
-
-        self.main_container.pack(pady=20, padx=60, fill="both", expand=True)
-
-        label = customtkinter.CTkLabel(self.main_container, text="Login Page", font=("Roboto", 24))
-        label.pack(pady=12, padx=10)
-
-        self.username = customtkinter.CTkEntry(self.main_container, placeholder_text="Username")
-        self.username.pack(pady=12, padx=10)
-
-        self.password = customtkinter.CTkEntry(self.main_container, placeholder_text="Password", show="*")
-        self.password.pack(pady=12, padx=10)
-
-        button = customtkinter.CTkButton(self.main_container, text="Login", command=lambda: login_success(self)) # Do login command/function here
-        button.pack(pady=12, padx=10)
-
-        checkbox = customtkinter.CTkCheckBox(self.main_container, text="Remember me") 
-        def login_success(self):
-            username = self.username.get()
-            success = validate(username, self.password.get())
-            if success:
-                global user_role_logged_in
-                # TODO: set role here
-                user_role_logged_in = db_conn.login_employee_roles(username)
-                print("role got: " , user_role_logged_in)
-                self.withdraw()
-                self.destroy()
-                print("success")
-    
-
 class App(customtkinter.CTk):
     def __init__(self):
-        super().__init__()      
-        self.title("Main Program")  
-        # Dimensions relating to screen size (Overlaps with taskbar)
+        super().__init__()  
+        
+        # open login page
+        self.login()
+        
+        # 1 second update function
+        def update():
+            print(user_role_logged_in)
+            # self.update()
+            self.after(1000, update)
+        self.after(1000, update)
+        
+          
+    def load_image(self, img_picked):
+        """Load an image only if its called"""
+        try:
+            resource_path = "resources/icons_variation_2/"                
+            img= (Image.open(f"{resource_path}{img_picked}.png"))
+            resized_image= img.resize((30,30), Image.LANCZOS)
+            return customtkinter.CTkImage(resized_image)             
+        except IOError:
+            print("File not found") 
+            pass
+    
+    # --------------------------------------------------------------------------------------------------
+    # Different Pages that can be loaded
+    # --------------------------------------------------------------------------------------------------  
+    def load_main_page(self):    
+        self.title("Main Program")
+        # Dimensions relating to screen size
         self.geometry("{0}x{1}+0+0".format(self.winfo_screenwidth(), self.winfo_screenheight()-75))
 
         # root page
@@ -110,33 +100,58 @@ class App(customtkinter.CTk):
         
         self.btn_client = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("customer"), fg_color="transparent", width=45, text="", command=self.client)
         self.btn_client.grid(row=5, column=0, padx=20, pady=10)
-        
-        # TODO: If statement here to see if admin          
-        self.btn_admin = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("admin"), fg_color="transparent", width=45, text="", command=self.admin)
-        self.btn_admin.grid(row=7, column=0, padx=20, pady=10)
+             
+        if user_role_logged_in == 1:               
+            self.btn_admin = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("admin"), fg_color="transparent", width=45, text="", command=self.admin)
+            self.btn_admin.grid(row=7, column=0, padx=20, pady=10)
         
         self.btn_user = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("user"), fg_color="transparent", width=45, text="", command=self.user)
         self.btn_user.grid(row=8, column=0, padx=20, pady=10)
         
-        self.toplevel_window = None
+        self.toplevel_window = None  
         
+    def login(self):       
+        global user_role_logged_in
+        user_role_logged_in = 0 
+        # Layout        
+        self.title("Login Page")
+        self.geometry("500x350")
         
-    def load_image(self, img_picked):
-        """Load an image only if its called"""
-        try:
-            resource_path = "resources/icons_variation_2/"                
-            img= (Image.open(f"{resource_path}{img_picked}.png"))
-            resized_image= img.resize((30,30), Image.LANCZOS)
-            return customtkinter.CTkImage(resized_image)             
-        except IOError:
-            print("File not found") 
-            pass
+        # root page
+        self.login_page = customtkinter.CTkCanvas(self, bg="#00253e")
+
+        self.login_page.pack(pady=20, padx=60, fill="both", expand=True)
+
+        label = customtkinter.CTkLabel(self.login_page, text="Login Page", font=("Roboto", 24))
+        label.pack(pady=12, padx=10)
+
+        self.username = customtkinter.CTkEntry(self.login_page, placeholder_text="Username")
+        self.username.pack(pady=12, padx=10)
+
+        self.password = customtkinter.CTkEntry(self.login_page, placeholder_text="Password", show="*")
+        self.password.pack(pady=12, padx=10)
+
+        button = customtkinter.CTkButton(self.login_page, text="Login", command=lambda: self.login_success())
+        button.pack(pady=12, padx=10)
     
-    # --------------------------------------------------------------------------------------------------
-    # Functions for navigating to and decorating different frames 
-    # --------------------------------------------------------------------------------------------------  
-        
-    # TODO: See if this cant be a class
+    def login_success(self):
+        global user_role_logged_in
+        username = self.username.get()
+        success = validate(username, self.password.get())
+        if success:               
+            # TODO: set role here
+            user_role_logged_in = db_conn.login_employee_roles(username)            
+            print("success")
+            for widget in self.login_page.winfo_children():
+                widget.destroy()
+            self.login_page.destroy()
+            self.load_main_page()      
+    
+    
+    def get_role():
+        return  user_role_logged_in
+
+
     def dashboard(self):
         self.clear_canvas()
         
@@ -205,78 +220,7 @@ class App(customtkinter.CTk):
                                             selection_function = self.header_dropdown_selected,
                                             text = "Header C Name")
     
-    def header_dropdown_selected(self, event = None):
-        hdrs = self.sheet.headers()
-        # this function is run before header cell data is set by dropdown selection
-        # so we have to get the new value from the event
-        hdrs[event.column] = event.text
-        if all(dd == "all" for dd in hdrs):
-            self.sheet.display_rows("all")
-        else:
-            for c, e in enumerate(hdrs):
-                print(c,e)
-
-            # for row in enumerate(self.data):
-                # print(row[2])
- 
-            rows = [rn for rn, row in enumerate(self.data) if all(row[c][1] == e or e == "all" for c, e in enumerate(hdrs))]
-            
-            self.sheet.display_rows(rows = rows,
-                                    all_displayed = False)
-        self.sheet.redraw()
-            
-        # Decorate Main dashboard page
-        # If archivist, show to be deleted
-        # If attorney, show your cases/analytics
-        # If manager, show analytics
-        # TODO: User based Dashboard
-        
-        # Decorate inner right panel
-        """
-        # grab data 
-        data = list(db_conn.case_to_be_destroyed_this_month())
-        location = db_conn.all_case_location()
-        location_list = list()
-        headers = ['caseId', 'archivedState', 'archiveNumber', 'archivedDate', 'DateToBeDestroyed', 'Location']
-
-        # Link location to archiveNumber
-        for id_location,location_data in location:
-            for id_data,q,w,j,r in data:               
-                if id_location == id_data:
-                    location_list.append(location_data)
-                else:
-                    location_list.append("No Location")
-        
-        #TODO: Add location_list to data          
-        final_data = list()                      
-        for i in range(len(location_list)):
-            new_list = list(data[i]).append(location_list[i])
-            print(new_list)
-            
-        print(type(data))
-        print(location)
-        print(location_list)
-        # Create table
-        self.sheet = tksheet.Sheet(self.notifications, height = 800)
-        self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
-        # self.sheet.grid(row=0, column =0, padx = 10, pady = 10)
-        
-        self.sheet.headers((f"{x}" for x in headers))
-        
-        # populate Table
-        self.sheet.set_sheet_data([[f"{a}", f"{b}", f"{c}", f"{d}",f"{e}",f"{f}"] for a,b,c,d,e,f in data])
-        
-        # table enable choices listed below:
-        self.sheet.enable_bindings(("single_select",
-                            "double_click_column_resize",
-                            "column_width_resize",
-                            "row_select",
-                            "column_width_resize",
-                            "arrowkeys",
-                            "copy"))
-        """
-        
-               
+             
     def archive(self):
         self.clear_canvas()
         
@@ -401,8 +345,6 @@ class App(customtkinter.CTk):
         
         button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= self.open_add_to_file_upload_data)
         button.grid(row=0, column=7, padx=5, pady=5) 
-        
-
         
         # grab data 
         gathered_data = db_conn.all_file_upload_data()
@@ -601,11 +543,84 @@ class App(customtkinter.CTk):
         self.clear_canvas()
         # Decorate Right Frame
         
-                             
+        
+    #------------------------------------------------------------------   
+    # Function for headers on sheets
+    def header_dropdown_selected(self, event = None):
+        hdrs = self.sheet.headers()
+        # this function is run before header cell data is set by dropdown selection
+        # so we have to get the new value from the event
+        hdrs[event.column] = event.text
+        if all(dd == "all" for dd in hdrs):
+            self.sheet.display_rows("all")
+        else:
+            for c, e in enumerate(hdrs):
+                print(c,e)
+
+            # for row in enumerate(self.data):
+                # print(row[2])
+ 
+            rows = [rn for rn, row in enumerate(self.data) if all(row[c][1] == e or e == "all" for c, e in enumerate(hdrs))]
+            
+            self.sheet.display_rows(rows = rows,
+                                    all_displayed = False)
+        self.sheet.redraw()
+            
+        # Decorate Main dashboard page
+        # If archivist, show to be deleted
+        # If attorney, show your cases/analytics
+        # If manager, show analytics
+        # TODO: User based Dashboard
+        
+        # Decorate inner right panel
+        """
+        # grab data 
+        data = list(db_conn.case_to_be_destroyed_this_month())
+        location = db_conn.all_case_location()
+        location_list = list()
+        headers = ['caseId', 'archivedState', 'archiveNumber', 'archivedDate', 'DateToBeDestroyed', 'Location']
+
+        # Link location to archiveNumber
+        for id_location,location_data in location:
+            for id_data,q,w,j,r in data:               
+                if id_location == id_data:
+                    location_list.append(location_data)
+                else:
+                    location_list.append("No Location")
+        
+        #TODO: Add location_list to data          
+        final_data = list()                      
+        for i in range(len(location_list)):
+            new_list = list(data[i]).append(location_list[i])
+            print(new_list)
+            
+        print(type(data))
+        print(location)
+        print(location_list)
+        # Create table
+        self.sheet = tksheet.Sheet(self.notifications, height = 800)
+        self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+        # self.sheet.grid(row=0, column =0, padx = 10, pady = 10)
+        
+        self.sheet.headers((f"{x}" for x in headers))
+        
+        # populate Table
+        self.sheet.set_sheet_data([[f"{a}", f"{b}", f"{c}", f"{d}",f"{e}",f"{f}"] for a,b,c,d,e,f in data])
+        
+        # table enable choices listed below:
+        self.sheet.enable_bindings(("single_select",
+                            "double_click_column_resize",
+                            "column_width_resize",
+                            "row_select",
+                            "column_width_resize",
+                            "arrowkeys",
+                            "copy"))
+        """
+    
+    
+    # Clear the page function                         
     def clear_canvas(self):
         """ Clears canvas from right_dashboard before loading the new canvas """
-        self.right_dashboard.grid_rowconfigure((0,1,2,3,4,5,6,7,8), weight=0)
-        self.right_dashboard.grid_columnconfigure((0,1,2,3,4,5,6,7,8), weight=0)
         for widget in self.right_dashboard.winfo_children():
             widget.destroy()
     
@@ -729,5 +744,5 @@ class App(customtkinter.CTk):
 # Main Function
 if __name__ == "__main__":
     app = App()
-    run = Login(app)
+    # run = Login(app)
     app.mainloop()  
