@@ -7,6 +7,7 @@ from add_to_db import *
 import grab_from_db as db_conn
 from validatePassword import *
 import popup
+import global_variables
 
 
 # TODO: validate Login into main page
@@ -28,7 +29,7 @@ class App(customtkinter.CTk):
         
         # 1 second update function
         def update():
-            print(user_role_logged_in)
+            # print(user_role_logged_in)
             # self.update()
             self.after(1000, update)
         self.after(1000, update)
@@ -91,17 +92,18 @@ class App(customtkinter.CTk):
 
         self.btn_archive = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("archive"), fg_color="transparent", width=45, text="", command=self.archive)
         self.btn_archive.grid(row=2, column=0, padx=20, pady=10)
-        
+            
         self.btn_case = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("case"), fg_color="transparent", width=45, text="", command=self.case)
         self.btn_case.grid(row=3, column=0, padx=20, pady=10)
         
-        self.btn_files = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("files"), fg_color="transparent", width=45, text="", command=self.files)
-        self.btn_files.grid(row=4, column=0, padx=20, pady=10)
+        if global_variables.get_id() != 2: # If not archivist
+            self.btn_files = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("files"), fg_color="transparent", width=45, text="", command=self.files)
+            self.btn_files.grid(row=4, column=0, padx=20, pady=10)
         
         self.btn_client = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("customer"), fg_color="transparent", width=45, text="", command=self.client)
         self.btn_client.grid(row=5, column=0, padx=20, pady=10)
              
-        if user_role_logged_in == 1:               
+        if global_variables.get_id() == 1: # If admin        
             self.btn_admin = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("admin"), fg_color="transparent", width=45, text="", command=self.admin)
             self.btn_admin.grid(row=7, column=0, padx=20, pady=10)
         
@@ -110,9 +112,7 @@ class App(customtkinter.CTk):
         
         self.toplevel_window = None  
         
-    def login(self):       
-        global user_role_logged_in
-        user_role_logged_in = 0 
+    def login(self):              
         # Layout        
         self.title("Login Page")
         self.geometry("500x350")
@@ -125,31 +125,28 @@ class App(customtkinter.CTk):
         label = customtkinter.CTkLabel(self.login_page, text="Login Page", font=("Roboto", 24))
         label.pack(pady=12, padx=10)
 
-        self.username = customtkinter.CTkEntry(self.login_page, placeholder_text="Username")
+        self.username = customtkinter.CTkEntry(self.login_page, placeholder_text = "username")
         self.username.pack(pady=12, padx=10)
 
-        self.password = customtkinter.CTkEntry(self.login_page, placeholder_text="Password", show="*")
+        self.password = customtkinter.CTkEntry(self.login_page, placeholder_text = "password", show="*")
         self.password.pack(pady=12, padx=10)
 
         button = customtkinter.CTkButton(self.login_page, text="Login", command=lambda: self.login_success())
         button.pack(pady=12, padx=10)
     
-    def login_success(self):
-        global user_role_logged_in
-        username = self.username.get()
-        success = validate(username, self.password.get())
-        if success:               
-            # TODO: set role here
-            user_role_logged_in = db_conn.login_employee_roles(username)            
-            print("success")
+    def login_success(self):       
+        username = "admin" # self.username.get()
+        password = "admin" # self.password.get()
+        success = validate(username, password)
+        if success:                          
+            global_variables.set_role(db_conn.login_employee_roles(username))
+            global_variables.set_id(db_conn.login_employee_id(username)) 
+            
+            print("Login Successful")
             for widget in self.login_page.winfo_children():
                 widget.destroy()
             self.login_page.destroy()
-            self.load_main_page()      
-    
-    
-    def get_role():
-        return  user_role_logged_in
+            self.load_main_page()         
 
 
     def dashboard(self):
@@ -163,7 +160,7 @@ class App(customtkinter.CTk):
         self.heading_banner = customtkinter.CTkCanvas(self.right_dashboard, height = 50, bg="#00253e")
         self.heading_banner.pack(side=tkinter.TOP, fill=tkinter.X, expand=False, padx=10, pady=10)
         
-        self.notifications = customtkinter.CTkCanvas(self.right_dashboard,width=500, bg="#00253e")
+        self.notifications = customtkinter.CTkCanvas(self.right_dashboard,width=500, bg="#00253e", scrollregion = (0,0,2000,10000))
         self.notifications.pack(side=tkinter.LEFT, fill=tkinter.Y, expand=False, padx=10, pady=10)
         
         self.inner_right_panel = customtkinter.CTkCanvas(self.right_dashboard, width=1500, bg="#00253e")
@@ -174,12 +171,12 @@ class App(customtkinter.CTk):
         Label.grid(row=0, column=0, padx=10, pady=10 )    
         
         # Decorate Notification Bar
-        
         headers = ['archiveNumber', 'employee', 'dateRequested', 'Location']
         self.data = [[f"{a}",f"{h} {i}",f"{c}",f"{e}"] for a,b,c,d,e,f,g,h,i,j,k,l in refresh_data()]
         # Create table
         # populate Table  
         self.sheet = tksheet.Sheet(self.notifications, data = self.data, height = 800, theme = "dark")
+        # self.sheet.grid(row=0, column=0, padx=10, pady=10)
         self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
 
         self.sheet.headers((f"{x}" for x in headers))   
@@ -219,7 +216,7 @@ class App(customtkinter.CTk):
                                             set_value = "all",
                                             selection_function = self.header_dropdown_selected,
                                             text = "Header C Name")
-    
+
              
     def archive(self):
         self.clear_canvas()
@@ -292,6 +289,12 @@ class App(customtkinter.CTk):
         
         button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= self.open_add_to_case_data)
         button.grid(row=0, column=5, padx=5, pady=5)
+        
+        Label = customtkinter.CTkLabel(self.heading_banner, text="Delete Case Request", font=('Roboto', 24))
+        Label.grid(row=0, column=6, padx=10, pady=10 )
+        
+        button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= self.open_add_to_deletion_confirmation)
+        button.grid(row=0, column=7, padx=5, pady=5)
         
         # Decorate inner right panel
         # grab data 
@@ -394,12 +397,18 @@ class App(customtkinter.CTk):
         # Decorate inner right panel
         # grab data 
         gathered_data = db_conn.all_client_information()
-        headers = ['id', 'Name', 'Surname', 'Gender', 'Date of Birth']
+        headers = ['id', 'Name', 'Surname', 'Gender', 'Date of Birth', 'Checked']
         self.data = [[f"{a}", f"{b}",f"{c}",f"{d}",f"{e}"] for a,b,c,d,e in gathered_data ]
         
         # Create table
-        self.sheet = tksheet.Sheet(self.inner_right_panel,data = self.data, theme = "dark", height = 800, width = 1750)
-        self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+        self.sheet = tksheet.Sheet(self.inner_right_panel,  
+                                    data = self.data, 
+                                    theme = "dark", 
+                                    height = 800, 
+                                    width = 1750,)
+
+        self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10,)
+
         # self.sheet.grid(row=0, column = 0, padx = 10, pady = 10)
         
         self.sheet.headers((f" {x}" for x in headers))

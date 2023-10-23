@@ -3,7 +3,7 @@ import add_to_db as db_conn
 from tkcalendar import Calendar
 from tkinter.filedialog import askopenfile
 import upload_file
-
+import global_variables
 
 # POPUP windows Decoration classes
 class popup_add_to_employee_roles(customtkinter.CTkToplevel):
@@ -27,7 +27,7 @@ class popup_add_to_employee_account(customtkinter.CTkToplevel):
         super().__init__(*args, **kwargs)
         self.geometry("750x750")
         self.title("Employee Account")
-     
+
         # Decorate here
         customtkinter.CTkLabel(self, text="Enter first name", font=("Roboto", 24)).pack(padx=12, pady=10)
         txtName = customtkinter.CTkEntry(self, placeholder_text="Name")
@@ -266,10 +266,27 @@ class popup_add_to_deletion_confirmation(customtkinter.CTkToplevel):
     """ Popup window to add to deletion_confirmation database"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        print(args)
         self.geometry("750x750")
         self.title("Deletion Confirmation")
-     
-        # Decorate here
+        
+
+        print(global_variables.get_id())
+
+        # Decorate here        
+        customtkinter.CTkLabel(self, text="Enter caseId", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtcaseId = customtkinter.CTkEntry(self, placeholder_text="id")
+        txtcaseId.pack(pady=12, padx=10)
+
+        employeeId2 = 1 # manager ID
+        
+        # Submit Button
+        customtkinter.CTkButton(self, text="Submit", command=lambda: db_conn.add_to_deletion_confirmation(txtcaseId.get(), 
+                                                                                                          global_variables.get_id(),
+                                                                                                          employeeId2,
+                                                                                                          True,
+                                                                                                          False                                                                                                         
+                                                                                                          )).pack(pady=12, padx=10)
 
         
         # Submit Button
@@ -296,18 +313,13 @@ class popup_add_to_archived_case_request(customtkinter.CTkToplevel):
         self.geometry("750x750")
         self.title("Archive Request")
      
-        # Decorate here
-        # TODO: Grab the employeeID  that is logged in and send it through
-        customtkinter.CTkLabel(self, text="Enter employee Id", font=("Roboto", 24)).pack(padx=12, pady=10)
-        txtID = customtkinter.CTkEntry(self, placeholder_text="id")
-        txtID.pack(pady=12, padx=10)
-        
+        # Decorate here        
         customtkinter.CTkLabel(self, text="Enter Archive Number", font=("Roboto", 24)).pack(padx=12, pady=10)
         txtArchive = customtkinter.CTkEntry(self, placeholder_text="number")
         txtArchive.pack(pady=12, padx=10)
         
         # Submit Button
-        customtkinter.CTkButton(self, text="Submit", command=lambda: db_conn.add_to_archived_case_request(txtID.get(), txtArchive.get())).pack(pady=12, padx=10)
+        customtkinter.CTkButton(self, text="Submit", command=lambda: db_conn.add_to_archived_case_request(global_variables.get_id(), txtArchive.get())).pack(pady=12, padx=10)
 
 
 class popup_add_to_case_drawn_by(customtkinter.CTkToplevel):
@@ -343,11 +355,11 @@ class popup_add_to_case_drawn_by(customtkinter.CTkToplevel):
         txtAge.pack(pady=12, padx=10)
         
         # Submit Button
-        customtkinter.CTkButton(self, text="Submit", command=lambda: db_conn.add_to_employee_account(txtAge.get(), txtName.get(), txtSurname.get(), txtGender.get(), txtBirth.get(), txtRoleId.get())).pack(pady=12, padx=10)
+        customtkinter.CTkButton(self, text="Submit", command=lambda: db_conn.add_to_case_drawn_by(txtAge.get(), txtName.get(), txtSurname.get(), txtGender.get(), txtBirth.get(), txtRoleId.get())).pack(pady=12, padx=10)
 
 
 class popup_add_to_case_drawn_history(customtkinter.CTkToplevel):
-    """ Popup window to add to employee_account database"""
+    """ Popup window to add to case_drawn_history database"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.geometry("750x750")
