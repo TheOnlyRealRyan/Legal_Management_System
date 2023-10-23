@@ -28,6 +28,7 @@ def login_employee_roles(username):
     myresult = sum(mycursor.fetchone()) # Convert tuple to int
     return myresult
 
+
 def login_employee_id(username):
     mycursor.execute(f"SELECT employeeId FROM user_login_data WHERE username = '{username}'")
     employeeId = sum(mycursor.fetchone()) # Convert tuple to int
@@ -65,12 +66,25 @@ def all_case_data():
     return myresult
 
 
+def case_data_by_id(caseId):
+    mycursor.execute(f"SELECT * FROM case_data LEFT JOIN employee_account ON case_data.employeeId=employee_account.employeeId LEFT JOIN client_information ON case_data.clientId=client_information.clientId WHERE caseId = '{caseId}'")
+    myresult = mycursor.fetchall()
+    return myresult
+
+
 def all_archived_state():
     mycursor.execute("SELECT * FROM archived_state LEFT JOIN case_location ON archived_state.archiveNumber=case_location.archiveNumber")
     myresult = mycursor.fetchall()
     return myresult
 
 
+def case_location_by_id(archiveNumber):
+    mycursor.execute(f"SELECT * FROM case_location WHERE archiveNumber = '{archiveNumber}'")
+    myresult = mycursor.fetchone()
+    return myresult
+    
+    
+    
 def all_case_location():
     mycursor.execute("SELECT * FROM case_location")
     myresult = mycursor.fetchall()
@@ -90,7 +104,7 @@ def all_file_upload_data():
 
 
 def all_deletion_confirmation():
-    mycursor.execute("SELECT * FROM deletion_confirmation")
+    mycursor.execute("SELECT caseId, firstName, lastName FROM deletion_confirmation LEFT JOIN employee_account ON employee_account.employeeId=deletion_confirmation.employeeId1")
     myresult = mycursor.fetchall()
     return myresult
 

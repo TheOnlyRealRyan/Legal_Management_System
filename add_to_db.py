@@ -2,6 +2,8 @@ import mysql.connector
 import tkinter.messagebox 
 import hashlib
 from datetime import datetime
+import grab_from_db as grab
+import global_variables as gv
 
 
 # TODO: Error handling of inputs
@@ -147,7 +149,6 @@ def add_to_client_information(firstName, lastName, gender, dateOfBirth) -> None:
         print(e)    
     
 
-
 def add_to_case_data(clientId, employeeId, description, department, dateOfCaseOpen, dateUploaded) -> None:
     """Inserts login details into case_data database"""
     sqlFormula = "INSERT INTO case_data (caseId, clientId, employeeId, description, department, dateOfCaseOpen, dateUploaded) VALUE (%s, %s, %s, %s, %s, %s, %s)"
@@ -200,17 +201,16 @@ def add_to_archived_state(caseId, archivedState, archivedDate) -> None:
   
     
 def add_to_case_location(archiveNumber, location) -> None:
-    """Inserts login details into case_location database"""
+    """Inserts into case_location database"""
     # TODO: FIX THIS
-    """
-    find = f"SELECT caseId FROM case_location WHERE caseId = '{caseId}'"  
-    exists = mycursor.execute(find) 
-    print(exists)
-    if exists != None:
-        NewsqlFormula = f"UPDATE case_location SET location = '{location}' WHERE caseId = '{caseId}'"  
+    find = grab.case_location_by_id(archiveNumber)
+    print(find)
+    
+    if find != None:
+        sqlFormula = f"UPDATE case_location SET location = '{location}' WHERE archiveNumber = '{archiveNumber}'"  
         # Insert into Db  
         try: 
-            mycursor.execute(NewsqlFormula)       
+            mycursor.execute(sqlFormula)       
             mydb.commit()
             if messagebox_show == True: tkinter.messagebox.showinfo("Success",  "Succesfully updated Database")
         except Exception as e:
@@ -219,15 +219,15 @@ def add_to_case_location(archiveNumber, location) -> None:
     else:
         # Insert into Db  
         try:   
-            sqlFormula = "INSERT INTO case_location (caseId, location) VALUE (%s, %s)"
-            details = (caseId, location)
+            sqlFormula = "INSERT INTO case_location (archiveNumber, location) VALUE (%s, %s)"
+            details = (archiveNumber, location)
             mycursor.execute(sqlFormula, details)   
             mydb.commit()
             if messagebox_show == True: tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
         except Exception as e:
             if messagebox_show == True: tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
             print(e) 
-    """
+
     # Insert into Db  
     try:   
         sqlFormula = "INSERT INTO case_location (archiveNumber, location) VALUE (%s, %s)"
@@ -307,13 +307,13 @@ def add_to_deletion_logging(caseId, employeeId1, employeeId2, deletionDate, dele
         print(e) 
 
 
-def add_to_archived_case_request(archiveNumber, employeeId) -> None:
+def add_to_archived_case_request(archiveNumber) -> None:
     """Inserts login details into archived_case_request database"""
-    sqlFormula = "INSERT INTO archived_case_request (archiveNumber, employeeId, dateRequested) VALUE (%s, %s, %s)"
-                
+    sqlFormula = "INSERT INTO archived_case_request (archiveNumber, employeeId, dateRequested) VALUE (%s, %s, %s)" 
+               
     # Insert into Db
     try:     
-        details = (archiveNumber, employeeId, datetime.today().strftime('%Y-%m-%d'))
+        details = (archiveNumber, gv.get_id(), datetime.today().strftime('%Y-%m-%d'))
         mycursor.execute(sqlFormula, details)   
         mydb.commit()
         if messagebox_show == True: tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")

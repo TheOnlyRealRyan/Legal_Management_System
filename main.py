@@ -2,6 +2,7 @@ import customtkinter
 from PIL import Image
 import tkinter
 import tksheet
+import time 
 
 from add_to_db import *
 import grab_from_db as db_conn
@@ -26,15 +27,16 @@ class App(customtkinter.CTk):
         
         # open login page
         self.login()
+        # self.after(1000, self.update)
         
-        # 1 second update function
-        def update():
-            # print(user_role_logged_in)
-            # self.update()
-            self.after(1000, update)
-        self.after(1000, update)
-        
-          
+    
+    
+    def update(self):
+        """1 second update function """
+        # print(gv.get_role())   
+        self.after(1000, self.update)
+    
+                 
     def load_image(self, img_picked):
         """Load an image only if its called"""
         try:
@@ -107,8 +109,8 @@ class App(customtkinter.CTk):
             self.btn_admin = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("admin"), fg_color="transparent", width=45, text="", command=self.admin)
             self.btn_admin.grid(row=7, column=0, padx=20, pady=10)
         
-        self.btn_user = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("user"), fg_color="transparent", width=45, text="", command=self.user)
-        self.btn_user.grid(row=8, column=0, padx=20, pady=10)
+        # self.btn_user = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("user"), fg_color="transparent", width=45, text="", command=self.user)
+        # self.btn_user.grid(row=8, column=0, padx=20, pady=10)
         
         self.toplevel_window = None  
         
@@ -133,6 +135,7 @@ class App(customtkinter.CTk):
 
         button = customtkinter.CTkButton(self.login_page, text="Login", command=lambda: self.login_success())
         button.pack(pady=12, padx=10)
+    
     
     def login_success(self):       
         username = "admin" # self.username.get()
@@ -160,63 +163,65 @@ class App(customtkinter.CTk):
         self.heading_banner = customtkinter.CTkCanvas(self.right_dashboard, height = 50, bg="#00253e")
         self.heading_banner.pack(side=tkinter.TOP, fill=tkinter.X, expand=False, padx=10, pady=10)
         
-        self.notifications = customtkinter.CTkCanvas(self.right_dashboard,width=500, bg="#00253e", scrollregion = (0,0,2000,10000))
+        self.notifications = customtkinter.CTkCanvas(self.right_dashboard,width=1000, bg="#00253e")
         self.notifications.pack(side=tkinter.LEFT, fill=tkinter.Y, expand=False, padx=10, pady=10)
         
-        self.inner_right_panel = customtkinter.CTkCanvas(self.right_dashboard, width=1500, bg="#00253e")
+        self.deletion_notifications = customtkinter.CTkCanvas(self.right_dashboard,width=300, bg="#00253e")
+        self.deletion_notifications.pack(side=tkinter.LEFT, fill=tkinter.Y, expand=False, padx=10, pady=10)
+        
+        self.inner_right_panel = customtkinter.CTkCanvas(self.right_dashboard, width=800, bg="#00253e")
         self.inner_right_panel.pack(side=tkinter.RIGHT, fill=tkinter.Y, expand=False, padx=10, pady=10)
         
         # Decorate Heading Banner    
         Label = customtkinter.CTkLabel(self.heading_banner, text="Dashboard", font=('Roboto', 30))
         Label.grid(row=0, column=0, padx=10, pady=10 )    
-        
-        # Decorate Notification Bar
-        headers = ['archiveNumber', 'employee', 'dateRequested', 'Location']
-        self.data = [[f"{a}",f"{h} {i}",f"{c}",f"{e}"] for a,b,c,d,e,f,g,h,i,j,k,l in refresh_data()]
-        # Create table
-        # populate Table  
-        self.sheet = tksheet.Sheet(self.notifications, data = self.data, height = 800, theme = "dark")
-        # self.sheet.grid(row=0, column=0, padx=10, pady=10)
-        self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
 
-        self.sheet.headers((f"{x}" for x in headers))   
-        
-        # table enable choices listed below:
-        self.sheet.enable_bindings(("single_select",
-                            "double_click_column_resize",
-                            "column_width_resize",
-                            "row_select",
-                            "column_width_resize",
-                            "arrowkeys",
-                            "copy"))  
+        # Decorate Deletion Notification Bar
+        if global_variables.get_id() == 2 or global_variables.get_id() == 1:
+            Label = customtkinter.CTkLabel(self.notifications, text="Archival Retrieval Requests", font=('Roboto', 24))
+            Label.pack(side=tkinter.TOP, padx=10, pady=10) 
+            
+            headers = ['archiveNumber', 'employee', 'dateRequested', 'Location']
+            self.data = [[f"{a}",f"{h} {i}",f"{c}",f"{e}"] for a,b,c,d,e,f,g,h,i,j,k,l in refresh_data()]
+            
+            # Create table
+            self.sheet1 = tksheet.Sheet(self.notifications, data = self.data, height = 800, theme = "dark", show_row_index=False, show_top_left=False)
+            self.sheet1.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
 
+            self.sheet1.headers((f"{x}" for x in headers))   
+            
+            # table enable choices listed below:
+            self.sheet1.enable_bindings(("single_select",
+                                "double_click_column_resize",
+                                "column_width_resize",
+                                "row_select",
+                                "column_width_resize",
+                                "arrowkeys",
+                                "copy")) 
+            
+                   
+        # Decorate Archive Retrival Notification Bar
+        if global_variables.get_id() == 2 or global_variables.get_id() == 1: # manager or admin role
+            Label = customtkinter.CTkLabel(self.deletion_notifications, text="Deletion Requests", font=('Roboto', 24))
+            Label.pack(side=tkinter.TOP, padx=10, pady=10)
+            
+            headers = ['caseId', 'employee requested']
+            self.data = [[f"{a}",f"{b} {c}"] for a,b,c in db_conn.all_deletion_confirmation()]
+            
+            self.sheet2 = tksheet.Sheet(self.deletion_notifications, data = self.data, height = 800, theme = "dark", show_row_index=False, show_top_left=False)
+            self.sheet2.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
 
-        self.sheet.create_header_dropdown(c = 0,
-                                            values = ["all", "1", "2", "3"], # TODO: change this to variable from data[0]
-                                            set_value = "all",
-                                            selection_function = self.header_dropdown_selected,
-                                            text = headers[0])
-        self.sheet.create_header_dropdown(c = 1,
-                                            values = ["all", "a", "b", "c"],
-                                            set_value = "all",
-                                            selection_function = self.header_dropdown_selected,
-                                            text = "Header B Name")
-        self.sheet.create_header_dropdown(c = 2,
-                                            values = ["all", "x", "y", "z"],
-                                            set_value = "all",
-                                            selection_function = self.header_dropdown_selected,
-                                            text = "Header C Name")
-        self.sheet.create_header_dropdown(c = 3,
-                                            values = ["all", "x", "y", "z"],
-                                            set_value = "all",
-                                            selection_function = self.header_dropdown_selected,
-                                            text = "Header C Name")
-        self.sheet.create_header_dropdown(c = 4,
-                                            values = ["all", "x", "y", "z"],
-                                            set_value = "all",
-                                            selection_function = self.header_dropdown_selected,
-                                            text = "Header C Name")
-
+            self.sheet2.headers((f"{x}" for x in headers))   
+            
+            # table enable choices listed below:
+            self.sheet2.enable_bindings(("single_select",
+                                "double_click_column_resize",
+                                "column_width_resize",
+                                "row_select",
+                                "column_width_resize",
+                                "arrowkeys",
+                                "copy")) 
+    
              
     def archive(self):
         self.clear_canvas()
@@ -245,6 +250,12 @@ class App(customtkinter.CTk):
         button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= self.open_add_to_archived_case_request)
         button.grid(row=0, column=7, padx=5, pady=5)
         
+        Label = customtkinter.CTkLabel(self.heading_banner, text="Give Location", font=('Roboto', 24))
+        Label.grid(row=0, column=8, padx=10, pady=10 )
+        
+        button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= self.open_add_to_case_location)
+        button.grid(row=0, column=9, padx=5, pady=5)
+        
         # Decorate Main Page
         # grab data 
         def refresh_data():
@@ -253,7 +264,7 @@ class App(customtkinter.CTk):
         headers = ['case Id', 'State', 'Archive Number', 'Archived Date', 'Date To Be Destroyed', 'Location']
         self.data = [[f"{a}",f"{b}",f"{c}",f"{d}",f"{e}",f"{g}"] for a,b,c,d,e,f,g in refresh_data()]
         # Create table
-        self.sheet = tksheet.Sheet(self.inner_right_panel,data = self.data, theme = "dark", height = 800, width = 1750)
+        self.sheet = tksheet.Sheet(self.inner_right_panel,data = self.data, theme = "dark", height = 800, width = 1750, show_row_index=False, show_top_left=False)
         self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
      
         self.sheet.headers((f" {x}" for x in headers))
@@ -302,7 +313,7 @@ class App(customtkinter.CTk):
         headers = ['id', 'client', 'employee', 'Description', 'Department', 'Date of Open', 'Date of Upload']
         self.data = [[f"{a}",f"{p} {q}",f"{j} {k}",f"{d}",f"{e}",f"{f}",f"{g}"] for a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s in gathered_data ]
         # Create table
-        self.sheet = tksheet.Sheet(self.inner_right_panel, data = self.data, theme = "dark", height = 800, width = 1750)
+        self.sheet = tksheet.Sheet(self.inner_right_panel, data = self.data, theme = "dark", height = 800, width = 1750, show_row_index=False, show_top_left=False)
         self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
         # self.sheet.grid(row=0, column = 0, padx = 10, pady = 10)
         
@@ -354,7 +365,7 @@ class App(customtkinter.CTk):
         headers = ['fileId', 'fileName', 'caseId', 'recievedDate', 'dateUploaded']
         self.data = [[f"{a}", f"{b}", f"{c}", f"{d}", f"{e}"] for a,b,c,d,e in gathered_data ]
         # Create table
-        self.sheet = tksheet.Sheet(self.inner_right_panel,data = self.data, theme = "dark", height = 800, width = 1750)
+        self.sheet = tksheet.Sheet(self.inner_right_panel,data = self.data, theme = "dark", height = 800, width = 1750, show_row_index=False, show_top_left=False)
         self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
         # self.sheet.grid(row=0, column =0, padx = 10, pady = 10)
         
@@ -405,7 +416,9 @@ class App(customtkinter.CTk):
                                     data = self.data, 
                                     theme = "dark", 
                                     height = 800, 
-                                    width = 1750,)
+                                    width = 1750,
+                                    show_row_index=False, 
+                                    show_top_left=False)
 
         self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10,)
 
@@ -547,85 +560,8 @@ class App(customtkinter.CTk):
         Label.grid(row=2, column=0, padx=20, pady=(10, 0))      
         optionmenu.grid(row=3, column=0, padx=20, pady=(10, 0))
         
-
-    def user(self):
-        self.clear_canvas()
-        # Decorate Right Frame
         
-        
-    #------------------------------------------------------------------   
-    # Function for headers on sheets
-    def header_dropdown_selected(self, event = None):
-        hdrs = self.sheet.headers()
-        # this function is run before header cell data is set by dropdown selection
-        # so we have to get the new value from the event
-        hdrs[event.column] = event.text
-        if all(dd == "all" for dd in hdrs):
-            self.sheet.display_rows("all")
-        else:
-            for c, e in enumerate(hdrs):
-                print(c,e)
-
-            # for row in enumerate(self.data):
-                # print(row[2])
- 
-            rows = [rn for rn, row in enumerate(self.data) if all(row[c][1] == e or e == "all" for c, e in enumerate(hdrs))]
-            
-            self.sheet.display_rows(rows = rows,
-                                    all_displayed = False)
-        self.sheet.redraw()
-            
-        # Decorate Main dashboard page
-        # If archivist, show to be deleted
-        # If attorney, show your cases/analytics
-        # If manager, show analytics
-        # TODO: User based Dashboard
-        
-        # Decorate inner right panel
-        """
-        # grab data 
-        data = list(db_conn.case_to_be_destroyed_this_month())
-        location = db_conn.all_case_location()
-        location_list = list()
-        headers = ['caseId', 'archivedState', 'archiveNumber', 'archivedDate', 'DateToBeDestroyed', 'Location']
-
-        # Link location to archiveNumber
-        for id_location,location_data in location:
-            for id_data,q,w,j,r in data:               
-                if id_location == id_data:
-                    location_list.append(location_data)
-                else:
-                    location_list.append("No Location")
-        
-        #TODO: Add location_list to data          
-        final_data = list()                      
-        for i in range(len(location_list)):
-            new_list = list(data[i]).append(location_list[i])
-            print(new_list)
-            
-        print(type(data))
-        print(location)
-        print(location_list)
-        # Create table
-        self.sheet = tksheet.Sheet(self.notifications, height = 800)
-        self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
-        # self.sheet.grid(row=0, column =0, padx = 10, pady = 10)
-        
-        self.sheet.headers((f"{x}" for x in headers))
-        
-        # populate Table
-        self.sheet.set_sheet_data([[f"{a}", f"{b}", f"{c}", f"{d}",f"{e}",f"{f}"] for a,b,c,d,e,f in data])
-        
-        # table enable choices listed below:
-        self.sheet.enable_bindings(("single_select",
-                            "double_click_column_resize",
-                            "column_width_resize",
-                            "row_select",
-                            "column_width_resize",
-                            "arrowkeys",
-                            "copy"))
-        """
-    
+    #------------------------------------------------------------------     
     
     # Clear the page function                         
     def clear_canvas(self):

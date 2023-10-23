@@ -266,18 +266,15 @@ class popup_add_to_deletion_confirmation(customtkinter.CTkToplevel):
     """ Popup window to add to deletion_confirmation database"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        print(args)
         self.geometry("750x750")
         self.title("Deletion Confirmation")
-        
-
-        print(global_variables.get_id())
 
         # Decorate here        
         customtkinter.CTkLabel(self, text="Enter caseId", font=("Roboto", 24)).pack(padx=12, pady=10)
         txtcaseId = customtkinter.CTkEntry(self, placeholder_text="id")
         txtcaseId.pack(pady=12, padx=10)
 
+        # Todo: grab the manager Id
         employeeId2 = 1 # manager ID
         
         # Submit Button
@@ -319,7 +316,7 @@ class popup_add_to_archived_case_request(customtkinter.CTkToplevel):
         txtArchive.pack(pady=12, padx=10)
         
         # Submit Button
-        customtkinter.CTkButton(self, text="Submit", command=lambda: db_conn.add_to_archived_case_request(global_variables.get_id(), txtArchive.get())).pack(pady=12, padx=10)
+        customtkinter.CTkButton(self, text="Submit", command=lambda: db_conn.add_to_archived_case_request(txtArchive.get())).pack(pady=12, padx=10)
 
 
 class popup_add_to_case_drawn_by(customtkinter.CTkToplevel):
