@@ -51,13 +51,10 @@ class popup_add_to_employee_account(customtkinter.CTkToplevel):
         txtGender = customtkinter.CTkEntry(self, placeholder_text="Gender")
         txtGender.pack(pady=12, padx=10)
         
-        # TODO: Change age to date of birth
-        customtkinter.CTkLabel(self, text="Enter Age", font=("Roboto", 24)).pack(padx=12, pady=10)
-        txtAge = customtkinter.CTkEntry(self, placeholder_text="Age")
-        txtAge.pack(pady=12, padx=10)
+
         
         # Submit Button
-        customtkinter.CTkButton(self, text="Submit", command=lambda: db_conn.add_to_employee_account(txtAge.get(), txtName.get(), txtSurname.get(), txtGender.get(), txtBirth.get(), txtRoleId.get())).pack(pady=12, padx=10)
+        customtkinter.CTkButton(self, text="Submit", command=lambda: db_conn.add_to_employee_account( txtName.get(), txtSurname.get(), txtGender.get(), txtBirth.get(), txtRoleId.get())).pack(pady=12, padx=10)
 
 
 class popup_add_to_user_login_data(customtkinter.CTkToplevel):
@@ -79,6 +76,7 @@ class popup_add_to_user_login_data(customtkinter.CTkToplevel):
         customtkinter.CTkLabel(self, text="password", font=("Roboto", 24)).pack(padx=12, pady=10)
         txtpassword = customtkinter.CTkEntry(self, placeholder_text="password")
         txtpassword.pack(pady=12, padx=10)
+    
         
         # Submit Button
         customtkinter.CTkButton(self, text="Submit", command=lambda: db_conn.add_to_user_login_data(txtemployeeId.get(), txtUsername.get(), txtpassword.get())).pack(pady=12, padx=10)

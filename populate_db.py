@@ -33,24 +33,41 @@ for i in range(10):
 firstname= "admin"
 lastname = "admin"
 gender = "M"
-age = 20
-dateOfBirth = "2022-06-06"
+dateOfBirth = "2001-06-06"
 roleId = 1
-add.add_to_employee_account(age, firstname, lastname, gender, dateOfBirth, roleId)
+add.add_to_employee_account(firstname, lastname, gender, dateOfBirth, roleId)
 print("success")
 time.sleep(wait_time)  
 
-for i in range(1,10):
+firstname= "Ryan"
+lastname = "Putzier"
+gender = "M"
+dateOfBirth = "1999-06-06"
+roleId = 2
+add.add_to_employee_account( firstname, lastname, gender, dateOfBirth, roleId)
+print("success")
+time.sleep(wait_time)  
+
+for i in range(5):
     firstname= f"Ryan {i}"
     lastname = "Putzier"
     gender = "M"
-    age = i
-    dateOfBirth = "2022-06-06"
-    roleId = 2
-    add.add_to_employee_account(age, firstname, lastname, gender, dateOfBirth, roleId)
+    dateOfBirth = "1999-06-06"
+    roleId = 3
+    add.add_to_employee_account( firstname, lastname, gender, dateOfBirth, roleId)
     print("success")
     time.sleep(wait_time)  
- 
+    
+for i in range(5):
+    firstname= f"Ryan {i}"
+    lastname = "Putzier"
+    gender = "M"
+    dateOfBirth = "1999-06-06"
+    roleId = 4
+    add.add_to_employee_account( firstname, lastname, gender, dateOfBirth, roleId)
+    print("success")
+    time.sleep(wait_time) 
+
 # Case Data
 for i in range(10):
     clientId = 1
@@ -93,8 +110,22 @@ print("success")
 time.sleep(wait_time)
 
 id= 2
-username = "ryan"
-password = "ryan"
+username = "manager"
+password = "manager"
+add.add_to_user_login_data(id, username, password)
+print("success")
+time.sleep(wait_time)
+
+id= 3
+username = "archive"
+password = "archive"
+add.add_to_user_login_data(id, username, password)
+print("success")
+time.sleep(wait_time)
+
+id= 4
+username = "attorney"
+password = "attorney"
 add.add_to_user_login_data(id, username, password)
 print("success")
 time.sleep(wait_time)

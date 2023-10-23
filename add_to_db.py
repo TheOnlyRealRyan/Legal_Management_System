@@ -92,14 +92,14 @@ def add_to_employee_roles(roleDescription) -> None:
             print(e)
         
         
-def add_to_employee_account(age, firstname, lastname, gender, dateOfBirth, roleId) -> None:
+def add_to_employee_account(firstname, lastname, gender, dateOfBirth, roleId) -> None:
     """Inserts details of employee into employee_account database"""
     
-    sqlFormula = "INSERT INTO employee_account (age, firstname, lastname, gender, dateOfBirth, roleId) VALUE (%s, %s, %s, %s, %s, %s)"
+    sqlFormula = "INSERT INTO employee_account (firstname, lastname, gender, dateOfBirth, roleId) VALUE (%s, %s, %s, %s, %s)"
     
     # Insert into Db     
     try:
-        details = (age, firstname, lastname, gender, dateOfBirth, roleId)
+        details = (firstname, lastname, gender, dateOfBirth, roleId)
         mycursor.execute(sqlFormula, details)   
         mydb.commit()
         if messagebox_show == True: tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
