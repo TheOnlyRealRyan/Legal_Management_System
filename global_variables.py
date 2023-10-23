@@ -1,7 +1,7 @@
 global user_role_logged_in
-user_role_logged_in = 0 
+user_role_logged_in = 1
 global user_id_logged_in
-user_id_logged_in = None
+user_id_logged_in = 1
 
 def get_role():
     return user_role_logged_in

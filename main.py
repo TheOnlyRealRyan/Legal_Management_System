@@ -27,13 +27,10 @@ class App(customtkinter.CTk):
         
         # open login page
         self.login()
-        # self.after(1000, self.update)
         
-    
-    
+          
     def update(self):
-        """1 second update function """
-        # print(gv.get_role())   
+        """1 second update function """ 
         self.after(1000, self.update)
     
                  
@@ -55,7 +52,9 @@ class App(customtkinter.CTk):
         self.title("Main Program")
         # Dimensions relating to screen size
         self.geometry("{0}x{1}+0+0".format(self.winfo_screenwidth(), self.winfo_screenheight()-75))
-
+        
+        
+        
         # root page
         self.main_container = customtkinter.CTkCanvas(self, bg="#00253e")
         self.main_container.pack(fill=tkinter.BOTH, expand=True, padx=10, pady=10)
@@ -65,52 +64,44 @@ class App(customtkinter.CTk):
         self.left_side_panel.pack(side=tkinter.LEFT, fill=tkinter.Y, expand=False, padx=5, pady=5)
        
         # Configure the weights of rows in left_side_panel
-        self.left_side_panel.grid_rowconfigure((0,1,2,3,4,5), weight=0)
-        self.left_side_panel.grid_rowconfigure((6), weight=3)
-        self.left_side_panel.grid_rowconfigure((7,8), weight=0)
+        # self.left_side_panel.grid_rowconfigure((0,1,2,3,4,5,6), weight=0)
+        self.left_side_panel.grid_rowconfigure((7,8), weight=3)
+        # self.left_side_panel.grid_rowconfigure((9), weight=0)
         
-        # right_side_panel has right_dashboard inside
-        self.right_side_panel = customtkinter.CTkCanvas(self.main_container, bg="#003356")
-        self.right_side_panel.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True, padx=5, pady=5)
-                
+        # right_dashboard creation
         self.right_dashboard = customtkinter.CTkCanvas(self.main_container, bg="#003356")
-        self.right_dashboard.pack(in_=self.right_side_panel, side=tkinter.TOP, fill=tkinter.BOTH, expand=True, padx=0, pady=0)
-        
-        # Configure the weights of rows in right_dashboard
-        self.right_dashboard.grid_rowconfigure((0,1,2,3), weight=0)
-        self.right_dashboard.grid_rowconfigure((4), weight=1)   
-        self.right_dashboard.grid_rowconfigure((5), weight=0)  
+        self.right_dashboard.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=0, pady=0)
         
         # left_side_panel Menu
         self.menu_label = customtkinter.CTkLabel(self.left_side_panel, text="Menu", font=customtkinter.CTkFont(size=20, weight="bold"))
         self.menu_label.grid(row=0, column=0, padx=20, pady=(20, 10))      
-        
-        # Focus on dashboard first
-        self.dashboard()
-        
+              
         # buttons on left_side_panel to select canvas     
         self.btn_dashboard = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("dashboard"), fg_color="transparent", width=45, text="", command=lambda: self.dashboard())
         self.btn_dashboard.grid(row=1, column=0, padx=20, pady=10)
+        
+        self.btn_notification = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("notification"), fg_color="transparent", width=45, text="", command=lambda: self.notification())
+        self.btn_notification.grid(row=2, column=0, padx=20, pady=10)
 
         self.btn_archive = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("archive"), fg_color="transparent", width=45, text="", command=self.archive)
-        self.btn_archive.grid(row=2, column=0, padx=20, pady=10)
+        self.btn_archive.grid(row=3, column=0, padx=20, pady=10)
             
         self.btn_case = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("case"), fg_color="transparent", width=45, text="", command=self.case)
-        self.btn_case.grid(row=3, column=0, padx=20, pady=10)
+        self.btn_case.grid(row=4, column=0, padx=20, pady=10)
         
         if global_variables.get_id() != 2: # If not archivist
             self.btn_files = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("files"), fg_color="transparent", width=45, text="", command=self.files)
-            self.btn_files.grid(row=4, column=0, padx=20, pady=10)
+            self.btn_files.grid(row=5, column=0, padx=20, pady=10)
         
         self.btn_client = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("customer"), fg_color="transparent", width=45, text="", command=self.client)
-        self.btn_client.grid(row=5, column=0, padx=20, pady=10)
+        self.btn_client.grid(row=6, column=0, padx=20, pady=10)
              
         if global_variables.get_id() == 1: # If admin        
             self.btn_admin = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("admin"), fg_color="transparent", width=45, text="", command=self.admin)
-            self.btn_admin.grid(row=7, column=0, padx=20, pady=10)
+            self.btn_admin.grid(row=9, column=0, padx=20, pady=10)
         
-        # self.btn_user = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("user"), fg_color="transparent", width=45, text="", command=self.user)
-        # self.btn_user.grid(row=8, column=0, padx=20, pady=10)
+        # Focus on dashboard first
+        self.dashboard()
         
         self.toplevel_window = None  
         
@@ -163,29 +154,55 @@ class App(customtkinter.CTk):
         self.heading_banner = customtkinter.CTkCanvas(self.right_dashboard, height = 50, bg="#00253e")
         self.heading_banner.pack(side=tkinter.TOP, fill=tkinter.X, expand=False, padx=10, pady=10)
         
-        self.notifications = customtkinter.CTkCanvas(self.right_dashboard,width=1000, bg="#00253e")
-        self.notifications.pack(side=tkinter.LEFT, fill=tkinter.Y, expand=False, padx=10, pady=10)
-        
-        self.deletion_notifications = customtkinter.CTkCanvas(self.right_dashboard,width=300, bg="#00253e")
-        self.deletion_notifications.pack(side=tkinter.LEFT, fill=tkinter.Y, expand=False, padx=10, pady=10)
         
         self.inner_right_panel = customtkinter.CTkCanvas(self.right_dashboard, width=800, bg="#00253e")
-        self.inner_right_panel.pack(side=tkinter.RIGHT, fill=tkinter.Y, expand=False, padx=10, pady=10)
+        self.inner_right_panel.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
         
         # Decorate Heading Banner    
         Label = customtkinter.CTkLabel(self.heading_banner, text="Dashboard", font=('Roboto', 30))
         Label.grid(row=0, column=0, padx=10, pady=10 )    
 
+        # Decorate inner panel
+        # TODO: Analytics go here
+        
+        
+    def notification(self):
+        self.clear_canvas()
+        
+        # Layout
+        self.heading_banner = customtkinter.CTkCanvas(self.right_dashboard, height = 50, bg="#00253e")
+        self.heading_banner.pack(side=tkinter.TOP, fill=tkinter.X, expand=False, padx=10, pady=10)
+        
+        self.archival = customtkinter.CTkCanvas(self.right_dashboard,width=500, bg="#00253e")
+        self.archival.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+        
+        self.deletion = customtkinter.CTkCanvas(self.right_dashboard,width=500, bg="#00253e")
+        self.deletion.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+        
+        self.destruction = customtkinter.CTkCanvas(self.right_dashboard,width=500, bg="#00253e")
+        self.destruction.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+        
+        # self.inner_right_panel = customtkinter.CTkCanvas(self.right_dashboard, width=400, bg="#00253e")
+        # self.inner_right_panel.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=False, padx=10, pady=10)
+        
+        # Decorate inner right panel
+        
+        
+        
+        # Decorate Heading Banner    
+        Label = customtkinter.CTkLabel(self.heading_banner, text="Notifications", font=('Roboto', 30))
+        Label.grid(row=0, column=0, padx=10, pady=10 )    
+
         # Decorate Deletion Notification Bar
         if global_variables.get_id() == 2 or global_variables.get_id() == 1:
-            Label = customtkinter.CTkLabel(self.notifications, text="Archival Retrieval Requests", font=('Roboto', 24))
+            Label = customtkinter.CTkLabel(self.archival, text="Archival Retrieval Requests", font=('Roboto', 24))
             Label.pack(side=tkinter.TOP, padx=10, pady=10) 
             
             headers = ['archiveNumber', 'employee', 'dateRequested', 'Location']
-            self.data = [[f"{a}",f"{h} {i}",f"{c}",f"{e}"] for a,b,c,d,e,f,g,h,i,j,k,l in refresh_data()]
+            self.data = [[f"{a}",f"{b} {c}",f"{d}",f"{e}"] for a,b,c,d,e in db_conn.all_archived_case_request()]
             
             # Create table
-            self.sheet1 = tksheet.Sheet(self.notifications, data = self.data, height = 800, theme = "dark", show_row_index=False, show_top_left=False)
+            self.sheet1 = tksheet.Sheet(self.archival, data = self.data, height = 800, theme = "dark", show_row_index=False, show_top_left=False)
             self.sheet1.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
 
             self.sheet1.headers((f"{x}" for x in headers))   
@@ -200,15 +217,15 @@ class App(customtkinter.CTk):
                                 "copy")) 
             
                    
-        # Decorate Archive Retrival Notification Bar
+        # Decorate Deletion Notification Bar
         if global_variables.get_id() == 2 or global_variables.get_id() == 1: # manager or admin role
-            Label = customtkinter.CTkLabel(self.deletion_notifications, text="Deletion Requests", font=('Roboto', 24))
+            Label = customtkinter.CTkLabel(self.deletion, text="Deletion Requests", font=('Roboto', 24))
             Label.pack(side=tkinter.TOP, padx=10, pady=10)
             
             headers = ['caseId', 'employee requested']
             self.data = [[f"{a}",f"{b} {c}"] for a,b,c in db_conn.all_deletion_confirmation()]
             
-            self.sheet2 = tksheet.Sheet(self.deletion_notifications, data = self.data, height = 800, theme = "dark", show_row_index=False, show_top_left=False)
+            self.sheet2 = tksheet.Sheet(self.deletion, data = self.data, height = 800, theme = "dark", show_row_index=False, show_top_left=False)
             self.sheet2.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
 
             self.sheet2.headers((f"{x}" for x in headers))   
@@ -221,8 +238,28 @@ class App(customtkinter.CTk):
                                 "column_width_resize",
                                 "arrowkeys",
                                 "copy")) 
-    
-             
+            
+        # Decorate Deletion Notification Bar
+        if global_variables.get_id() == 2 or global_variables.get_id() == 1 or global_variables.get_id() == 3: # manager or admin or archival role
+            Label = customtkinter.CTkLabel(self.destruction, text="Destruction Dates", font=('Roboto', 24))
+            Label.pack(side=tkinter.TOP, padx=10, pady=10)
+            
+            headers = ['caseId', 'archived State', 'ArchiveNumber', 'archivedDate', 'dateToBeDestroyed']
+            self.data = [[f"{a}",f"{b}",f"{c}",f"{d}",f"{e}"] for a,b,c,d,e in db_conn.case_to_be_destroyed_this_month()]
+            
+            self.sheet2 = tksheet.Sheet(self.destruction, data = self.data, height = 800, theme = "dark", show_row_index=False, show_top_left=False)
+            self.sheet2.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+
+            self.sheet2.headers((f"{x}" for x in headers))   
+            
+            # table enable choices listed below:
+            self.sheet2.enable_bindings(("single_select",
+                                "double_click_column_resize",
+                                "column_width_resize",
+                                "row_select",
+                                "column_width_resize",
+                                "arrowkeys",
+                                "copy"))      
     def archive(self):
         self.clear_canvas()
         
@@ -311,16 +348,13 @@ class App(customtkinter.CTk):
         # grab data 
         gathered_data = db_conn.all_case_data()
         headers = ['id', 'client', 'employee', 'Description', 'Department', 'Date of Open', 'Date of Upload']
-        self.data = [[f"{a}",f"{p} {q}",f"{j} {k}",f"{d}",f"{e}",f"{f}",f"{g}"] for a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s in gathered_data ]
+        self.data = [[f"{a}",f"{b} {c}",f"{d} {e}",f"{f}",f"{g}",f"{h}",f"{i}"] for a,b,c,d,e,f,g,h,i in gathered_data ]
         # Create table
         self.sheet = tksheet.Sheet(self.inner_right_panel, data = self.data, theme = "dark", height = 800, width = 1750, show_row_index=False, show_top_left=False)
         self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
-        # self.sheet.grid(row=0, column = 0, padx = 10, pady = 10)
         
         self.sheet.headers((f"{x}" for x in headers))
-        
-        # populate Table
-        
+               
         # table enable choices listed below:
         self.sheet.enable_bindings(("single_select",
                             "double_click_column_resize",

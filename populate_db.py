@@ -1,15 +1,10 @@
 import add_to_db as add
 import time
-
-
-
+import global_variables
 
 
 wait_time = 0
 # Just a bunch of dummy data for testing
-
-
-
 
 # Client Information
 for i in range(50):
@@ -90,14 +85,7 @@ for i in range(10):
     print("success")
     time.sleep(wait_time)    
 
-# Archived State    
-for i in range(10):
-    caseId = i
-    archivedState = "Archived"
-    archivedDate = "2001-06-06"
-    add.add_to_archived_state(caseId, archivedState, archivedDate)
-    print("success")
-    time.sleep(wait_time)    
+ 
  
 # login data
 
@@ -138,27 +126,37 @@ print("success")
 time.sleep(wait_time)
 
 # Archive State
+
+# Archived State    
 for i in range(5):
-    id= i+1
+    caseId = i
+    archivedState = "Archived"
+    archivedDate = "2001-06-06"
+    add.add_to_archived_state(caseId, archivedState, archivedDate)
+    print("success")
+    time.sleep(wait_time)   
+
+for i in range(6,10):
+    id= i
     archivedState = "Archived"
 
-    dateOfBirth = f"200{i}-06-06"
+    archivedDate = f"200{i}-06-06"
     roleId = 1
-    add.add_to_archived_state(id, archivedState, dateOfBirth)
+    add.add_to_archived_state(id, archivedState, archivedDate)
     print("success")
     time.sleep(wait_time)  
     
-id= 8
+id= 11
 archivedState = "Archived"
-dateOfBirth = "2016-11-06"
-add.add_to_archived_state(id, archivedState, dateOfBirth)
+archivedDate = "2016-11-06"
+add.add_to_archived_state(id, archivedState, archivedDate)
 print("success")
 time.sleep(wait_time)
 
-id= 9
+id= 12
 archivedState = "Archived"
-dateOfBirth = "2016-09-06"
-add.add_to_archived_state(id, archivedState, dateOfBirth)
+archivedDate = "2016-09-06"
+add.add_to_archived_state(id, archivedState, archivedDate)
 print("success")
 time.sleep(wait_time)
 
@@ -174,7 +172,15 @@ time.sleep(wait_time)
 # Archive Case Request
 # for i in range(10):
 archiveNumber = 0
-employeeId = 1
-add.add_to_archived_case_request(archiveNumber, employeeId)
+add.add_to_archived_case_request(archiveNumber)
 print("success")
 time.sleep(wait_time)
+
+archiveNumber = 1
+add.add_to_archived_case_request(archiveNumber)
+print("success")
+time.sleep(wait_time)
+
+# Deletion Request
+for i in range(5):
+    add.add_to_deletion_confirmation(i, 1, 1, True, False)

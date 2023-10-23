@@ -61,7 +61,7 @@ def all_client_information():
 
 
 def all_case_data():
-    mycursor.execute("SELECT * FROM case_data LEFT JOIN employee_account ON case_data.employeeId=employee_account.employeeId LEFT JOIN client_information ON case_data.clientId=client_information.clientId")
+    mycursor.execute("SELECT case_data.caseId, client_information.firstName, client_information.lastName, employee_account.firstName, employee_account.lastName, description, department, dateOfCaseOpen, dateUploaded FROM case_data LEFT JOIN employee_account ON case_data.employeeId=employee_account.employeeId LEFT JOIN client_information ON case_data.clientId=client_information.clientId")
     myresult = mycursor.fetchall()
     return myresult
 
@@ -116,7 +116,7 @@ def all_deletion_logging():
 
 
 def all_archived_case_request():
-    mycursor.execute("SELECT * FROM archived_case_request LEFT JOIN case_location ON archived_case_request.archiveNumber=case_location.archiveNumber LEFT JOIN employee_account ON archived_case_request.employeeId=employee_account.employeeId")
+    mycursor.execute("SELECT archived_case_request.archiveNumber, firstName, lastName, dateRequested, Location FROM archived_case_request LEFT JOIN case_location ON archived_case_request.archiveNumber=case_location.archiveNumber LEFT JOIN employee_account ON archived_case_request.employeeId=employee_account.employeeId")
     myresult = mycursor.fetchall()
     return myresult
 
