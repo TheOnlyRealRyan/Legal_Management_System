@@ -1,61 +1,68 @@
 from google.cloud import storage
+import os
+import tkinter.messagebox
 
+# Intitialise Cloud Environment
 project_id = "legal-management-system-399510"
-#TODO: FIX Cloud Functions
-def list_buckets(project_id=project_id):
+client = storage.Client(project=project_id)
+
+
+def list_buckets():
     """This function will list all buckets. """
-    storage_client = storage.Client(project=project_id)
-    buckets = storage_client.list_buckets()
+    # client = storage.Client(project=project_id)
+    buckets = client.list_buckets()
     print("Buckets:")
     for bucket in buckets:
         print(bucket.name)
     print("Listed all storage buckets.")
     
     
-def create_new_bucket(project_id=project_id):
+def create_new_bucket():
     """ Creates a Client object that allows the script to communicate 
         with Google Cloud Storage and perform operations on it (like 
         creating a bucket). """
-    storage_client = storage.Client(project=project_id)
+    # client = storage.Client(project=project_id)
 
     # Creates a new bucket with a specified name
     name = input("Enter name of bucket: ")
-    bucket = storage_client.create_bucket(name)
+    bucket = client.create_bucket(name)
     
     # Prints a message indicating the bucket was successfully created.
     bucketName = bucket.name
     print(f"Bucket {bucketName} created.")
 
 
-def upload_object_from_filename(fileLocation ):
+def upload_object_from_filename(name, fileLocation):
     """Uploads a file from your computer as a blob object"""
-    client = storage.Client(project=project_id)
-    bucket_name = "my-first-test-bucket-146541"
-    # Get a reference to the bucket you want to upload to
-    bucket = client.bucket(f"{bucket_name}")
+    try:        
+        # client = storage.Client(project=project_id)
+        bucket_name = "case-file-upload-bucket"
+        bucket = client.bucket(f"{bucket_name}")
 
-    # Create a new blob object
-    fileName =  f"{fileLocation}"
-    blob = bucket.blob(f"{fileName}")
+        # Create a new blob object
+        blob = bucket.blob(name)
 
-    # Upload the file to the bucket
-    # TODO: popup to select file from computer
-    if blob.upload_from_filename(f"{fileName}"): # It works but still goes to else statement 
-        print("File successfully uploaded to bucket.")
-    else:
-        print("Error uploading file to bucket.")
-
-def download_object_from_bucket(blob_name, file_path):
-    """Downloads a file from the cloud"""
+        # Upload the file to the bucket
+        blob.upload_from_filename(fileLocation)
+        print("Successful upload")
+    except Exception as e:
+        print(e)
+        
+        
+def download_object_from_bucket(blob_name):
+    """Downloads a file from the cloud. Get blob_name from the cloud file name"""
     try:
-        client = storage.Client(project=project_id)
-        bucket_name = "my-first-test-bucket-146541"
+        # This downloads to the folder that the app is located in
+        bucket_name = "case-file-upload-bucket"
+        bucket = client.bucket(f"{bucket_name}")
         blob = bucket.blob(blob_name)
-        with open(file_path, "wb") as f:
-            storage_client.download_object_from_bucket(blob, f)
-        pass
-    except:    
-        pass
+        with open(blob_name, "wb") as f:
+            client.download_blob_to_file(blob, f)
+        tkinter.messagebox.showinfo("Success",  "Succesfully downloaded")
+        print("Successful Download")
+    except Exception as e:    
+        print(e)
+        tkinter.messagebox.showinfo("Failed",  "Failed downloaded")
     
 # list_buckets()
 # create_new_bucket()

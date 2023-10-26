@@ -1,23 +1,22 @@
 import customtkinter
 from PIL import Image
 import tkinter
-import tksheet
-import time 
+import tksheet 
+
 
 from add_to_db import *
 import grab_from_db as db_conn
 from validatePassword import *
 import popup
 import global_variables
+import create_db
 
 
-# TODO: validate Login into main page
 # TODO: change title headings from database titles to normal titles
 
 
 # Initialise Appearance for customtkinter
-DARK_MODE = "dark"
-customtkinter.set_appearance_mode(DARK_MODE)
+customtkinter.set_appearance_mode("dark")
 customtkinter.set_default_color_theme("dark-blue")
 
 
@@ -53,8 +52,7 @@ class App(customtkinter.CTk):
         # Dimensions relating to screen size
         self.geometry("{0}x{1}+0+0".format(self.winfo_screenwidth(), self.winfo_screenheight()-75))
         
-        
-        
+               
         # root page
         self.main_container = customtkinter.CTkCanvas(self, bg="#00253e")
         self.main_container.pack(fill=tkinter.BOTH, expand=True, padx=10, pady=10)
@@ -64,9 +62,7 @@ class App(customtkinter.CTk):
         self.left_side_panel.pack(side=tkinter.LEFT, fill=tkinter.Y, expand=False, padx=5, pady=5)
        
         # Configure the weights of rows in left_side_panel
-        # self.left_side_panel.grid_rowconfigure((0,1,2,3,4,5,6), weight=0)
         self.left_side_panel.grid_rowconfigure((7,8), weight=3)
-        # self.left_side_panel.grid_rowconfigure((9), weight=0)
         
         # right_dashboard creation
         self.right_dashboard = customtkinter.CTkCanvas(self.main_container, bg="#003356")
@@ -181,14 +177,7 @@ class App(customtkinter.CTk):
         
         self.destruction = customtkinter.CTkCanvas(self.right_dashboard,width=500, bg="#00253e")
         self.destruction.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
-        
-        # self.inner_right_panel = customtkinter.CTkCanvas(self.right_dashboard, width=400, bg="#00253e")
-        # self.inner_right_panel.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=False, padx=10, pady=10)
-        
-        # Decorate inner right panel
-        
-        
-        
+     
         # Decorate Heading Banner    
         Label = customtkinter.CTkLabel(self.heading_banner, text="Notifications", font=('Roboto', 30))
         Label.grid(row=0, column=0, padx=10, pady=10 )    
@@ -306,8 +295,6 @@ class App(customtkinter.CTk):
      
         self.sheet.headers((f" {x}" for x in headers))
         
-        # populate Table
-        
         # table enable choices listed below:
         self.sheet.enable_bindings(("single_select",
                             "double_click_column_resize",
@@ -385,7 +372,7 @@ class App(customtkinter.CTk):
         Label = customtkinter.CTkLabel(self.heading_banner, text="Download File", font=('Roboto', 24))
         Label.grid(row=0, column=4, padx=10, pady=10 )
         # TODO: change this button to download from cloud
-        button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= self.open_add_to_file_upload_data)
+        button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= self.open_download_from_cloud)
         button.grid(row=0, column=5, padx=5, pady=5) 
         
         Label = customtkinter.CTkLabel(self.heading_banner, text="Upload File", font=('Roboto', 24))
@@ -404,8 +391,6 @@ class App(customtkinter.CTk):
         # self.sheet.grid(row=0, column =0, padx = 10, pady = 10)
         
         self.sheet.headers((f" {x}" for x in headers))
-        
-        # populate Table
         
         # table enable choices listed below:
         self.sheet.enable_bindings(("single_select",
@@ -455,12 +440,8 @@ class App(customtkinter.CTk):
                                     show_top_left=False)
 
         self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10,)
-
-        # self.sheet.grid(row=0, column = 0, padx = 10, pady = 10)
         
         self.sheet.headers((f" {x}" for x in headers))
-        
-        # populate Table
         
         # table enable choices listed below:
         self.sheet.enable_bindings(("single_select",
@@ -474,13 +455,13 @@ class App(customtkinter.CTk):
     
     def admin(self):
         self.clear_canvas()
-              # Layout
+        
+        # Layout
         self.heading_banner = customtkinter.CTkCanvas(self.right_dashboard, height = 50, bg="#00253e")
         self.heading_banner.pack(side=tkinter.TOP, fill=tkinter.X, expand=False, padx=10, pady=10)
         
         self.inner_right_panel = customtkinter.CTkCanvas(self.right_dashboard, width=1500, bg="#00253e")
         self.inner_right_panel.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
-
         
         # Decorate heading Banner   
         self.heading_banner.grid_columnconfigure((1,2,3), weight=2)    
@@ -590,10 +571,24 @@ class App(customtkinter.CTk):
                                                                                "Case Drawn History"],
                                                 command=optionmenu_delete,
                                                 variable=optionmenu_var)
+
         Label = customtkinter.CTkLabel(self.inner_right_panel, text="Delete from Database", font=('Roboto', 24))
         Label.grid(row=2, column=0, padx=20, pady=(10, 0))      
         optionmenu.grid(row=3, column=0, padx=20, pady=(10, 0))
         
+    
+        Label = customtkinter.CTkLabel(self.inner_right_panel, text="Create/Clear New Database", font=('Roboto', 24))
+        Label.grid(row=4, column=0, padx=10, pady=10 )
+        
+        button = customtkinter.CTkButton(self.inner_right_panel, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= lambda: create_db.create_database())
+        button.grid(row=5, column=0, padx=5, pady=5) 
+        
+        Label = customtkinter.CTkLabel(self.inner_right_panel, text="Populate Database", font=('Roboto', 24))
+        Label.grid(row=6, column=0, padx=10, pady=10 )
+        
+        button = customtkinter.CTkButton(self.inner_right_panel, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= lambda: create_db.populate_database())
+        button.grid(row=7, column=0, padx=5, pady=5) 
+
         
     #------------------------------------------------------------------     
     
@@ -718,7 +713,13 @@ class App(customtkinter.CTk):
         else:
             self.toplevel_window.focus()  # if window exists focus it
 
-
+    
+    def open_download_from_cloud(self):
+        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+            self.toplevel_window = popup.popup_download_from_cloud(self)  # create window if its None or destroyed
+            self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
+        else:
+            self.toplevel_window.focus()  # if window exists focus it
         
 # Main Function
 if __name__ == "__main__":

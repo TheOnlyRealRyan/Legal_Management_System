@@ -202,7 +202,6 @@ def add_to_archived_state(caseId, archivedState, archivedDate) -> None:
     
 def add_to_case_location(archiveNumber, location) -> None:
     """Inserts into case_location database"""
-    # TODO: FIX THIS
     find = grab.case_location_by_id(archiveNumber)
     print(find)
     

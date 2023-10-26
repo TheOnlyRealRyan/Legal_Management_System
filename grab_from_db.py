@@ -139,6 +139,11 @@ def all_employees():
     return myresult
 
 
+def all_cloud_files():
+    mycursor.execute("SELECT fileName FROM file_upload_data")
+    myresult = mycursor.fetchall()
+    return myresult
+
 def case_to_be_destroyed_this_month():
     # TODO: check that case is already not destroyed
     current_year = date.today().year

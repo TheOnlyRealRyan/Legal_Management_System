@@ -1,9 +1,14 @@
 import customtkinter
-import add_to_db as db_conn
 from tkcalendar import Calendar
-from tkinter.filedialog import askopenfile
+from tkinter.filedialog import askopenfilename
+import os
+import numpy as np
+
+import add_to_db as db_conn
+import grab_from_db
 import upload_file
 import global_variables
+
 
 # POPUP windows Decoration classes
 class popup_add_to_employee_roles(customtkinter.CTkToplevel):
@@ -248,17 +253,46 @@ class popup_add_to_file_upload_data(customtkinter.CTkToplevel):
         borderwidth=0, bordercolor='white', height = 20, width = 20)
         recieved.pack(padx=12, pady=10)
         
+        # customtkinter.CTkButton(self, text="Grab from Computer", command=lambda: get_file()).pack(pady=12, padx=10)
+        # Submit Button
+        customtkinter.CTkButton(self, text="Grab from Computer and submit", command=lambda: get_file()).pack(pady=12, padx=10)
         
         def get_file():            
-            # TODO: Call Upload to cloud function here
-            filename = askopenfile() # open file explorer and return the path
-            upload_file.upload_object_from_filename(filename)
+            # Call Upload to cloud function here
+            # open file explorer and return the path
             
-            
-        customtkinter.CTkButton(self, text="Grab from Computer", command=lambda: get_file()).pack(pady=12, padx=10)
-        # Submit Button
-        customtkinter.CTkButton(self, text="Submit", command=lambda: db_conn.add_to_file_upload_data(txtName.get(), txtcaseId.get(), recieved.get_date())).pack(pady=12, padx=10)
+            filename = askopenfilename() 
+            filepath = os.path.abspath(filename) # / to \
+            upload_file.upload_object_from_filename(txtName.get(), filepath)
+            db_conn.add_to_file_upload_data(txtName.get(), txtcaseId.get(), recieved.get_date())
+ 
+        
+class popup_download_from_cloud(customtkinter.CTkToplevel):
+    """ Popup window to download file from cloud"""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.geometry("750x750")
+        self.title("File Upload")
+        
+        # Decorate here
+        customtkinter.CTkLabel(self, text="Which file to download", font=("Roboto", 24)).pack(padx=12, pady=10)
+        optionmenu_var = customtkinter.StringVar(value="Select a file")  # set initial value
 
+        def optionmenu_callback(choice):
+            #download here
+            upload_file.download_object_from_bucket(choice)
+
+        # convert a list of tuples to a list of strings
+        data = grab_from_db.all_cloud_files()
+        new_data = []
+        for i in data:
+            new_data.append(''.join(i))
+            
+        combobox = customtkinter.CTkOptionMenu(self,
+                                            values=new_data, # Select from database
+                                            command=optionmenu_callback,
+                                            variable=optionmenu_var)
+        combobox.pack(padx=20, pady=10)
 
 class popup_add_to_deletion_confirmation(customtkinter.CTkToplevel):
     """ Popup window to add to deletion_confirmation database"""
