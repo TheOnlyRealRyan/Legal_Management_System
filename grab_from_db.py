@@ -30,7 +30,7 @@ def login_employee_roles(username):
 def login_employee_id(username):
     mycursor.execute(f"SELECT employeeId FROM user_login_data WHERE username = '{username}'")
     employeeId = sum(mycursor.fetchone()) # Convert tuple to int
-    print("returned: ", employeeId)
+    print(f"--> Employee {employeeId} logged in", employeeId)
     return employeeId
 
 
@@ -71,7 +71,7 @@ def case_data_by_id(caseId):
 
 
 def all_archived_state():
-    mycursor.execute("SELECT * FROM archived_state LEFT JOIN case_location ON archived_state.archiveNumber=case_location.archiveNumber")
+    mycursor.execute("SELECT archived_state.archiveNumber, archivedState, archivedDate, dateToBeDestroyed, case_location.location FROM archived_state LEFT JOIN case_location ON archived_state.archiveNumber=case_location.archiveNumber")
     myresult = mycursor.fetchall()
     return myresult
 
@@ -102,7 +102,8 @@ def all_file_upload_data():
 
 
 def all_deletion_confirmation():
-    mycursor.execute("SELECT caseId, firstName, lastName FROM deletion_confirmation LEFT JOIN employee_account ON employee_account.employeeId=deletion_confirmation.employeeId1")
+    # TODO: should not show if employeeId1 and employeeId2 are = 1
+    mycursor.execute("SELECT caseId, firstName, lastName FROM deletion_confirmation LEFT JOIN employee_account ON employee_account.employeeId=deletion_confirmation.employeeId1 WHERE deletion_confirmation.employee1Confirmed = 1 AND deletion_confirmation.employee2Confirmed = 0")
     myresult = mycursor.fetchall()
     return myresult
 
@@ -114,7 +115,7 @@ def all_deletion_logging():
 
 
 def all_archived_case_request():
-    mycursor.execute("SELECT archived_case_request.archiveNumber, firstName, lastName, dateRequested, Location FROM archived_case_request LEFT JOIN case_location ON archived_case_request.archiveNumber=case_location.archiveNumber LEFT JOIN employee_account ON archived_case_request.employeeId=employee_account.employeeId")
+    mycursor.execute("SELECT archived_case_request.archiveNumber, firstName, lastName, archived_case_request.employeeId, dateRequested, Location FROM archived_case_request LEFT JOIN case_location ON archived_case_request.archiveNumber=case_location.archiveNumber LEFT JOIN employee_account ON archived_case_request.employeeId=employee_account.employeeId")
     myresult = mycursor.fetchall()
     return myresult
 
@@ -154,7 +155,7 @@ def case_to_be_destroyed_this_month():
     current_year = date.today().year
     current_month = date.today().month
     # Grab all items that need to be destoyed
-    mycursor.execute(f"SELECT * FROM archived_state WHERE (MONTH(dateToBeDestroyed) <= {current_month} AND YEAR(dateToBeDestroyed) = {current_year}) OR (YEAR(dateToBeDestroyed) < {current_year})")
+    mycursor.execute(f"SELECT archived_state.archiveNumber, archivedState, archivedDate, dateToBeDestroyed, Location FROM archived_state LEFT JOIN case_location ON archived_state.archiveNumber=case_location.archiveNumber WHERE (MONTH(dateToBeDestroyed) <= {current_month} AND YEAR(dateToBeDestroyed) = {current_year}) OR (YEAR(dateToBeDestroyed) < {current_year})")
     myresult = mycursor.fetchall()
     
     myresult2 = list()
@@ -164,7 +165,7 @@ def case_to_be_destroyed_this_month():
     for a,b,c,d,e in myresult:
         mycursor.execute(f"SELECT archiveNumber FROM destruction_state WHERE archiveNumber = {a} AND destructionState = 'Destroyed'")
         myresult2.append(mycursor.fetchone())
-        
+  
     # convert (1,) to 1 if not None from already Destroyed list
     for a in myresult2:
         if a != None:       
@@ -178,7 +179,7 @@ def case_to_be_destroyed_this_month():
                 break
    
     # If list is empty        
-    if len(final_list) > 0:      
+    if len(final_list) > 0:    
         return final_list
     else:
         print("Doesnt exist")

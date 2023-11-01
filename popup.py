@@ -361,32 +361,22 @@ class popup_add_to_case_drawn_by(customtkinter.CTkToplevel):
         self.title("Case Drawn By")
      
         # Decorate here
-        customtkinter.CTkLabel(self, text="Enter first name", font=("Roboto", 24)).pack(padx=12, pady=10)
-        txtName = customtkinter.CTkEntry(self, placeholder_text="Name")
-        txtName.pack(pady=12, padx=10)
+        customtkinter.CTkLabel(self, text="Enter Archive Number", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtArchiveNumber = customtkinter.CTkEntry(self, placeholder_text="Archive Number")
+        txtArchiveNumber.pack(pady=12, padx=10)
         
-        customtkinter.CTkLabel(self, text="Enter surname", font=("Roboto", 24)).pack(padx=12, pady=10)
-        txtSurname = customtkinter.CTkEntry(self, placeholder_text="surname")
-        txtSurname.pack(pady=12, padx=10)
+        customtkinter.CTkLabel(self, text="Enter Employee ID", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtemployeeId = customtkinter.CTkEntry(self, placeholder_text="ID")
+        txtemployeeId.pack(pady=12, padx=10)
         
-        customtkinter.CTkLabel(self, text="Enter date of birth (YYYY-MM-DD)", font=("Roboto", 24)).pack(padx=12, pady=10)
-        txtBirth = customtkinter.CTkEntry(self, placeholder_text="DOB")
-        txtBirth.pack(pady=12, padx=10)
-        
-        customtkinter.CTkLabel(self, text="Enter role ID", font=("Roboto", 24)).pack(padx=12, pady=10)
-        txtRoleId = customtkinter.CTkEntry(self, placeholder_text="Role ID")
-        txtRoleId.pack(pady=12, padx=10)
-        
-        customtkinter.CTkLabel(self, text="Enter Gender (M/F)", font=("Roboto", 24)).pack(padx=12, pady=10)
-        txtGender = customtkinter.CTkEntry(self, placeholder_text="Gender")
-        txtGender.pack(pady=12, padx=10)
-        
-        customtkinter.CTkLabel(self, text="Enter Age", font=("Roboto", 24)).pack(padx=12, pady=10)
-        txtAge = customtkinter.CTkEntry(self, placeholder_text="Age")
-        txtAge.pack(pady=12, padx=10)
+        customtkinter.CTkLabel(self, text="Enter date Drawn Out", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtdate = Calendar(self, selectmode='day', font=("Roboto", 12),
+        showweeknumbers=False, cursor="hand2", date_pattern= 'y-mm-dd',
+        borderwidth=0, bordercolor='white', height = 20, width = 20)
+        txtdate.pack(padx=12, pady=10)
         
         # Submit Button
-        customtkinter.CTkButton(self, text="Submit", command=lambda: db_conn.add_to_case_drawn_by(txtAge.get(), txtName.get(), txtSurname.get(), txtGender.get(), txtBirth.get(), txtRoleId.get())).pack(pady=12, padx=10)
+        customtkinter.CTkButton(self, text="Submit", command=lambda: db_conn.add_to_case_drawn_by(txtArchiveNumber.get(), txtemployeeId.get(), txtdate.get_date())).pack(pady=12, padx=10)
 
 
 class popup_add_to_case_drawn_history(customtkinter.CTkToplevel):

@@ -79,8 +79,8 @@ def create_database():
         mycursor.execute("CREATE TABLE deletion_confirmation(caseId INTEGER(10), employeeId1 INTEGER, employeeId2 INTEGER, employee1Confirmed BOOLEAN, employee2Confirmed BOOLEAN, PRIMARY KEY (caseId), FOREIGN KEY (employeeId1) REFERENCES employee_account(employeeId),  FOREIGN KEY (employeeId2) REFERENCES employee_account(employeeId))")
         mycursor.execute("CREATE TABLE destruction_state(archiveNumber INTEGER(10), destructionState VARCHAR(50), PRIMARY KEY (archiveNumber), FOREIGN KEY (archiveNumber) REFERENCES archived_state(archiveNumber))")
         mycursor.execute("CREATE TABLE case_location(archiveNumber INTEGER(10), location VARCHAR(50), PRIMARY KEY (archiveNumber), FOREIGN KEY (archiveNumber) REFERENCES archived_state(archiveNumber))")
-        mycursor.execute("CREATE TABLE case_drawn_by(caseId INTEGER(10), employeeId INTEGER, dateDrawnOut DATE, PRIMARY KEY (caseId), FOREIGN KEY (caseId) REFERENCES case_data(caseId), FOREIGN KEY (employeeId) REFERENCES employee_account(employeeId))")
-        mycursor.execute("CREATE TABLE case_drawn_history(caseId INTEGER(10), employeeId INTEGER(10), dateDrawnOut DATE, dateDrawnIn DATE, PRIMARY KEY (caseId), FOREIGN KEY (caseId) REFERENCES case_data(caseId), FOREIGN KEY (employeeId) REFERENCES employee_account(employeeId))")
+        mycursor.execute("CREATE TABLE case_drawn_by(archiveNumber INTEGER(10), employeeId INTEGER, dateDrawnOut DATE, PRIMARY KEY (archiveNumber), FOREIGN KEY (archiveNumber) REFERENCES archived_state(archiveNumber), FOREIGN KEY (employeeId) REFERENCES employee_account(employeeId))")
+        mycursor.execute("CREATE TABLE case_drawn_history(archiveNumber INTEGER(10), employeeId INTEGER(10), dateDrawnOut DATE, dateDrawnIn DATE, PRIMARY KEY (archiveNumber), FOREIGN KEY (archiveNumber) REFERENCES archived_state(archiveNumber), FOREIGN KEY (employeeId) REFERENCES employee_account(employeeId))")
         mycursor.execute("CREATE TABLE file_upload_data(fileId INTEGER(10), fileName VARCHAR(100), caseId INTEGER(10), recievedDate DATE, dateUploaded DATETIME, PRIMARY KEY (fileId), FOREIGN KEY (caseId) REFERENCES case_data(caseId))")
         mycursor.execute("CREATE TABLE archived_case_request(archiveNumber INTEGER(10), employeeId INTEGER(10), dateRequested DATETIME, PRIMARY KEY (archiveNumber, employeeId), FOREIGN KEY (employeeId) REFERENCES employee_account(employeeId), FOREIGN KEY (archiveNumber) REFERENCES archived_state(archiveNumber))")
         print("--> Successfuly Created Tables")
@@ -276,6 +276,11 @@ def populate_database():
         add.add_to_deletion_confirmation(i, 1, 1, True, False)
         print("success")
         time.sleep(wait_time)
-        
+    
+    archiveNumber = 1
+    archivedDate = "2016-09-06"
+    add.add_to_case_drawn_by(archiveNumber, employeeId, archivedDate)
+    print("success")
+    time.sleep(wait_time)    
 # create_database()
 # populate_database()

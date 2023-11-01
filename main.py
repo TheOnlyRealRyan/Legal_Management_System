@@ -245,6 +245,7 @@ class App(customtkinter.CTk):
         
         
         # Decorate Archival Retrieval Requests Notification Bar
+        
         if global_variables.get_id() == 2 or global_variables.get_id() == 1 or global_variables.get_id() == 3:
             self.archival = customtkinter.CTkCanvas(self.right_dashboard,width=500, bg="#00253e")
             self.archival.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
@@ -252,8 +253,8 @@ class App(customtkinter.CTk):
             Label = customtkinter.CTkLabel(self.archival, text="Archival Retrieval Requests", font=('Roboto', 24))
             Label.pack(side=tkinter.TOP, padx=10, pady=10) 
             
-            headers = ['archiveNumber', 'employee', 'dateRequested', 'Location']
-            self.data = [[f"{a}",f"{b} {c}",f"{d}",f"{e}"] for a,b,c,d,e in db_conn.all_archived_case_request()]
+            headers = ['archiveNumber', 'employee', 'employee ID', 'dateRequested', 'Location']
+            self.data = [[f"{a}",f"{b} {c}",f"{d}",f"{e}",f"{f}"] for a,b,c,d,e,f in db_conn.all_archived_case_request()]
             
             # Create table
             self.sheet1 = tksheet.Sheet(self.archival, data = self.data, height = 800, theme = "dark", show_row_index=False, show_top_left=False)
@@ -304,7 +305,7 @@ class App(customtkinter.CTk):
             Label = customtkinter.CTkLabel(self.destruction, text="Destruction Dates", font=('Roboto', 24))
             Label.pack(side=tkinter.TOP, padx=10, pady=10)
             
-            headers = ['caseId', 'archived State', 'ArchiveNumber', 'archivedDate', 'dateToBeDestroyed']
+            headers = ['ArchiveNumber', 'archived State',  'archivedDate', 'dateToBeDestroyed', 'Location']
             self.data = [[f"{a}",f"{b}",f"{c}",f"{d}",f"{e}"] for a,b,c,d,e in db_conn.case_to_be_destroyed_this_month()]
             
             self.sheet2 = tksheet.Sheet(self.destruction, data = self.data, height = 800, theme = "dark", show_row_index=False, show_top_left=False)
@@ -327,11 +328,18 @@ class App(customtkinter.CTk):
         self.heading_banner = customtkinter.CTkCanvas(self.right_dashboard, height = 50, bg="#00253e")
         self.heading_banner.pack(side=tkinter.TOP, fill=tkinter.X, expand=False, padx=10, pady=10)
         
-        self.inner_right_panel = customtkinter.CTkCanvas(self.right_dashboard, width=1500, bg="#00253e")
-        self.inner_right_panel.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+        # self.inner_right_panel = customtkinter.CTkCanvas(self.right_dashboard, width=1500, bg="#00253e")
+        # self.inner_right_panel.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+        
+        self.archivedCases_panel = customtkinter.CTkCanvas(self.right_dashboard,width=500, bg="#00253e")
+        self.archivedCases_panel.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+        
+        self.caseDrawnBy_panel = customtkinter.CTkCanvas(self.right_dashboard,width=500, bg="#00253e")
+        self.caseDrawnBy_panel.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
         
         # Decorate heading Banner   
-        self.heading_banner.grid_columnconfigure((1,2,3), weight=2)     
+        self.heading_banner.grid_columnconfigure((1,2,3), weight=2)  
+           
         Label = customtkinter.CTkLabel(self.heading_banner, text="Archive", font=('Roboto', 30))
         Label.grid(row=0, column=0, padx=10, pady=10 )
         
@@ -342,8 +350,7 @@ class App(customtkinter.CTk):
             elif choice == "Request Archive":
                 return self.open_popup("archivedCaseRequest")
             elif choice == "Give Location":
-                return self.open_popup("CaseLocation")
-            
+                return self.open_popup("CaseLocation")            
         
          
         optionmenu_var = customtkinter.StringVar(value="Archive Functions")
@@ -357,14 +364,18 @@ class App(customtkinter.CTk):
         
         
         # Decorate Main Page
-        # grab data 
+        # grab archived cases data 
+        
+        Label = customtkinter.CTkLabel(self.archivedCases_panel, text="Archived Cases", font=('Roboto', 24))
+        Label.pack(side=tkinter.TOP, padx=10, pady=10) 
+        
         def refresh_data():
             return db_conn.all_archived_state()
             
-        headers = ['case Id', 'State', 'Archive Number', 'Archived Date', 'Date To Be Destroyed', 'Location']
-        self.data = [[f"{a}",f"{b}",f"{c}",f"{d}",f"{e}",f"{g}"] for a,b,c,d,e,f,g in refresh_data()]
+        headers = ['Archive Number', 'State', 'Archived Date', 'Date To Be Destroyed', 'Location']
+        self.data = [[f"{a}",f"{b}",f"{c}",f"{d}",f"{e}"] for a,b,c,d,e in refresh_data()]
         # Create table
-        self.sheet = tksheet.Sheet(self.inner_right_panel,data = self.data, theme = "dark", height = 800, width = 1750, show_row_index=False, show_top_left=False)
+        self.sheet = tksheet.Sheet(self.archivedCases_panel,data = self.data, theme = "dark", height = 800, width = 500, show_row_index=False, show_top_left=False)
         self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
      
         self.sheet.headers((f" {x}" for x in headers))
@@ -377,7 +388,33 @@ class App(customtkinter.CTk):
                             "column_width_resize",
                             "arrowkeys",
                             "copy"))
-    
+        
+        
+        # grab drawn by data 
+        
+        Label = customtkinter.CTkLabel(self.caseDrawnBy_panel, text="Case Drawn By", font=('Roboto', 24))
+        Label.pack(side=tkinter.TOP, padx=10, pady=10) 
+        
+        def refresh_data_case_drawn_out():
+            return db_conn.all_case_drawn_by()
+            
+        headers = ['archive Number', 'employee ID', 'date Drawn Out']
+        self.data2 = [[f"{a}",f"{b}",f"{c}"] for a,b,c in refresh_data_case_drawn_out()]
+        # Create table
+        self.sheet2 = tksheet.Sheet(self.caseDrawnBy_panel, data = self.data2, theme = "dark", height = 800, width = 500, show_row_index=False, show_top_left=False)
+        self.sheet2.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+     
+        self.sheet2.headers((f" {x}" for x in headers))
+        
+        # table enable choices listed below:
+        self.sheet2.enable_bindings(("single_select",
+                            "double_click_column_resize",
+                            "column_width_resize",
+                            "row_select",
+                            "column_width_resize",
+                            "arrowkeys",
+                            "copy"))
+        
         
     def case(self):
         self.clear_canvas()
@@ -517,13 +554,6 @@ class App(customtkinter.CTk):
               
         optionmenu.grid(row=0, column=11, padx=20, pady=(10, 10))
         
-        """
-        Label = customtkinter.CTkLabel(self.heading_banner, text="New Client", font=('Roboto', 24))
-        Label.grid(row=0, column=4, padx=10, pady=10 )
-        
-        button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= lambda: self.open_popup("client"))
-        button.grid(row=0, column=5, padx=5, pady=5) 
-        """
         
         # Decorate inner right panel
         # grab data 

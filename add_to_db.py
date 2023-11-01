@@ -11,7 +11,7 @@ import global_variables as gv
 # TODO: check that a case already doesnt have an assignment to it (case has a location already)
 
 # Display messages upon successful or failed insertion
-messagebox_show = True
+messagebox_show = False
 
 # Conenct to database
 mydb = mysql.connector.connect(

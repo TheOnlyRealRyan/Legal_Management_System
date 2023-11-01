@@ -6,7 +6,7 @@ from datetime import datetime
 import global_variables as gv
 
 
-messagebox_show = True
+messagebox_show = False
 
 
 # Conenct to database
