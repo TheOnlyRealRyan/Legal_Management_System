@@ -1,6 +1,4 @@
 import mysql.connector
-import tkinter.messagebox 
-import hashlib
 from datetime import datetime, date
 
 
@@ -143,6 +141,13 @@ def all_cloud_files():
     mycursor.execute("SELECT fileName FROM file_upload_data")
     myresult = mycursor.fetchall()
     return myresult
+
+
+def grab_username(employeeId):
+    mycursor.execute(f"SELECT firstName FROM file_upload_data WHERE employeeId = '{employeeId}'")
+    myresult = mycursor.fetchall()
+    return myresult
+
 
 def case_to_be_destroyed_this_month():
     # TODO: check that case is already not destroyed

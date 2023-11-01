@@ -4,6 +4,14 @@ import tkinter
 import tksheet 
 
 
+import numpy as np
+import seaborn as sns
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from string import ascii_letters
+import pandas as pd
+import matplotlib.pyplot as plt
+
+
 from add_to_db import *
 import grab_from_db as db_conn
 from validatePassword import *
@@ -155,11 +163,49 @@ class App(customtkinter.CTk):
         self.inner_right_panel.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
         
         # Decorate Heading Banner    
-        Label = customtkinter.CTkLabel(self.heading_banner, text="Dashboard", font=('Roboto', 30))
+        try:
+            name = db_conn.grab_username(global_variables.get_id())
+        except:
+            name = "admin"
+        Label = customtkinter.CTkLabel(self.heading_banner, text=f"Hello {name}!", font=('Roboto', 30))
         Label.grid(row=0, column=0, padx=10, pady=10 )    
 
         # Decorate inner panel
-        # TODO: Analytics go here
+        # TODO: crashes when closing app
+        def create_plot():
+            sns.set(style="white")
+
+            # Generate a large random dataset
+            dataset = db_conn.all_case_data()
+            # print(dataset)
+            rs = np.random.RandomState(33)
+            d = pd.DataFrame(data=rs.normal(size=(100, 26)),
+                            columns=list(ascii_letters[26:]))
+
+            # Compute the correlation matrix
+            corr = d.corr()
+
+            # Generate a mask for the upper triangle
+            mask = np.zeros_like(corr, dtype=np.bool_)
+            mask[np.triu_indices_from(mask)] = True
+
+            # Set up the matplotlib figure
+            f, ax = plt.subplots(figsize=(11, 9))
+
+            # Generate a custom diverging colormap
+            cmap = sns.diverging_palette(220, 10, as_cmap=True)
+
+            # Draw the heatmap with the mask and correct aspect ratio
+            sns.heatmap(corr, mask=mask, cmap=cmap, vmax=.3, center=0,
+                        square=True, linewidths=.5, cbar_kws={"shrink": .5})
+
+            return f
+
+        # Load table
+        table = create_plot()
+        canvas = FigureCanvasTkAgg(table, master=self.inner_right_panel)  # A tk.DrawingArea.
+        # canvas.draw()
+        canvas.get_tk_widget().pack()
         
         
     def notification(self):
@@ -179,9 +225,35 @@ class App(customtkinter.CTk):
         self.destruction.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
      
         # Decorate Heading Banner    
+        self.heading_banner.grid_columnconfigure((1,2,3), weight=2)
         Label = customtkinter.CTkLabel(self.heading_banner, text="Notifications", font=('Roboto', 30))
-        Label.grid(row=0, column=0, padx=10, pady=10 )    
+        Label.grid(row=0, column=0, padx=10, pady=10 )  
 
+        
+        
+        def optionmenu_options(choice):
+            if choice == "Archival Retrieval Requests":
+                return self.open_popup("remove_archivedCaseRequest")
+            elif choice == "Deletion Requests":
+                return self.open_popup("remove_deletionConfirm")
+            elif choice == "Destruction Dates":
+                return self.open_popup("remove_destructionState")
+            
+        
+         
+        optionmenu_var = customtkinter.StringVar(value="Mark Complete")
+        optionmenu = customtkinter.CTkOptionMenu(self.heading_banner, values=["Archival Retrieval Requests",
+                                                                                "Deletion Requests", 
+                                                                                "Destruction Dates"],
+                                                command=optionmenu_options,
+                                                variable=optionmenu_var)
+
+        Label = customtkinter.CTkLabel(self.heading_banner, text="Mark Complete", font=('Roboto', 24))
+        Label.grid(row=0, column=10, padx=20, pady=(10, 0))
+              
+        optionmenu.grid(row=0, column=11, padx=20, pady=(10, 0))
+        
+        
         # Decorate Deletion Notification Bar
         if global_variables.get_id() == 2 or global_variables.get_id() == 1:
             Label = customtkinter.CTkLabel(self.archival, text="Archival Retrieval Requests", font=('Roboto', 24))
@@ -267,20 +339,22 @@ class App(customtkinter.CTk):
         Label = customtkinter.CTkLabel(self.heading_banner, text="New Archive", font=('Roboto', 24))
         Label.grid(row=0, column=4, padx=10, pady=10 )
         
-        button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= self.open_add_to_archived_state)
+        button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= lambda: self.open_popup("archiveState"))
         button.grid(row=0, column=5, padx=5, pady=5)
         
         Label = customtkinter.CTkLabel(self.heading_banner, text="Request Archive", font=('Roboto', 24))
         Label.grid(row=0, column=6, padx=10, pady=10 )
         
-        button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= self.open_add_to_archived_case_request)
+        button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= lambda: self.open_popup("archivedCaseRequest"))
         button.grid(row=0, column=7, padx=5, pady=5)
         
         Label = customtkinter.CTkLabel(self.heading_banner, text="Give Location", font=('Roboto', 24))
         Label.grid(row=0, column=8, padx=10, pady=10 )
         
-        button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= self.open_add_to_case_location)
+        button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= lambda: self.open_popup("CaseLocation"))
         button.grid(row=0, column=9, padx=5, pady=5)
+        
+        
         
         # Decorate Main Page
         # grab data 
@@ -322,13 +396,13 @@ class App(customtkinter.CTk):
         Label = customtkinter.CTkLabel(self.heading_banner, text="New Case", font=('Roboto', 24))
         Label.grid(row=0, column=4, padx=10, pady=10 )
         
-        button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= self.open_add_to_case_data)
+        button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= lambda: self.open_popup("case"))
         button.grid(row=0, column=5, padx=5, pady=5)
         
         Label = customtkinter.CTkLabel(self.heading_banner, text="Delete Case Request", font=('Roboto', 24))
         Label.grid(row=0, column=6, padx=10, pady=10 )
         
-        button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= self.open_add_to_deletion_confirmation)
+        button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= lambda: self.open_popup("deletionConfirm"))
         button.grid(row=0, column=7, padx=5, pady=5)
         
         # Decorate inner right panel
@@ -372,13 +446,13 @@ class App(customtkinter.CTk):
         Label = customtkinter.CTkLabel(self.heading_banner, text="Download File", font=('Roboto', 24))
         Label.grid(row=0, column=4, padx=10, pady=10 )
         # TODO: change this button to download from cloud
-        button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= self.open_download_from_cloud)
+        button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= lambda: self.open_popup("fileDownload"))
         button.grid(row=0, column=5, padx=5, pady=5) 
         
         Label = customtkinter.CTkLabel(self.heading_banner, text="Upload File", font=('Roboto', 24))
         Label.grid(row=0, column=6, padx=10, pady=10 )
         
-        button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= self.open_add_to_file_upload_data)
+        button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= lambda: self.open_popup("fileUpload"))
         button.grid(row=0, column=7, padx=5, pady=5) 
         
         # grab data 
@@ -421,7 +495,7 @@ class App(customtkinter.CTk):
         Label = customtkinter.CTkLabel(self.heading_banner, text="New Client", font=('Roboto', 24))
         Label.grid(row=0, column=4, padx=10, pady=10 )
         
-        button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= self.open_add_to_client_information)
+        button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= lambda: self.open_popup("client"))
         button.grid(row=0, column=5, padx=5, pady=5) 
 
         # Decorate inner right panel
@@ -471,33 +545,33 @@ class App(customtkinter.CTk):
 
         def optionmenu_insert(choice):
             if choice == "Employee Roles":
-                return self.open_add_to_employee_roles()
+                return self.open_popup("role")
             elif choice == "Employee Account":
-                return self.open_add_to_employee_account()
+                return self.open_popup("account")
             elif choice == "User Login Data":
-                return self.open_add_to_user_login_data()
+                return self.open_popup("login")
             elif choice == "Client Information":
-                return self.open_add_to_client_information()
+                return self.open_popup("client")
             elif choice == "Case data":
-                return self.open_add_to_case_data()
+                return self.open_popup("case")
             elif choice == "Archived State":
-                return self.open_add_to_archived_state()
+                return self.open_popup("archiveState")
             elif choice == "Case Location":
-                return self.open_add_to_case_location()
+                return self.open_popup("CaseLocation")
             elif choice == "Destruction State":
-                return self.open_add_to_destruction_state()
+                return self.open_popup("destructionState")
             elif choice == "File Upload Data":
-                return self.open_add_to_file_upload_data()
+                return self.open_popup("fileUpload")
             elif choice == "Deletion Confirmation":
-                return self.open_add_to_deletion_confirmation()
+                return self.open_popup("DeletionConfirm")
             elif choice == "Deletion Logging":
-                return self.open_add_to_deletion_logging()
+                return self.open_popup("DeletionLogging")
             elif choice == "Case Request":
-                return self.open_add_to_archived_case_request()
+                return self.open_popup("archivedCaseRequest")
             elif choice == "Case Drawn By":
-                return self.open_add_to_case_drawn_by()
+                return self.open_popup("CaseDrawnBy")
             elif choice == "Case Drawn History":
-                return self.open_add_to_case_drawn_history()
+                return self.open_popup("CaseDrawnHistory")
         
         
         # Decorate Right Frame    
@@ -525,33 +599,33 @@ class App(customtkinter.CTk):
              
         def optionmenu_delete(choice):
             if choice == "Employee Roles":
-                return self.open_add_to_employee_roles()
+                return self.open_popup("remove_role")
             elif choice == "Employee Account":
-                return self.open_add_to_employee_account()
+                return self.open_popup("remove_account")
             elif choice == "User Login Data":
-                return self.open_add_to_user_login_data()
+                return self.open_popup("remove_login")
             elif choice == "Client Information":
-                return self.open_add_to_client_information()
+                return self.open_popup("remove_client")
             elif choice == "Case data":
-                return self.open_add_to_case_data()
+                return self.open_popup("remove_case")
             elif choice == "Archived State":
-                return self.open_add_to_archived_state()
+                return self.open_popup("remove_archiveState")
             elif choice == "Case Location":
-                return self.open_add_to_case_location()
+                return self.open_popup("remove_CaseLocation")
             elif choice == "Destruction State":
-                return self.open_add_to_destruction_state()
+                return self.open_popup("remove_destructionState")
             elif choice == "File Upload Data":
-                return self.open_add_to_file_upload_data()
+                return self.open_popup("remove_fileUpload")
             elif choice == "Deletion Confirmation":
-                return self.open_add_to_deletion_confirmation()
+                return self.open_popup("remove_DeletionConfirm")
             elif choice == "Deletion Logging":
-                return self.open_add_to_deletion_logging()
+                return self.open_popup("remove_DeletionLogging")
             elif choice == "Case Request":
-                return self.open_add_to_archived_case_request()
+                return self.open_popup("remove_archivedCaseRequest")
             elif choice == "Case Drawn By":
-                return self.open_add_to_case_drawn_by()
+                return self.open_popup("remove_CaseDrawnBy")
             elif choice == "Case Drawn History":
-                return self.open_add_to_case_drawn_history()
+                return self.open_popup("remove_CaseDrawnHistory")
         
          
         optionmenu_var = customtkinter.StringVar(value="Delete from")
@@ -601,126 +675,77 @@ class App(customtkinter.CTk):
     
     # -------------------------------------------- 
     # Popup windows focus functions
-    # --------------------------------------------        
-    # TODO: Combine these into one function (pass in a value maybe)   
-    def open_add_to_employee_roles(self):
-        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
-            self.toplevel_window = popup.popup_add_to_employee_roles(self)  # create window if its None or destroyed
-            self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
-        else:
-            self.toplevel_window.focus()  # if window exists focus it
-            
-            
-    def open_add_to_employee_account(self):
-        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
-            self.toplevel_window = popup.popup_add_to_employee_account(self)  # create window if its None or destroyed
-            self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
-        else:
-            self.toplevel_window.focus()  # if window exists focus it
-        
-            
-    def open_add_to_user_login_data(self):
-        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
-            self.toplevel_window = popup.popup_add_to_user_login_data(self)  # create window if its None or destroyed
-            self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
-        else:
-            self.toplevel_window.focus()  # if window exists focus it
-
-
-    def open_add_to_client_information(self):
-            if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
-                self.toplevel_window = popup.popup_add_to_client_information(self)  # create window if its None or destroyed
-                self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
-            else:
-                self.toplevel_window.focus()  # if window exists focus it
-                
-    def open_add_to_case_data(self):
-            if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
-                self.toplevel_window = popup.popup_add_to_case_data(self)  # create window if its None or destroyed
-                self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
-            else:
-                self.toplevel_window.focus()  # if window exists focus it
+    # --------------------------------------------   
     
-    
-    def open_add_to_archived_state(self):
-            if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
-                self.toplevel_window = popup.popup_add_to_archived_state(self)  # create window if its None or destroyed
-                self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
-            else:
-                self.toplevel_window.focus()  # if window exists focus it
-                
-                
-    def open_add_to_destruction_state(self):
-            if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
-                self.toplevel_window = popup.popup_add_to_destruction_state(self)  # create window if its None or destroyed
-                self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
-            else:
-                self.toplevel_window.focus()  # if window exists focus it
-                
-                
-    def open_add_to_file_upload_data(self):
-            if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
-                self.toplevel_window = popup.popup_add_to_file_upload_data(self)  # create window if its None or destroyed
-                self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
-            else:
-                self.toplevel_window.focus()  # if window exists focus it
-                
-                
-    def open_add_to_deletion_confirmation(self):
-            if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
-                self.toplevel_window = popup.popup_add_to_deletion_confirmation(self)  # create window if its None or destroyed
-                self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
-            else:
-                self.toplevel_window.focus()  # if window exists focus it
-                
-    
-    def open_add_to_archived_case_request(self):
-            if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
-                self.toplevel_window = popup.popup_add_to_archived_case_request(self)  # create window if its None or destroyed
-                self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
-            else:
-                self.toplevel_window.focus()  # if window exists focus it
-                
-                
-    def open_add_to_case_drawn_by(self):
-            if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
-                self.toplevel_window = popup.popup_add_to_case_drawn_by(self)  # create window if its None or destroyed
-                self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
-            else:
-                self.toplevel_window.focus()  # if window exists focus it
-                
-    
-    def open_add_to_case_drawn_history(self):
+    def open_popup(self, popupName):
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
-            self.toplevel_window = popup.popup_add_to_case_drawn_history(self)  # create window if its None or destroyed
+            if popupName == "role": # INSERTION Segment --------------------------
+                self.toplevel_window = popup.popup_add_to_employee_roles(self)  # create window if its None or destroyed
+            elif popupName == "account":
+                self.toplevel_window = popup.popup_add_to_employee_account(self) 
+            elif popupName == "login":
+                self.toplevel_window = popup.popup_add_to_user_login_data(self)
+            elif popupName == "client":
+                self.toplevel_window = popup.popup_add_to_client_information(self)
+            elif popupName == "case":
+                self.toplevel_window = popup.popup_add_to_case_data(self)
+            elif popupName == "archiveState":
+                self.toplevel_window = popup.popup_add_to_archived_state(self)
+            elif popupName == "destructionState":
+                self.toplevel_window = popup.popup_add_to_destruction_state(self)
+            elif popupName == "fileUpload":
+                self.toplevel_window = popup.popup_add_to_file_upload_data(self)
+            elif popupName == "deletionConfirm":
+                self.toplevel_window = popup.popup_add_to_deletion_confirmation(self)
+            elif popupName == "archivedCaseRequest":
+                self.toplevel_window = popup.popup_add_to_archived_case_request(self)
+            elif popupName == "CaseDrawnBy":
+                self.toplevel_window = popup.popup_add_to_case_drawn_by(self)
+            elif popupName == "CaseDrawnHistory":
+                self.toplevel_window = popup.popup_add_to_case_drawn_history(self)
+            elif popupName == "CaseLocation":
+                self.toplevel_window = popup.popup_add_to_case_location(self)
+            elif popupName == "DeletionLogging":
+                self.toplevel_window = popup.popup_add_to_deletion_logging(self)
+            elif popupName == "fileDownload":
+                self.toplevel_window = popup.popup_download_from_cloud(self)
+            elif popupName == "remove_role": # DELETION Segment --------------------------
+                self.toplevel_window = popup.popup_remove_employee_role(self)
+            elif popupName == "remove_account":
+                self.toplevel_window = popup.popup_remove_employee_account(self) 
+            elif popupName == "remove_login":
+                self.toplevel_window = popup.popup_remove_user_login_data(self)
+            elif popupName == "remove_client":
+                self.toplevel_window = popup.popup_remove_client_information(self)
+            elif popupName == "remove_case":
+                self.toplevel_window = popup.popup_remove_case_data(self)
+            elif popupName == "remove_archiveState":
+                self.toplevel_window = popup.popup_remove_archived_state(self)
+            elif popupName == "remove_destructionState":
+                self.toplevel_window = popup.popup_remove_destruction_state(self)
+            elif popupName == "remove_fileUpload":
+                self.toplevel_window = popup.popup_remove_file_upload_data(self)
+            elif popupName == "remove_deletionConfirm":
+                self.toplevel_window = popup.popup_remove_deletion_confirmation(self)
+            elif popupName == "remove_archivedCaseRequest":
+                self.toplevel_window = popup.popup_remove_archived_case_request(self)
+            elif popupName == "remove_CaseDrawnBy":
+                self.toplevel_window = popup.popup_remove_case_drawn_by(self)
+            elif popupName == "remove_CaseDrawnHistory":
+                self.toplevel_window = popup.popup_remove_case_drawn_history(self)
+            elif popupName == "remove_CaseLocation":
+                self.toplevel_window = popup.popup_remove_case_location(self)
+            elif popupName == "remove_DeletionLogging":
+                self.toplevel_window = popup.popup_remove_deletion_logging(self)
+            else:
+                print("Popup failed")
+                    
+                           
             self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
         else:
-            self.toplevel_window.focus()  # if window exists focus it
-            
+            self.toplevel_window.focus()  # if window exists focus it               
     
-    def open_add_to_case_location(self):
-        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
-            self.toplevel_window = popup.popup_add_to_case_location(self)  # create window if its None or destroyed
-            self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
-        else:
-            self.toplevel_window.focus()  # if window exists focus it
-            
-            
-    def open_add_to_deletion_logging(self):
-        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
-            self.toplevel_window = popup.popup_add_to_deletion_logging(self)  # create window if its None or destroyed
-            self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
-        else:
-            self.toplevel_window.focus()  # if window exists focus it
-
-    
-    def open_download_from_cloud(self):
-        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
-            self.toplevel_window = popup.popup_download_from_cloud(self)  # create window if its None or destroyed
-            self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
-        else:
-            self.toplevel_window.focus()  # if window exists focus it
-        
+      
 # Main Function
 if __name__ == "__main__":
     app = App()

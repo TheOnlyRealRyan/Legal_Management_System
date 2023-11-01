@@ -1,5 +1,4 @@
 from google.cloud import storage
-import os
 import tkinter.messagebox
 
 # Intitialise Cloud Environment

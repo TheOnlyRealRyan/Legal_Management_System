@@ -3,6 +3,7 @@ import add_to_db as add
 import time
 # import global_variables
 
+
 def create_database():
     # Connect to Database
     try:   
@@ -57,7 +58,7 @@ def create_database():
     mycursor.execute("CREATE TABLE case_drawn_by(caseId INTEGER(10), employeeId INTEGER, dateDrawnOut DATE, PRIMARY KEY (caseId), FOREIGN KEY (caseId) REFERENCES case_data(caseId), FOREIGN KEY (employeeId) REFERENCES employee_account(employeeId))")
     mycursor.execute("CREATE TABLE case_drawn_history(caseId INTEGER(10), employeeId INTEGER(10), dateDrawnOut DATE, dateDrawnIn DATE, PRIMARY KEY (caseId), FOREIGN KEY (caseId) REFERENCES case_data(caseId), FOREIGN KEY (employeeId) REFERENCES employee_account(employeeId))")
     mycursor.execute("CREATE TABLE file_upload_data(fileId INTEGER(10), fileName VARCHAR(100), caseId INTEGER(10), recievedDate DATE, dateUploaded DATETIME, PRIMARY KEY (fileId), FOREIGN KEY (caseId) REFERENCES case_data(caseId))")
-    mycursor.execute("CREATE TABLE archived_case_request(archiveNumber INTEGER(10), employeeId INTEGER(10), dateRequested DATETIME, PRIMARY KEY (archiveNumber), FOREIGN KEY (employeeId) REFERENCES employee_account(employeeId), FOREIGN KEY (archiveNumber) REFERENCES archived_state(archiveNumber))")
+    mycursor.execute("CREATE TABLE archived_case_request(archiveNumber INTEGER(10), employeeId INTEGER(10), dateRequested DATETIME, PRIMARY KEY (archiveNumber, employeeId), FOREIGN KEY (employeeId) REFERENCES employee_account(employeeId), FOREIGN KEY (archiveNumber) REFERENCES archived_state(archiveNumber))")
 
 
     # Display Tables 
@@ -247,3 +248,6 @@ def populate_database():
     # Deletion Request
     for i in range(5):
         add.add_to_deletion_confirmation(i, 1, 1, True, False)
+        
+# create_database()
+# populate_database()
