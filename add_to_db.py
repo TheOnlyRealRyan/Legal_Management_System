@@ -11,7 +11,7 @@ import global_variables as gv
 # TODO: check that a case already doesnt have an assignment to it (case has a location already)
 
 # Display messages upon successful or failed insertion
-messagebox_show = False
+messagebox_show = True
 
 # Conenct to database
 mydb = mysql.connector.connect(
@@ -202,6 +202,7 @@ def add_to_archived_state(caseId, archivedState, archivedDate) -> None:
     
 def add_to_case_location(archiveNumber, location) -> None:
     """Inserts into case_location database"""
+    # Todo: Fix add to case Location ( Duplicate entry '0' for key 'case_location.PRIMARY')
     find = grab.case_location_by_id(archiveNumber)
     print(find)
     
@@ -238,13 +239,13 @@ def add_to_case_location(archiveNumber, location) -> None:
         if messagebox_show == True: tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
         print(e) 
 
-def add_to_destruction_state(caseId, destructionState) -> None:
+def add_to_destruction_state(archiveNumber, destructionState) -> None:
     """Inserts login details into destruction_state database"""
-    sqlFormula = "INSERT INTO destruction_state (caseId, destructionState) VALUE (%s, %s)"
+    sqlFormula = "INSERT INTO destruction_state (archiveNumber, destructionState) VALUE (%s, %s)"
                 
     # Insert into Db     
     try:
-        details = (caseId, destructionState)
+        details = (archiveNumber, destructionState)
         mycursor.execute(sqlFormula, details)   
         mydb.commit()
         if messagebox_show == True: tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")

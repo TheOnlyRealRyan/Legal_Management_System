@@ -2,8 +2,6 @@ import customtkinter
 from PIL import Image
 import tkinter
 import tksheet 
-
-
 import numpy as np
 import seaborn as sns
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -21,6 +19,8 @@ import create_db
 
 
 # TODO: change title headings from database titles to normal titles
+# TODO: Adapt tables to only show what they should see
+# TODO: Search and filter
 
 
 # Initialise Appearance for customtkinter
@@ -133,8 +133,8 @@ class App(customtkinter.CTk):
     
     
     def login_success(self):       
-        username = "admin" # self.username.get()
-        password = "admin" # self.password.get()
+        username = self.username.get() # "admin"
+        password = self.password.get() # "admin"
         success = validate(username, password)
         if success:                          
             global_variables.set_role(db_conn.login_employee_roles(username))
@@ -170,8 +170,9 @@ class App(customtkinter.CTk):
         Label = customtkinter.CTkLabel(self.heading_banner, text=f"Hello {name}!", font=('Roboto', 30))
         Label.grid(row=0, column=0, padx=10, pady=10 )    
 
-        # Decorate inner panel
+        # Decorate inner panel        
         # TODO: crashes when closing app
+        # TODO: Analytics
         def create_plot():
             sns.set(style="white")
 
@@ -214,30 +215,22 @@ class App(customtkinter.CTk):
         # Layout
         self.heading_banner = customtkinter.CTkCanvas(self.right_dashboard, height = 50, bg="#00253e")
         self.heading_banner.pack(side=tkinter.TOP, fill=tkinter.X, expand=False, padx=10, pady=10)
-        
-        self.archival = customtkinter.CTkCanvas(self.right_dashboard,width=500, bg="#00253e")
-        self.archival.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
-        
-        self.deletion = customtkinter.CTkCanvas(self.right_dashboard,width=500, bg="#00253e")
-        self.deletion.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
-        
-        self.destruction = customtkinter.CTkCanvas(self.right_dashboard,width=500, bg="#00253e")
-        self.destruction.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
-     
+
+
         # Decorate Heading Banner    
         self.heading_banner.grid_columnconfigure((1,2,3), weight=2)
+        
         Label = customtkinter.CTkLabel(self.heading_banner, text="Notifications", font=('Roboto', 30))
         Label.grid(row=0, column=0, padx=10, pady=10 )  
-
         
         
         def optionmenu_options(choice):
-            if choice == "Archival Retrieval Requests":
+            if choice == "Archival Retrieval Requests": #TODO: show who has the case
                 return self.open_popup("remove_archivedCaseRequest")
             elif choice == "Deletion Requests":
-                return self.open_popup("remove_deletionConfirm")
+                return self.open_popup("update_deletionConfirm")
             elif choice == "Destruction Dates":
-                return self.open_popup("remove_destructionState")
+                return self.open_popup("destructionState")
             
         
          
@@ -247,15 +240,15 @@ class App(customtkinter.CTk):
                                                                                 "Destruction Dates"],
                                                 command=optionmenu_options,
                                                 variable=optionmenu_var)
-
-        Label = customtkinter.CTkLabel(self.heading_banner, text="Mark Complete", font=('Roboto', 24))
-        Label.grid(row=0, column=10, padx=20, pady=(10, 0))
               
-        optionmenu.grid(row=0, column=11, padx=20, pady=(10, 0))
+        optionmenu.grid(row=0, column=11, padx=20, pady=(10, 10))
         
         
-        # Decorate Deletion Notification Bar
-        if global_variables.get_id() == 2 or global_variables.get_id() == 1:
+        # Decorate Archival Retrieval Requests Notification Bar
+        if global_variables.get_id() == 2 or global_variables.get_id() == 1 or global_variables.get_id() == 3:
+            self.archival = customtkinter.CTkCanvas(self.right_dashboard,width=500, bg="#00253e")
+            self.archival.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+            
             Label = customtkinter.CTkLabel(self.archival, text="Archival Retrieval Requests", font=('Roboto', 24))
             Label.pack(side=tkinter.TOP, padx=10, pady=10) 
             
@@ -278,8 +271,11 @@ class App(customtkinter.CTk):
                                 "copy")) 
             
                    
-        # Decorate Deletion Notification Bar
+        # Decorate Deletion Requests Notification Bar
         if global_variables.get_id() == 2 or global_variables.get_id() == 1: # manager or admin role
+            self.deletion = customtkinter.CTkCanvas(self.right_dashboard,width=500, bg="#00253e")
+            self.deletion.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+            
             Label = customtkinter.CTkLabel(self.deletion, text="Deletion Requests", font=('Roboto', 24))
             Label.pack(side=tkinter.TOP, padx=10, pady=10)
             
@@ -300,8 +296,11 @@ class App(customtkinter.CTk):
                                 "arrowkeys",
                                 "copy")) 
             
-        # Decorate Deletion Notification Bar
+        # Decorate Destruction Dates Notification Bar
         if global_variables.get_id() == 2 or global_variables.get_id() == 1 or global_variables.get_id() == 3: # manager or admin or archival role
+            self.destruction = customtkinter.CTkCanvas(self.right_dashboard,width=500, bg="#00253e")
+            self.destruction.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+            
             Label = customtkinter.CTkLabel(self.destruction, text="Destruction Dates", font=('Roboto', 24))
             Label.pack(side=tkinter.TOP, padx=10, pady=10)
             
@@ -336,24 +335,25 @@ class App(customtkinter.CTk):
         Label = customtkinter.CTkLabel(self.heading_banner, text="Archive", font=('Roboto', 30))
         Label.grid(row=0, column=0, padx=10, pady=10 )
         
-        Label = customtkinter.CTkLabel(self.heading_banner, text="New Archive", font=('Roboto', 24))
-        Label.grid(row=0, column=4, padx=10, pady=10 )
         
-        button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= lambda: self.open_popup("archiveState"))
-        button.grid(row=0, column=5, padx=5, pady=5)
+        def optionmenu_options(choice):
+            if choice == "New Archive": #TODO: show who has the case
+                return self.open_popup("archiveState")
+            elif choice == "Request Archive":
+                return self.open_popup("archivedCaseRequest")
+            elif choice == "Give Location":
+                return self.open_popup("CaseLocation")
+            
         
-        Label = customtkinter.CTkLabel(self.heading_banner, text="Request Archive", font=('Roboto', 24))
-        Label.grid(row=0, column=6, padx=10, pady=10 )
-        
-        button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= lambda: self.open_popup("archivedCaseRequest"))
-        button.grid(row=0, column=7, padx=5, pady=5)
-        
-        Label = customtkinter.CTkLabel(self.heading_banner, text="Give Location", font=('Roboto', 24))
-        Label.grid(row=0, column=8, padx=10, pady=10 )
-        
-        button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= lambda: self.open_popup("CaseLocation"))
-        button.grid(row=0, column=9, padx=5, pady=5)
-        
+         
+        optionmenu_var = customtkinter.StringVar(value="Archive Functions")
+        optionmenu = customtkinter.CTkOptionMenu(self.heading_banner, values=["New Archive",
+                                                                                "Request Archive", 
+                                                                                "Give Location"],
+                                                command=optionmenu_options,
+                                                variable=optionmenu_var)
+              
+        optionmenu.grid(row=0, column=11, padx=20, pady=(10, 10))
         
         
         # Decorate Main Page
@@ -390,20 +390,25 @@ class App(customtkinter.CTk):
         
         # Decorate heading Banner   
         self.heading_banner.grid_columnconfigure((1,2,3), weight=2)     
+        
         Label = customtkinter.CTkLabel(self.heading_banner, text="Cases", font=('Roboto', 30))
         Label.grid(row=0, column=0, padx=10, pady=10 )
         
-        Label = customtkinter.CTkLabel(self.heading_banner, text="New Case", font=('Roboto', 24))
-        Label.grid(row=0, column=4, padx=10, pady=10 )
+        def optionmenu_options(choice):
+            if choice == "New Case":
+                return self.open_popup("case")
+            elif choice == "Delete Case Request":
+                return self.open_popup("deletionConfirm")           
         
-        button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= lambda: self.open_popup("case"))
-        button.grid(row=0, column=5, padx=5, pady=5)
+         
+        optionmenu_var = customtkinter.StringVar(value="Case Functions")
+        optionmenu = customtkinter.CTkOptionMenu(self.heading_banner, values=["New Case",
+                                                                                "Delete Case Request"],
+                                                command=optionmenu_options,
+                                                variable=optionmenu_var)
+              
+        optionmenu.grid(row=0, column=11, padx=20, pady=(10, 10))
         
-        Label = customtkinter.CTkLabel(self.heading_banner, text="Delete Case Request", font=('Roboto', 24))
-        Label.grid(row=0, column=6, padx=10, pady=10 )
-        
-        button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= lambda: self.open_popup("deletionConfirm"))
-        button.grid(row=0, column=7, padx=5, pady=5)
         
         # Decorate inner right panel
         # grab data 
@@ -440,20 +445,25 @@ class App(customtkinter.CTk):
         
         # Decorate heading Banner   
         self.heading_banner.grid_columnconfigure((1,2,3), weight=2)     
-        Label = customtkinter.CTkLabel(self.heading_banner, text="Cloud Upload", font=('Roboto', 30))
+        
+        Label = customtkinter.CTkLabel(self.heading_banner, text="Cloud", font=('Roboto', 30))
         Label.grid(row=0, column=0, padx=10, pady=10 )
         
-        Label = customtkinter.CTkLabel(self.heading_banner, text="Download File", font=('Roboto', 24))
-        Label.grid(row=0, column=4, padx=10, pady=10 )
-        # TODO: change this button to download from cloud
-        button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= lambda: self.open_popup("fileDownload"))
-        button.grid(row=0, column=5, padx=5, pady=5) 
+        def optionmenu_options(choice):
+            if choice == "Download File":
+                return self.open_popup("fileDownload")
+            elif choice == "Upload File":
+                return self.open_popup("fileUpload")           
         
-        Label = customtkinter.CTkLabel(self.heading_banner, text="Upload File", font=('Roboto', 24))
-        Label.grid(row=0, column=6, padx=10, pady=10 )
+         
+        optionmenu_var = customtkinter.StringVar(value="Cloud Functions")
+        optionmenu = customtkinter.CTkOptionMenu(self.heading_banner, values=["Download File",
+                                                                                "Upload File"],
+                                                command=optionmenu_options,
+                                                variable=optionmenu_var)
+              
+        optionmenu.grid(row=0, column=11, padx=20, pady=(10, 10))
         
-        button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= lambda: self.open_popup("fileUpload"))
-        button.grid(row=0, column=7, padx=5, pady=5) 
         
         # grab data 
         gathered_data = db_conn.all_file_upload_data()
@@ -492,12 +502,29 @@ class App(customtkinter.CTk):
         Label = customtkinter.CTkLabel(self.heading_banner, text="Client", font=('Roboto', 30))
         Label.grid(row=0, column=0, padx=10, pady=10 )
         
+        def optionmenu_options(choice):
+            if choice == "New Client":
+                return self.open_popup("client")
+            elif choice == "Remove Client":
+                return self.open_popup("remove_client")          
+        
+         
+        optionmenu_var = customtkinter.StringVar(value="Client Functions")
+        optionmenu = customtkinter.CTkOptionMenu(self.heading_banner, values=["New Client",
+                                                                                "Remove Client"],
+                                                command=optionmenu_options,
+                                                variable=optionmenu_var)
+              
+        optionmenu.grid(row=0, column=11, padx=20, pady=(10, 10))
+        
+        """
         Label = customtkinter.CTkLabel(self.heading_banner, text="New Client", font=('Roboto', 24))
         Label.grid(row=0, column=4, padx=10, pady=10 )
         
         button = customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= lambda: self.open_popup("client"))
         button.grid(row=0, column=5, padx=5, pady=5) 
-
+        """
+        
         # Decorate inner right panel
         # grab data 
         gathered_data = db_conn.all_client_information()
@@ -737,6 +764,8 @@ class App(customtkinter.CTk):
                 self.toplevel_window = popup.popup_remove_case_location(self)
             elif popupName == "remove_DeletionLogging":
                 self.toplevel_window = popup.popup_remove_deletion_logging(self)
+            elif popupName == "update_deletionConfirm": # UPDATE SEGMENT --------------------------------------------------
+                self.toplevel_window = popup.popup_update_deletion_confirmation(self)    
             else:
                 print("Popup failed")
                     

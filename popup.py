@@ -6,6 +6,7 @@ import os
 
 import add_to_db as db_conn
 import delete_from_db as db_delete
+import update_db as db_update
 import grab_from_db
 import upload_file
 import global_variables
@@ -164,7 +165,7 @@ class popup_add_to_archived_state(customtkinter.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.geometry("750x750")
-        self.title("Employee Account")
+        self.title("Archive State")
      
         # Decorate here
         customtkinter.CTkLabel(self, text="Enter case Id", font=("Roboto", 24)).pack(padx=12, pady=10)
@@ -198,19 +199,19 @@ class popup_add_to_case_location(customtkinter.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.geometry("750x750")
-        self.title("Employee Account")
+        self.title("Case Location")
      
         # Decorate here
-        customtkinter.CTkLabel(self, text="Enter case Id", font=("Roboto", 24)).pack(padx=12, pady=10)
-        txtcaseId = customtkinter.CTkEntry(self, placeholder_text="caseId")
-        txtcaseId.pack(pady=12, padx=10)
+        customtkinter.CTkLabel(self, text="Enter Archive Number", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtArchiveNumber = customtkinter.CTkEntry(self, placeholder_text="Archive Number")
+        txtArchiveNumber.pack(pady=12, padx=10)
         
         customtkinter.CTkLabel(self, text="Enter location", font=("Roboto", 24)).pack(padx=12, pady=10)
         txtlocation = customtkinter.CTkEntry(self, placeholder_text="location")
         txtlocation.pack(pady=12, padx=10)
         
         # Submit Button
-        customtkinter.CTkButton(self, text="Submit", command=lambda: db_conn.add_to_case_location(txtcaseId.get(), txtlocation.get())).pack(pady=12, padx=10)
+        customtkinter.CTkButton(self, text="Submit", command=lambda: db_conn.add_to_case_location(txtArchiveNumber.get(), txtlocation.get())).pack(pady=12, padx=10)
 
 class popup_add_to_destruction_state(customtkinter.CTkToplevel):
     """ Popup window to add to destruction_state database"""
@@ -220,24 +221,24 @@ class popup_add_to_destruction_state(customtkinter.CTkToplevel):
         self.title("Destruction State")
      
         # Decorate here
-        customtkinter.CTkLabel(self, text="Enter case Id", font=("Roboto", 24)).pack(padx=12, pady=10)
-        txtcaseId = customtkinter.CTkEntry(self, placeholder_text="caseId")
-        txtcaseId.pack(pady=12, padx=10)
+        customtkinter.CTkLabel(self, text="Enter Archive Number", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtArchiveNumber = customtkinter.CTkEntry(self, placeholder_text="Archive Number")
+        txtArchiveNumber.pack(pady=12, padx=10)
         
         customtkinter.CTkLabel(self, text="Enter Destruction State", font=("Roboto", 24)).pack(padx=12, pady=10)
         txtState = customtkinter.CTkEntry(self, placeholder_text="State")
         txtState.pack(pady=12, padx=10)
         
         # Submit Button
-        customtkinter.CTkButton(self, text="Submit", command=lambda: db_conn.add_to_destruction_state(txtcaseId.get(), txtState.get())).pack(pady=12, padx=10)
+        customtkinter.CTkButton(self, text="Submit", command=lambda: db_conn.add_to_destruction_state(txtArchiveNumber.get(), txtState.get())).pack(pady=12, padx=10)
 
 
 class popup_add_to_file_upload_data(customtkinter.CTkToplevel):
-    """ Popup window to add to employee_account database"""
+    """ Popup window to add to file_upload_data database"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.geometry("750x750")
-        self.title("File Upload")
+        self.title("File Upload Data")
      
         # Decorate here
         customtkinter.CTkLabel(self, text="Enter File name", font=("Roboto", 24)).pack(padx=12, pady=10)
@@ -273,7 +274,7 @@ class popup_download_from_cloud(customtkinter.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.geometry("750x750")
-        self.title("File Upload")
+        self.title("Cloud Download")
         
         # Decorate here
         customtkinter.CTkLabel(self, text="Which file to download", font=("Roboto", 24)).pack(padx=12, pady=10)
@@ -341,7 +342,7 @@ class popup_add_to_archived_case_request(customtkinter.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.geometry("750x750")
-        self.title("Archive Request")
+        self.title("Archive Case Request")
      
         # Decorate here        
         customtkinter.CTkLabel(self, text="Enter Archive Number", font=("Roboto", 24)).pack(padx=12, pady=10)
@@ -513,7 +514,7 @@ class popup_remove_archived_state(customtkinter.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.geometry("750x750")
-        self.title("Employee Account")
+        self.title("Archived State")
      
         # Decorate here
         customtkinter.CTkLabel(self, text="Enter archive Number", font=("Roboto", 24)).pack(padx=12, pady=10)
@@ -613,7 +614,7 @@ class popup_remove_archived_case_request(customtkinter.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.geometry("750x750")
-        self.title("Archive Request")
+        self.title("Archive Case Request")
      
         # Decorate here        
         customtkinter.CTkLabel(self, text="Enter Archive Number", font=("Roboto", 24)).pack(padx=12, pady=10)
@@ -659,5 +660,23 @@ class popup_remove_case_drawn_history(customtkinter.CTkToplevel):
         # Submit Button
         customtkinter.CTkButton(self, text="Delete", command=lambda: db_delete.remove_case_drawn_history(txtID.get())).pack(pady=12, padx=10)
 
-
+#------------------------------------------------------------------
+# Update Popups
+#------------------------------------------------------------------
+class popup_update_deletion_confirmation(customtkinter.CTkToplevel):
+    """ Popup window to add to case_drawn_history database"""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.geometry("750x750")
+        self.title("Deletion Confirmation")
+     
+        # Decorate here
+        customtkinter.CTkLabel(self, text="Enter Case ID", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtCaseId = customtkinter.CTkEntry(self, placeholder_text="Case ID")
+        txtCaseId.pack(pady=12, padx=10)         
+        
+        confirm = 1
+        
+        # Submit Button
+        customtkinter.CTkButton(self, text="Confirm Deletion", command=lambda: db_update.update_deletion_confirmation_employee2(txtCaseId.get(), confirm)).pack(pady=12, padx=10)
 

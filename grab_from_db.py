@@ -162,7 +162,7 @@ def case_to_be_destroyed_this_month():
     
     # Grab all cases that have already been destroyed
     for a,b,c,d,e in myresult:
-        mycursor.execute(f"SELECT caseId FROM destruction_state WHERE caseId = {a} AND destructionState = 'Destroyed'")
+        mycursor.execute(f"SELECT archiveNumber FROM destruction_state WHERE archiveNumber = {a} AND destructionState = 'Destroyed'")
         myresult2.append(mycursor.fetchone())
         
     # convert (1,) to 1 if not None from already Destroyed list
