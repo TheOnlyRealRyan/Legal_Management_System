@@ -2,13 +2,13 @@ import mysql.connector
 import tkinter.messagebox 
 import hashlib
 from datetime import datetime
-import grab_from_db as grab
-import global_variables as gv
+import database.grab_from_db as grab
+import global_variables.global_variables as gv
 
 
 # TODO: Error handling of inputs
 # TODO: Fix auto-increment
-# TODO: check that a case already doesnt have an assignment to it (case has a location already)
+
 
 # Display messages upon successful or failed insertion
 messagebox_show = False
@@ -203,6 +203,7 @@ def add_to_archived_state(caseId, archivedState, archivedDate) -> None:
 def add_to_case_location(archiveNumber, location) -> None:
     """Inserts into case_location database"""
     # Todo: Fix add to case Location ( Duplicate entry '0' for key 'case_location.PRIMARY')
+    # TODO: combine update and add to case location
     find = grab.case_location_by_id(archiveNumber)
     print(find)
     

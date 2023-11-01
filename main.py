@@ -10,16 +10,15 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-from add_to_db import *
-import grab_from_db as db_conn
-from validatePassword import *
-import popup
-import global_variables
-import create_db
+import database.grab_from_db as db_conn
+import database.create_db as create_db
+from password.validatePassword import *
+import popup.popup as popup
+import global_variables.global_variables as global_variables
 
 
 # TODO: change title headings from database titles to normal titles
-# TODO: Adapt tables to only show what they should see
+# TODO: Adapt tables to only show what user logged in should see
 # TODO: Search and filter
 
 
@@ -225,7 +224,7 @@ class App(customtkinter.CTk):
         
         
         def optionmenu_options(choice):
-            if choice == "Archival Retrieval Requests": #TODO: show who has the case
+            if choice == "Archival Retrieval Requests":
                 return self.open_popup("remove_archivedCaseRequest")
             elif choice == "Deletion Requests":
                 return self.open_popup("update_deletionConfirm")
@@ -345,7 +344,7 @@ class App(customtkinter.CTk):
         
         
         def optionmenu_options(choice):
-            if choice == "New Archive": #TODO: show who has the case
+            if choice == "New Archive":
                 return self.open_popup("archiveState")
             elif choice == "Request Archive":
                 return self.open_popup("archivedCaseRequest")
@@ -798,8 +797,7 @@ class App(customtkinter.CTk):
                 self.toplevel_window = popup.popup_update_deletion_confirmation(self)    
             else:
                 print("Popup failed")
-                    
-                           
+                                              
             self.toplevel_window.after(50, self.toplevel_window.lift) # Focus on popup window after 50ms
         else:
             self.toplevel_window.focus()  # if window exists focus it               
@@ -808,5 +806,4 @@ class App(customtkinter.CTk):
 # Main Function
 if __name__ == "__main__":
     app = App()
-    # run = Login(app)
     app.mainloop()  

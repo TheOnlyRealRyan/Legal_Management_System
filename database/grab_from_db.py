@@ -102,7 +102,6 @@ def all_file_upload_data():
 
 
 def all_deletion_confirmation():
-    # TODO: should not show if employeeId1 and employeeId2 are = 1
     mycursor.execute("SELECT caseId, firstName, lastName FROM deletion_confirmation LEFT JOIN employee_account ON employee_account.employeeId=deletion_confirmation.employeeId1 WHERE deletion_confirmation.employee1Confirmed = 1 AND deletion_confirmation.employee2Confirmed = 0")
     myresult = mycursor.fetchall()
     return myresult
@@ -151,7 +150,6 @@ def grab_username(employeeId):
 
 
 def case_to_be_destroyed_this_month():
-    # TODO: check that case is already not destroyed
     current_year = date.today().year
     current_month = date.today().month
     # Grab all items that need to be destoyed

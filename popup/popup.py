@@ -4,12 +4,12 @@ from tkinter.filedialog import askopenfilename
 import os
 
 
-import add_to_db as db_conn
-import delete_from_db as db_delete
-import update_db as db_update
-import grab_from_db
-import upload_file
-import global_variables
+import database.add_to_db as db_conn
+import database.delete_from_db as db_delete
+import database.update_db as db_update
+import database.grab_from_db as grab_from_db
+import cloud.upload_file as upload_file
+import global_variables.global_variables as global_variables
 
 
 # POPUP windows Decoration classes
