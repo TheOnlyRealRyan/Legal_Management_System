@@ -11,11 +11,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 """
 
-import database.grab_from_db as db_conn
-import database.create_db as create_db
-from password.validatePassword import *
-import popup.popup as popup
-import global_variables.global_variables as global_variables
+import grab_from_db as db_conn
+import create_db as create_db
+from validatePassword import *
+import popup
+import global_variables as global_variables
 
 
 # TODO: change title headings from database titles to normal titles
@@ -175,8 +175,57 @@ class App(customtkinter.CTk):
         Label.grid(row=0, column=0, padx=10, pady=10 )    
 
         # Decorate inner panel        
-        # TODO: crashes when closing app
-        # TODO: Analytics
+        
+        if global_variables.get_id() != 3 and global_variables.get_id() != 2 and global_variables.get_id() != 1: # if not admin, manager, or archivist
+            self.my_cases_panel = customtkinter.CTkCanvas(self.right_dashboard,width=500, bg="#00253e")
+            self.my_cases_panel.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+            
+            Label = customtkinter.CTkLabel(self.my_cases_panel, text="My cases", width=30, height=30, font=('Roboto', 24))
+            Label.pack(side=tkinter.TOP, anchor=tkinter.NW, padx=(10,10), pady=(10,10)) 
+
+            # Create table
+            self.sheet = tksheet.Sheet(self.my_cases_panel, theme = "dark", height = 800, width = 500, show_row_index=False, show_top_left=False)
+            self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+            self.sheet.enable_bindings(("single_select",
+                                "double_click_column_resize",
+                                "column_width_resize",
+                                "row_select",
+                                "column_width_resize",
+                                "arrowkeys",
+                                "copy"))     
+
+            # grab data 
+            gathered_data = db_conn.case_data_of_employee(global_variables.get_id())
+            headers = ['id', 'client', 'employee', 'Description', 'Department', 'Date of Open', 'Date Closed']
+            self.data = [[f"{a}",f"{b} {c}",f"{d} {e}",f"{f}",f"{g}",f"{h}",f"{i}"] for a,b,c,d,e,f,g,h,i in gathered_data ]
+            
+            self.sheet.headers((f"{x}" for x in headers))
+            self.sheet.data_reference(self.data)   
+
+         
+        def click_this():
+            try:
+                gathered_data = db_conn.case_data_of_employee(global_variables.get_id())
+                self.data = [[f"{a}",f"{b} {c}",f"{d} {e}",f"{f}",f"{g}",f"{h}",f"{i}"] for a,b,c,d,e,f,g,h,i in gathered_data ]
+                print("--> Updated Table")
+            except:
+                print("--> Wrong user")          
+        
+                
+        btn_refresh= customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("refresh"), fg_color="transparent", width=30, height=30, command= lambda: click_this())
+        btn_refresh.grid(row=0, column=10, padx=10, pady=10)
+         
+            
+        # TODO: Analytics    
+        Label = customtkinter.CTkLabel(self.inner_right_panel, text="Analytics and Metrics TBC", font=('Roboto', 30))
+        Label.grid(row=0, column=0, padx=10, pady=10 )
+                   
+        Label = customtkinter.CTkLabel(self.inner_right_panel, text="Graph of cases closed over time here...", font=('Roboto', 30))
+        Label.grid(row=1, column=0, padx=10, pady=10 )   
+        
+        # if role is attorney, show their current cases
+        # case_data_of_employee()
+        
         # TEMPORARY!
         """
         def create_plot():
@@ -248,7 +297,7 @@ class App(customtkinter.CTk):
               
         optionmenu.grid(row=0, column=11, padx=20, pady=(10, 10))
         
-        
+        # if role is a attorney, show what archive requests they have. show their deletion requests. 
         # Decorate Archival Retrieval Requests Notification Bar
         
         if global_variables.get_id() == 2 or global_variables.get_id() == 1 or global_variables.get_id() == 3:
@@ -516,7 +565,7 @@ class App(customtkinter.CTk):
         
         # grab data 
         gathered_data = db_conn.all_case_data()
-        headers = ['id', 'client', 'employee', 'Description', 'Department', 'Date of Open', 'Date of Upload']
+        headers = ['id', 'client', 'employee', 'Description', 'Department', 'Date of Open', 'Date Closed']
         self.data = [[f"{a}",f"{b} {c}",f"{d} {e}",f"{f}",f"{g}",f"{h}",f"{i}"] for a,b,c,d,e,f,g,h,i in gathered_data ]
         self.sheet.headers((f"{x}" for x in headers))
         self.sheet.data_reference(self.data)   

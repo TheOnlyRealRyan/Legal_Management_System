@@ -3,7 +3,7 @@ import tkinter.messagebox
 from datetime import datetime
 
 
-import global_variables.global_variables as gv
+import global_variables as gv
 
 
 messagebox_show = False

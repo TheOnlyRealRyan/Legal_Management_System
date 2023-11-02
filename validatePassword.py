@@ -1,6 +1,5 @@
 import mysql.connector
 import hashlib
-from datetime import datetime, date
 
 
 # Conenct to database

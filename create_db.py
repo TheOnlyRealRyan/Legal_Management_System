@@ -1,5 +1,5 @@
 import mysql.connector
-import database.add_to_db as add
+import add_to_db as add
 import time
 
 
@@ -72,7 +72,7 @@ def create_database():
         mycursor.execute("CREATE TABLE employee_account(employeeId INTEGER(10) NOT NULL AUTO_INCREMENT, firstName VARCHAR(50),  lastName VARCHAR(50), gender VARCHAR(2),  dateOfBirth DATE, roleId INTEGER(10), PRIMARY KEY (employeeId), FOREIGN KEY (roleId) REFERENCES employee_roles(roleId))")
         mycursor.execute("CREATE TABLE user_login_data(employeeId INTEGER, username VARCHAR(50), passwordHash VARCHAR(250), PRIMARY KEY (employeeId), FOREIGN KEY (employeeId) REFERENCES employee_account(employeeId))")
         mycursor.execute("CREATE TABLE client_information(clientId INTEGER(10) NOT NULL AUTO_INCREMENT, firstName VARCHAR(50), lastName VARCHAR(50), gender VARCHAR(1), dateOfBirth DATE, PRIMARY KEY (clientId))")
-        mycursor.execute("CREATE TABLE case_data(caseId INTEGER(10), clientId INTEGER(10), employeeId INTEGER(10), description VARCHAR(250), department VARCHAR(30), dateOfCaseOpen DATE, dateUploaded DATE, PRIMARY KEY (caseId), FOREIGN KEY (employeeId) REFERENCES employee_account(employeeId), FOREIGN KEY (clientId) REFERENCES client_information(clientId))")
+        mycursor.execute("CREATE TABLE case_data(caseId INTEGER(10), clientId INTEGER(10), employeeId INTEGER(10), description VARCHAR(250), department VARCHAR(30), dateOfCaseOpen DATE, dateClosed DATE, PRIMARY KEY (caseId), FOREIGN KEY (employeeId) REFERENCES employee_account(employeeId), FOREIGN KEY (clientId) REFERENCES client_information(clientId))")
         mycursor.execute("CREATE TABLE archived_state(caseId INTEGER(10), archivedState VARCHAR(10), archiveNumber INTEGER(10), archivedDate DATE, dateToBeDestroyed DATE, UNIQUE (caseId), PRIMARY KEY (archiveNumber), FOREIGN KEY (caseId) REFERENCES case_data(caseId))")
         mycursor.execute("CREATE TABLE deletion_logging(caseId INTEGER(10), employeeId INTEGER, deletionDate DATE, deletionConfirmed BOOLEAN, PRIMARY KEY (caseId), FOREIGN KEY (caseId) REFERENCES case_data(caseId), FOREIGN KEY (employeeId) REFERENCES employee_account(employeeId))")
         mycursor.execute("CREATE TABLE deletion_confirmation(caseId INTEGER(10), employeeId1 INTEGER, employeeId2 INTEGER, employee1Confirmed BOOLEAN, employee2Confirmed BOOLEAN, PRIMARY KEY (caseId), FOREIGN KEY (employeeId1) REFERENCES employee_account(employeeId),  FOREIGN KEY (employeeId2) REFERENCES employee_account(employeeId))")
@@ -162,11 +162,11 @@ def populate_database():
         description = "awesome"
         department = "Tax"
         dateOfCaseOpen = "2020-06-06"
-        dateUploaded = "2022-06-06"
-        add.add_to_case_data(clientId, employeeId, description, department, dateOfCaseOpen, dateUploaded)
+        add.add_to_case_data(clientId, employeeId, description, department, dateOfCaseOpen)
         print("success")
         time.sleep(wait_time) 
 
+    
     # File Upload Data    
     for i in range(10):
         fileName = f"File Name {i}"

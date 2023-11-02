@@ -64,9 +64,16 @@ def all_client_information():
     return myresult
 
 
+def case_data_of_employee(employeeId):
+    mydb.cmd_refresh(1)
+    mycursor.execute(f"SELECT case_data.caseId, client_information.firstName, client_information.lastName, employee_account.firstName, employee_account.lastName, description, department, dateOfCaseOpen, dateClosed FROM case_data LEFT JOIN employee_account ON case_data.employeeId=employee_account.employeeId LEFT JOIN client_information ON case_data.clientId=client_information.clientId WHERE case_data.employeeId = '{employeeId}'")
+    myresult = mycursor.fetchall()
+    return myresult
+
+
 def all_case_data():
     mydb.cmd_refresh(1)
-    mycursor.execute("SELECT case_data.caseId, client_information.firstName, client_information.lastName, employee_account.firstName, employee_account.lastName, description, department, dateOfCaseOpen, dateUploaded FROM case_data LEFT JOIN employee_account ON case_data.employeeId=employee_account.employeeId LEFT JOIN client_information ON case_data.clientId=client_information.clientId")
+    mycursor.execute("SELECT case_data.caseId, client_information.firstName, client_information.lastName, employee_account.firstName, employee_account.lastName, description, department, dateOfCaseOpen, dateClosed FROM case_data LEFT JOIN employee_account ON case_data.employeeId=employee_account.employeeId LEFT JOIN client_information ON case_data.clientId=client_information.clientId")
     myresult = mycursor.fetchall()
     return myresult
 

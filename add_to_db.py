@@ -2,8 +2,8 @@ import mysql.connector
 import tkinter.messagebox 
 import hashlib
 from datetime import datetime
-import database.grab_from_db as grab
-import global_variables.global_variables as gv
+import grab_from_db as grab
+import global_variables as gv
 
 
 # TODO: Error handling of inputs
@@ -152,10 +152,10 @@ def add_to_client_information(firstName, lastName, gender, dateOfBirth) -> None:
         print(e)    
     
 
-def add_to_case_data(clientId, employeeId, description, department, dateOfCaseOpen, dateUploaded) -> None:
+def add_to_case_data(clientId, employeeId, description, department, dateOfCaseOpen) -> None:
     """Inserts login details into case_data database"""
     mydb.cmd_refresh(1)
-    sqlFormula = "INSERT INTO case_data (caseId, clientId, employeeId, description, department, dateOfCaseOpen, dateUploaded) VALUE (%s, %s, %s, %s, %s, %s, %s)"
+    sqlFormula = "INSERT INTO case_data (caseId, clientId, employeeId, description, department, dateOfCaseOpen) VALUE (%s, %s, %s, %s, %s, %s)"
     
     # Manual auto-increment
     mycursor.execute("SELECT caseId FROM case_data ORDER BY caseId DESC LIMIT 1") 
@@ -168,13 +168,14 @@ def add_to_case_data(clientId, employeeId, description, department, dateOfCaseOp
             
     # Insert into Db    
     try:  
-        details = (caseId, clientId, employeeId, description, department, dateOfCaseOpen, dateUploaded)
+        details = (caseId, clientId, employeeId, description, department, dateOfCaseOpen)
         mycursor.execute(sqlFormula, details)   
         mydb.commit()
         if messagebox_show == True: tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
     except Exception as e:
         if messagebox_show == True: tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
         print(e)  
+
 
 def add_to_archived_state(caseId, archivedState, archivedDate) -> None:
     """Inserts login details into archived_state database"""

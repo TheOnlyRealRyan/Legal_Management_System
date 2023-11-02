@@ -4,12 +4,12 @@ from tkinter.filedialog import askopenfilename
 import os
 
 
-import database.add_to_db as db_conn
-import database.delete_from_db as db_delete
-import database.update_db as db_update
-import database.grab_from_db as grab_from_db
-import cloud.upload_file as upload_file
-import global_variables.global_variables as global_variables
+import add_to_db as db_conn
+import delete_from_db as db_delete
+import update_db as db_update
+import grab_from_db as grab_from_db
+import upload_file as upload_file
+import global_variables as global_variables
 
 
 # POPUP windows Decoration classes
@@ -150,14 +150,8 @@ class popup_add_to_case_data(customtkinter.CTkToplevel):
         borderwidth=0, bordercolor='white', height = 20, width = 20)
         case_open.pack(padx=12, pady=10)
         
-        customtkinter.CTkLabel(self, text="Enter date Uploaded", font=("Roboto", 24)).pack(padx=12, pady=10)
-        date_upload = Calendar(self, selectmode='day', font=("Roboto", 12),
-        showweeknumbers=False, cursor="hand2", date_pattern= 'y-mm-dd',
-        borderwidth=0, bordercolor='white', height = 20, width = 20)
-        date_upload.pack(padx=12, pady=10)
-        
         # Submit Button
-        customtkinter.CTkButton(self, text="Submit", command=lambda: db_conn.add_to_case_data(txtclientId.get(), txtemployeeId.get(), txtdescription.get(), txtDepartment.get(), case_open.get_date(), date_upload.get_date())).pack(pady=12, padx=10)
+        customtkinter.CTkButton(self, text="Submit", command=lambda: db_conn.add_to_case_data(txtclientId.get(), txtemployeeId.get(), txtdescription.get(), txtDepartment.get(), case_open.get_date())).pack(pady=12, padx=10)
 
 
 class popup_add_to_archived_state(customtkinter.CTkToplevel):
