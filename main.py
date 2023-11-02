@@ -280,16 +280,7 @@ class App(customtkinter.CTk):
             
             gathered_data = db_conn.all_archived_case_request()
             self.data = [[f"{a}",f"{b} {c}",f"{d}",f"{e}",f"{f}"] for a,b,c,d,e,f in gathered_data]
-            self.sheet.data_reference(self.data)
-                    
-            def click_this():
-                gathered_data = db_conn.all_archived_case_request()
-                self.data = [[f"{a}",f"{b} {c}",f"{d}",f"{e}",f"{f}"] for a,b,c,d,e,f in gathered_data]
-                self.sheet.data_reference(self.data)
-                print("--> Updated Table")
-                    
-            btn_refresh= customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("refresh"), fg_color="transparent", width=30, height=30, command= lambda: click_this())
-            btn_refresh.grid(row=0, column=10, padx=10, pady=10)
+            self.sheet.data_reference(self.data)                   
             
                    
         # Decorate Deletion Requests Notification Bar
@@ -301,9 +292,9 @@ class App(customtkinter.CTk):
             Label.pack(side=tkinter.TOP, padx=10, pady=10)
 
             # Create table
-            self.sheet = tksheet.Sheet(self.deletion, theme = "dark", height = 800, width = 500, show_row_index=False, show_top_left=False)
-            self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
-            self.sheet.enable_bindings(("single_select",
+            self.sheet2 = tksheet.Sheet(self.deletion, theme = "dark", height = 800, width = 500, show_row_index=False, show_top_left=False)
+            self.sheet2.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+            self.sheet2.enable_bindings(("single_select",
                                 "double_click_column_resize",
                                 "column_width_resize",
                                 "row_select",
@@ -313,20 +304,12 @@ class App(customtkinter.CTk):
             
             # grab data 
             headers = ['caseId', 'employee requested']
-            self.sheet.headers((f"{x}" for x in headers))
+            self.sheet2.headers((f"{x}" for x in headers))
             
-            gathered_data = db_conn.all_archived_state()
-            self.data = [[f"{a}",f"{b} {c}"] for a,b,c in db_conn.all_deletion_confirmation()]
-            self.sheet.data_reference(self.data)
-                    
-            def click_this():
-                gathered_data = db_conn.all_archived_state()
-                self.data = [[f"{a}",f"{b} {c}"] for a,b,c in db_conn.all_deletion_confirmation()]
-                self.sheet.data_reference(self.data)
-                print("--> Updated Table")
-                    
-            btn_refresh= customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("refresh"), fg_color="transparent", width=30, height=30, command= lambda: click_this())
-            btn_refresh.grid(row=0, column=10, padx=10, pady=10)
+            gathered_data2 = db_conn.all_deletion_confirmation()
+            self.data2 = [[f"{a}",f"{b} {c}"] for a,b,c in gathered_data2]
+            self.sheet2.data_reference(self.data2)
+                   
             
             
         # Decorate Destruction Dates Notification Bar
@@ -338,9 +321,9 @@ class App(customtkinter.CTk):
             Label.pack(side=tkinter.TOP, padx=10, pady=10)          
   
             # Create table
-            self.sheet = tksheet.Sheet(self.destruction, theme = "dark", height = 800, width = 500, show_row_index=False, show_top_left=False)
-            self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
-            self.sheet.enable_bindings(("single_select",
+            self.sheet3 = tksheet.Sheet(self.destruction, theme = "dark", height = 800, width = 500, show_row_index=False, show_top_left=False)
+            self.sheet3.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+            self.sheet3.enable_bindings(("single_select",
                                 "double_click_column_resize",
                                 "column_width_resize",
                                 "row_select",
@@ -350,20 +333,38 @@ class App(customtkinter.CTk):
             
             # grab data 
             headers = ['ArchiveNumber', 'archived State',  'archivedDate', 'dateToBeDestroyed', 'Location']
-            self.sheet.headers((f"{x}" for x in headers))
+            self.sheet3.headers((f"{x}" for x in headers))
             
-            gathered_data = db_conn.all_archived_state()
-            self.data = [[f"{a}",f"{b}",f"{c}",f"{d}",f"{e}"] for a,b,c,d,e in db_conn.case_to_be_destroyed_this_month()]
-            self.sheet.data_reference(self.data)
-                    
-            def click_this():
-                gathered_data = db_conn.all_archived_state()
-                self.data = [[f"{a}",f"{b}",f"{c}",f"{d}",f"{e}"] for a,b,c,d,e in db_conn.case_to_be_destroyed_this_month()]
+            gathered_data3 = db_conn.all_archived_state()
+            self.data3 = [[f"{a}",f"{b}",f"{c}",f"{d}",f"{e}"] for a,b,c,d,e in gathered_data3]
+            self.sheet3.data_reference(self.data3)
+                
+        def click_this():
+            try:
+                gathered_data = db_conn.all_archived_case_request()
+                self.data = [[f"{a}",f"{b} {c}",f"{d}",f"{e}",f"{f}"] for a,b,c,d,e,f in gathered_data]
                 self.sheet.data_reference(self.data)
                 print("--> Updated Table")
-                    
-            btn_refresh= customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("refresh"), fg_color="transparent", width=30, height=30, command= lambda: click_this())
-            btn_refresh.grid(row=0, column=10, padx=10, pady=10)
+            except:
+                print("--> Wrong user") 
+            try:   
+                gathered_data2 = db_conn.all_deletion_confirmation()
+                self.data2 = [[f"{a}",f"{b} {c}"] for a,b,c in gathered_data2]
+                self.sheet2.data_reference(self.data2)
+                print("--> Updated Table")
+            except:
+                print("--> Wrong user") 
+            try:
+                gathered_data3 = db_conn.case_to_be_destroyed_this_month()
+                self.data3 = [[f"{a}",f"{b}",f"{c}",f"{d}",f"{e}"] for a,b,c,d,e in gathered_data3]
+                self.sheet3.data_reference(self.data3)  
+                print("--> Updated Table") 
+            except:
+                print("--> Wrong user")               
+            
+                
+        btn_refresh= customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("refresh"), fg_color="transparent", width=30, height=30, command= lambda: click_this())
+        btn_refresh.grid(row=0, column=10, padx=10, pady=10)
     
     
     def archive(self):
@@ -430,26 +431,16 @@ class App(customtkinter.CTk):
         
         gathered_data = db_conn.all_archived_state()
         self.data = [[f"{a}",f"{b}",f"{c}",f"{d}",f"{e}"] for a,b,c,d,e in gathered_data]
-        self.sheet.data_reference(self.data)
-                
-        def click_this():
-            gathered_data = db_conn.all_archived_state()
-            self.data = [[f"{a}",f"{b}",f"{c}",f"{d}",f"{e}"] for a,b,c,d,e in gathered_data]
-            self.sheet.data_reference(self.data)
-            print("--> Updated Table")
-                
-        btn_refresh= customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("refresh"), fg_color="transparent", width=30, height=30, command= lambda: click_this())
-        btn_refresh.grid(row=0, column=10, padx=10, pady=10)
-        
+        self.sheet.data_reference(self.data)        
         
         # case drawn by     
         Label = customtkinter.CTkLabel(self.caseDrawnBy_panel, text="Case Drawn By", font=('Roboto', 24))
         Label.pack(side=tkinter.TOP, padx=10, pady=10) 
                      
         # Create table
-        self.sheet = tksheet.Sheet(self.caseDrawnBy_panel, theme = "dark", height = 800, width = 500, show_row_index=False, show_top_left=False)
-        self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
-        self.sheet.enable_bindings(("single_select",
+        self.sheet2 = tksheet.Sheet(self.caseDrawnBy_panel, theme = "dark", height = 800, width = 500, show_row_index=False, show_top_left=False)
+        self.sheet2.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+        self.sheet2.enable_bindings(("single_select",
                             "double_click_column_resize",
                             "column_width_resize",
                             "row_select",
@@ -459,16 +450,20 @@ class App(customtkinter.CTk):
         
         # grab data 
         headers = ['archive Number', 'employee ID', 'date Drawn Out']
-        self.sheet.headers((f"{x}" for x in headers))
+        self.sheet2.headers((f"{x}" for x in headers))
         
         gathered_data = db_conn.all_case_drawn_by()
         self.data2 = [[f"{a}",f"{b}",f"{c}"] for a,b,c in gathered_data] 
-        self.sheet.data_reference(self.data2)
+        self.sheet2.data_reference(self.data2)
                 
         def click_this():
-            gathered_data = db_conn.all_case_drawn_by()
-            self.data2 = [[f"{a}",f"{b}",f"{c}"] for a,b,c in gathered_data] 
-            self.sheet.data_reference(self.data2)
+            gathered_data = db_conn.all_archived_state()
+            self.data = [[f"{a}",f"{b}",f"{c}",f"{d}",f"{e}"] for a,b,c,d,e in gathered_data]
+            self.sheet.data_reference(self.data)
+            
+            gathered_data2 = db_conn.all_case_drawn_by()
+            self.data2 = [[f"{a}",f"{b}",f"{c}"] for a,b,c in gathered_data2] 
+            self.sheet2.data_reference(self.data2)
             print("--> Updated Table")
                 
         btn_refresh= customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("refresh"), fg_color="transparent", width=30, height=30, command= lambda: click_this())
