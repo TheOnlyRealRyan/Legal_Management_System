@@ -35,6 +35,7 @@ def hash_password(password):
 
 def add_years(input_date):
     """ Takes in YYYY-MM-DD string and converts to datetime object then outputs formatted string YYY-MM-DD with added 7 years"""
+    mydb.cmd_refresh(1)
     years = 7
     start_date = datetime.strptime(input_date, '%Y-%m-%d')
     try:
@@ -50,7 +51,7 @@ def add_years(input_date):
         
 def add_to_employee_roles(roleDescription) -> None:
     """Inserts a role description and roleId into employee_roles database"""
-     
+    mydb.cmd_refresh(1)
     if roleDescription == "" or len(roleDescription)>49:
         print("Redo")
     else:  
@@ -94,7 +95,7 @@ def add_to_employee_roles(roleDescription) -> None:
         
 def add_to_employee_account(firstname, lastname, gender, dateOfBirth, roleId) -> None:
     """Inserts details of employee into employee_account database"""
-    
+    mydb.cmd_refresh(1)
     sqlFormula = "INSERT INTO employee_account (firstname, lastname, gender, dateOfBirth, roleId) VALUE (%s, %s, %s, %s, %s)"
     
     # Insert into Db     
@@ -110,6 +111,7 @@ def add_to_employee_account(firstname, lastname, gender, dateOfBirth, roleId) ->
     
 def add_to_user_login_data(employeeId, username, password) -> None:
     """Inserts login details into user_login_data database"""
+    mydb.cmd_refresh(1)
     sqlFormula = "INSERT INTO user_login_data (employeeId, username, passwordHash) VALUE (%s, %s, %s)"
     
     # Take in password and generate Hash
@@ -127,6 +129,7 @@ def add_to_user_login_data(employeeId, username, password) -> None:
     
 def add_to_client_information(firstName, lastName, gender, dateOfBirth) -> None:
     """Inserts login details into client_information database"""
+    mydb.cmd_refresh(1)
     sqlFormula = "INSERT INTO client_information (firstName, lastName, gender, dateOfBirth) VALUE (%s, %s, %s, %s)"
     """
     # Manual auto-increment
@@ -151,6 +154,7 @@ def add_to_client_information(firstName, lastName, gender, dateOfBirth) -> None:
 
 def add_to_case_data(clientId, employeeId, description, department, dateOfCaseOpen, dateUploaded) -> None:
     """Inserts login details into case_data database"""
+    mydb.cmd_refresh(1)
     sqlFormula = "INSERT INTO case_data (caseId, clientId, employeeId, description, department, dateOfCaseOpen, dateUploaded) VALUE (%s, %s, %s, %s, %s, %s, %s)"
     
     # Manual auto-increment
@@ -174,6 +178,7 @@ def add_to_case_data(clientId, employeeId, description, department, dateOfCaseOp
 
 def add_to_archived_state(caseId, archivedState, archivedDate) -> None:
     """Inserts login details into archived_state database"""
+    mydb.cmd_refresh(1)
     sqlFormula = "INSERT INTO archived_state (caseId, archivedState, archiveNumber, archivedDate, dateToBeDestroyed) VALUE (%s, %s, %s, %s, %s)"
      
     # Determine when the file should be destroyed (7 years)
@@ -204,6 +209,7 @@ def add_to_case_location(archiveNumber, location) -> None:
     """Inserts into case_location database"""
     # Todo: Fix add to case Location ( Duplicate entry '0' for key 'case_location.PRIMARY')
     # TODO: combine update and add to case location
+    mydb.cmd_refresh(1)
     find = grab.case_location_by_id(archiveNumber)
     print(find)
     
@@ -242,6 +248,7 @@ def add_to_case_location(archiveNumber, location) -> None:
 
 def add_to_destruction_state(archiveNumber, destructionState) -> None:
     """Inserts login details into destruction_state database"""
+    mydb.cmd_refresh(1)
     sqlFormula = "INSERT INTO destruction_state (archiveNumber, destructionState) VALUE (%s, %s)"
                 
     # Insert into Db     
@@ -257,6 +264,7 @@ def add_to_destruction_state(archiveNumber, destructionState) -> None:
 
 def add_to_file_upload_data(fileName, caseId, recievedDate) -> None:
     """Inserts file_upload_data database"""
+    mydb.cmd_refresh(1)
     sqlFormula = "INSERT INTO file_upload_data (fileId, fileName, caseId, recievedDate, dateUploaded) VALUE (%s, %s, %s, %s, %s)"
     
      # Manual auto-increment            
@@ -280,6 +288,7 @@ def add_to_file_upload_data(fileName, caseId, recievedDate) -> None:
 
 def add_to_deletion_confirmation(caseId, employeeId1, employeeId2, employee1Confirmed, employee2Confirmed) -> None:
     """Inserts login details into deletion_confirmation database"""
+    mydb.cmd_refresh(1)
     sqlFormula = "INSERT INTO deletion_confirmation (caseId, employeeId1, employeeId2, employee1Confirmed, employee2Confirmed) VALUE (%s, %s, %s, %s, %s)"
                 
     # Insert into Db
@@ -295,6 +304,7 @@ def add_to_deletion_confirmation(caseId, employeeId1, employeeId2, employee1Conf
 
 def add_to_deletion_logging(caseId, employeeId1, employeeId2, deletionDate, deletionConfirmed) -> None:
     """Inserts login details into deletion_logging database"""
+    mydb.cmd_refresh(1)
     sqlFormula = "INSERT INTO deletion_logging (caseId, employeeId1, employeeId2, deletionDate, deletionConfirmed) VALUE (%s, %s, %s, %s, %s)"
                 
     # Insert into Db
@@ -310,6 +320,7 @@ def add_to_deletion_logging(caseId, employeeId1, employeeId2, deletionDate, dele
 
 def add_to_archived_case_request(archiveNumber) -> None:
     """Inserts login details into archived_case_request database"""
+    mydb.cmd_refresh(1)
     sqlFormula = "INSERT INTO archived_case_request (archiveNumber, employeeId, dateRequested) VALUE (%s, %s, %s)" 
                
     # Insert into Db
@@ -325,6 +336,7 @@ def add_to_archived_case_request(archiveNumber) -> None:
     
 def add_to_case_drawn_by(archiveNumber, employeeId, dateDrawnOut) -> None:
     """Inserts login details into case_drawn_by database"""
+    mydb.cmd_refresh(1)
     sqlFormula = "INSERT INTO case_drawn_by (archiveNumber, employeeId, dateDrawnOut) VALUE (%s, %s, %s)"
                 
     # Insert into Db
@@ -340,6 +352,7 @@ def add_to_case_drawn_by(archiveNumber, employeeId, dateDrawnOut) -> None:
     
 def add_to_case_drawn_history(archiveNumber, employeeId, dateDrawnOut, dateDrawnIn) -> None:
     """Inserts login details into case_drawn_history database"""
+    mydb.cmd_refresh(1)
     sqlFormula = "INSERT INTO case_drawn_history (archiveNumber, employeeId, dateDrawnOut, dateDrawnIn) VALUE (%s, %s, %s, %s)"
                 
     # Insert into Db

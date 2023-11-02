@@ -117,7 +117,7 @@ class popup_add_to_client_information(customtkinter.CTkToplevel):
         txtDOB.pack(padx=12, pady=10)
                
         # Submit Button
-        customtkinter.CTkButton(self, text="Submit", command=lambda: db_conn.add_to_client_information(txtName.get(), txtSurname.get(), txtGender.get(), txtDOB.get())).pack(pady=12, padx=10)
+        customtkinter.CTkButton(self, text="Submit", command=lambda: db_conn.add_to_client_information(txtName.get(), txtSurname.get(), txtGender.get(), txtDOB.get_date())).pack(pady=12, padx=10)
 
 
 class popup_add_to_case_data(customtkinter.CTkToplevel):

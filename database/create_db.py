@@ -1,7 +1,6 @@
 import mysql.connector
-import add_to_db as add
+import database.add_to_db as add
 import time
-# import global_variables
 
 
 def connect_to_database():

@@ -2,13 +2,14 @@ import customtkinter
 from PIL import Image
 import tkinter
 import tksheet 
+"""
 import numpy as np
 import seaborn as sns
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from string import ascii_letters
 import pandas as pd
 import matplotlib.pyplot as plt
-
+"""
 
 import database.grab_from_db as db_conn
 import database.create_db as create_db
@@ -33,15 +34,16 @@ class App(customtkinter.CTk):
         
         # open login page
         self.login()
-        
-          
-    def update(self):
-        """1 second update function """ 
-        self.after(1000, self.update)
     
-                 
+    
+    def clear_canvas(self):
+        """ Clears canvas from right_dashboard before loading the new canvas """
+        for widget in self.right_dashboard.winfo_children():
+            widget.destroy()     
+            
+            
     def load_image(self, img_picked):
-        """Load an image only if its called"""
+        """Load an image only if its called using the image name"""
         try:
             resource_path = "resources/icons_variation_2/"                
             img= (Image.open(f"{resource_path}{img_picked}.png"))
@@ -50,10 +52,31 @@ class App(customtkinter.CTk):
         except IOError:
             print("File not found") 
             pass
+        
+        
+    def login_success(self):
+        """Checks to see if the username and password is correct then sets the session user id and role"""       
+        username = self.username.get() # "admin"
+        password = self.password.get() # "admin"
+        success = validate(username, password)
+        if success:         
+            # Set Role and employee ID for session                 
+            global_variables.set_role(db_conn.login_employee_roles(username))
+            global_variables.set_id(db_conn.login_employee_id(username)) 
+            print(f"--> Employee {global_variables.get_id()} logged in")
+            print("--> Login Successful")
+            # Destroy Login Pagge. Load Main Page
+            for widget in self.login_page.winfo_children():
+                widget.destroy()
+            self.login_page.destroy()
+            self.load_main_page()  
+    
     
     # --------------------------------------------------------------------------------------------------
     # Different Pages that can be loaded
     # --------------------------------------------------------------------------------------------------  
+    
+    
     def load_main_page(self):    
         self.title("Main Program")
         # Dimensions relating to screen size
@@ -131,47 +154,31 @@ class App(customtkinter.CTk):
         button.pack(pady=12, padx=10)
     
     
-    def login_success(self):       
-        username = self.username.get() # "admin"
-        password = self.password.get() # "admin"
-        success = validate(username, password)
-        if success:                          
-            global_variables.set_role(db_conn.login_employee_roles(username))
-            global_variables.set_id(db_conn.login_employee_id(username)) 
-            
-            print("Login Successful")
-            for widget in self.login_page.winfo_children():
-                widget.destroy()
-            self.login_page.destroy()
-            self.load_main_page()         
-
-
     def dashboard(self):
         self.clear_canvas()
         
-        def refresh_data(): 
-            # TODO: The table should update somehow
-            return db_conn.all_archived_case_request()
-        
         # Layout
         self.heading_banner = customtkinter.CTkCanvas(self.right_dashboard, height = 50, bg="#00253e")
-        self.heading_banner.pack(side=tkinter.TOP, fill=tkinter.X, expand=False, padx=10, pady=10)
-        
+        self.heading_banner.pack(side=tkinter.TOP, fill=tkinter.X, expand=False, padx=10, pady=10)       
         
         self.inner_right_panel = customtkinter.CTkCanvas(self.right_dashboard, width=800, bg="#00253e")
         self.inner_right_panel.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
         
         # Decorate Heading Banner    
         try:
-            name = db_conn.grab_username(global_variables.get_id())
+            name = "".join(db_conn.grab_username(global_variables.get_id())[0])
         except:
             name = "admin"
+        
+        
         Label = customtkinter.CTkLabel(self.heading_banner, text=f"Hello {name}!", font=('Roboto', 30))
         Label.grid(row=0, column=0, padx=10, pady=10 )    
 
         # Decorate inner panel        
         # TODO: crashes when closing app
         # TODO: Analytics
+        # TEMPORARY!
+        """
         def create_plot():
             sns.set(style="white")
 
@@ -206,7 +213,7 @@ class App(customtkinter.CTk):
         canvas = FigureCanvasTkAgg(table, master=self.inner_right_panel)  # A tk.DrawingArea.
         # canvas.draw()
         canvas.get_tk_widget().pack()
-        
+        """
         
     def notification(self):
         self.clear_canvas()
@@ -231,8 +238,7 @@ class App(customtkinter.CTk):
             elif choice == "Destruction Dates":
                 return self.open_popup("destructionState")
             
-        
-         
+                 
         optionmenu_var = customtkinter.StringVar(value="Mark Complete")
         optionmenu = customtkinter.CTkOptionMenu(self.heading_banner, values=["Archival Retrieval Requests",
                                                                                 "Deletion Requests", 
@@ -249,26 +255,41 @@ class App(customtkinter.CTk):
             self.archival = customtkinter.CTkCanvas(self.right_dashboard,width=500, bg="#00253e")
             self.archival.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
             
-            Label = customtkinter.CTkLabel(self.archival, text="Archival Retrieval Requests", font=('Roboto', 24))
-            Label.pack(side=tkinter.TOP, padx=10, pady=10) 
-            
-            headers = ['archiveNumber', 'employee', 'employee ID', 'dateRequested', 'Location']
-            self.data = [[f"{a}",f"{b} {c}",f"{d}",f"{e}",f"{f}"] for a,b,c,d,e,f in db_conn.all_archived_case_request()]
-            
-            # Create table
-            self.sheet1 = tksheet.Sheet(self.archival, data = self.data, height = 800, theme = "dark", show_row_index=False, show_top_left=False)
-            self.sheet1.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+            Label = customtkinter.CTkLabel(self.archival, text="Archival Retrieval Requests", width=30, height=30, font=('Roboto', 24))
+            Label.pack(side=tkinter.TOP, anchor=tkinter.NW, padx=(10,10), pady=(10,10)) 
+            # Label.grid(row=0, column=0, padx=20, pady=(10, 10))
+            # TODO: fix location of filter button
+            btn_filter = customtkinter.CTkButton(self.archival, text="", image=self.load_image("filter"), fg_color="transparent", width=30, height=30, command= lambda: print("-->filter Not Implemented"))
+            btn_filter.pack(side=tkinter.TOP, anchor=tkinter.NE, padx=(10,10), pady=(10,10))
+            # btn_filter.grid(row=0, column=0, padx=20, pady=(10, 10))
 
-            self.sheet1.headers((f"{x}" for x in headers))   
-            
-            # table enable choices listed below:
-            self.sheet1.enable_bindings(("single_select",
+            # Create table
+            self.sheet = tksheet.Sheet(self.archival, theme = "dark", height = 800, width = 500, show_row_index=False, show_top_left=False)
+            self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+            self.sheet.enable_bindings(("single_select",
                                 "double_click_column_resize",
                                 "column_width_resize",
                                 "row_select",
                                 "column_width_resize",
                                 "arrowkeys",
-                                "copy")) 
+                                "copy"))     
+            
+            # grab data 
+            headers = ['archiveNumber', 'employee', 'employee ID', 'dateRequested', 'Location']
+            self.sheet.headers((f"{x}" for x in headers))
+            
+            gathered_data = db_conn.all_archived_case_request()
+            self.data = [[f"{a}",f"{b} {c}",f"{d}",f"{e}",f"{f}"] for a,b,c,d,e,f in gathered_data]
+            self.sheet.data_reference(self.data)
+                    
+            def click_this():
+                gathered_data = db_conn.all_archived_case_request()
+                self.data = [[f"{a}",f"{b} {c}",f"{d}",f"{e}",f"{f}"] for a,b,c,d,e,f in gathered_data]
+                self.sheet.data_reference(self.data)
+                print("--> Updated Table")
+                    
+            btn_refresh= customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("refresh"), fg_color="transparent", width=30, height=30, command= lambda: click_this())
+            btn_refresh.grid(row=0, column=10, padx=10, pady=10)
             
                    
         # Decorate Deletion Requests Notification Bar
@@ -278,23 +299,35 @@ class App(customtkinter.CTk):
             
             Label = customtkinter.CTkLabel(self.deletion, text="Deletion Requests", font=('Roboto', 24))
             Label.pack(side=tkinter.TOP, padx=10, pady=10)
-            
-            headers = ['caseId', 'employee requested']
-            self.data = [[f"{a}",f"{b} {c}"] for a,b,c in db_conn.all_deletion_confirmation()]
-            
-            self.sheet2 = tksheet.Sheet(self.deletion, data = self.data, height = 800, theme = "dark", show_row_index=False, show_top_left=False)
-            self.sheet2.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
 
-            self.sheet2.headers((f"{x}" for x in headers))   
-            
-            # table enable choices listed below:
-            self.sheet2.enable_bindings(("single_select",
+            # Create table
+            self.sheet = tksheet.Sheet(self.deletion, theme = "dark", height = 800, width = 500, show_row_index=False, show_top_left=False)
+            self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+            self.sheet.enable_bindings(("single_select",
                                 "double_click_column_resize",
                                 "column_width_resize",
                                 "row_select",
                                 "column_width_resize",
                                 "arrowkeys",
-                                "copy")) 
+                                "copy"))     
+            
+            # grab data 
+            headers = ['caseId', 'employee requested']
+            self.sheet.headers((f"{x}" for x in headers))
+            
+            gathered_data = db_conn.all_archived_state()
+            self.data = [[f"{a}",f"{b} {c}"] for a,b,c in db_conn.all_deletion_confirmation()]
+            self.sheet.data_reference(self.data)
+                    
+            def click_this():
+                gathered_data = db_conn.all_archived_state()
+                self.data = [[f"{a}",f"{b} {c}"] for a,b,c in db_conn.all_deletion_confirmation()]
+                self.sheet.data_reference(self.data)
+                print("--> Updated Table")
+                    
+            btn_refresh= customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("refresh"), fg_color="transparent", width=30, height=30, command= lambda: click_this())
+            btn_refresh.grid(row=0, column=10, padx=10, pady=10)
+            
             
         # Decorate Destruction Dates Notification Bar
         if global_variables.get_id() == 2 or global_variables.get_id() == 1 or global_variables.get_id() == 3: # manager or admin or archival role
@@ -302,24 +335,37 @@ class App(customtkinter.CTk):
             self.destruction.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
             
             Label = customtkinter.CTkLabel(self.destruction, text="Destruction Dates", font=('Roboto', 24))
-            Label.pack(side=tkinter.TOP, padx=10, pady=10)
-            
-            headers = ['ArchiveNumber', 'archived State',  'archivedDate', 'dateToBeDestroyed', 'Location']
-            self.data = [[f"{a}",f"{b}",f"{c}",f"{d}",f"{e}"] for a,b,c,d,e in db_conn.case_to_be_destroyed_this_month()]
-            
-            self.sheet2 = tksheet.Sheet(self.destruction, data = self.data, height = 800, theme = "dark", show_row_index=False, show_top_left=False)
-            self.sheet2.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
-
-            self.sheet2.headers((f"{x}" for x in headers))   
-            
-            # table enable choices listed below:
-            self.sheet2.enable_bindings(("single_select",
+            Label.pack(side=tkinter.TOP, padx=10, pady=10)          
+  
+            # Create table
+            self.sheet = tksheet.Sheet(self.destruction, theme = "dark", height = 800, width = 500, show_row_index=False, show_top_left=False)
+            self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+            self.sheet.enable_bindings(("single_select",
                                 "double_click_column_resize",
                                 "column_width_resize",
                                 "row_select",
                                 "column_width_resize",
                                 "arrowkeys",
-                                "copy"))      
+                                "copy"))     
+            
+            # grab data 
+            headers = ['ArchiveNumber', 'archived State',  'archivedDate', 'dateToBeDestroyed', 'Location']
+            self.sheet.headers((f"{x}" for x in headers))
+            
+            gathered_data = db_conn.all_archived_state()
+            self.data = [[f"{a}",f"{b}",f"{c}",f"{d}",f"{e}"] for a,b,c,d,e in db_conn.case_to_be_destroyed_this_month()]
+            self.sheet.data_reference(self.data)
+                    
+            def click_this():
+                gathered_data = db_conn.all_archived_state()
+                self.data = [[f"{a}",f"{b}",f"{c}",f"{d}",f"{e}"] for a,b,c,d,e in db_conn.case_to_be_destroyed_this_month()]
+                self.sheet.data_reference(self.data)
+                print("--> Updated Table")
+                    
+            btn_refresh= customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("refresh"), fg_color="transparent", width=30, height=30, command= lambda: click_this())
+            btn_refresh.grid(row=0, column=10, padx=10, pady=10)
+    
+    
     def archive(self):
         self.clear_canvas()
         
@@ -363,56 +409,70 @@ class App(customtkinter.CTk):
         
         
         # Decorate Main Page
-        # grab archived cases data 
-        
+        # archived cases       
         Label = customtkinter.CTkLabel(self.archivedCases_panel, text="Archived Cases", font=('Roboto', 24))
         Label.pack(side=tkinter.TOP, padx=10, pady=10) 
         
-        def refresh_data():
-            return db_conn.all_archived_state()
-            
-        headers = ['Archive Number', 'State', 'Archived Date', 'Date To Be Destroyed', 'Location']
-        self.data = [[f"{a}",f"{b}",f"{c}",f"{d}",f"{e}"] for a,b,c,d,e in refresh_data()]
         # Create table
-        self.sheet = tksheet.Sheet(self.archivedCases_panel,data = self.data, theme = "dark", height = 800, width = 500, show_row_index=False, show_top_left=False)
+        self.sheet = tksheet.Sheet(self.archivedCases_panel, theme = "dark", height = 800, width = 500, show_row_index=False, show_top_left=False)
         self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
-     
-        self.sheet.headers((f" {x}" for x in headers))
-        
-        # table enable choices listed below:
         self.sheet.enable_bindings(("single_select",
                             "double_click_column_resize",
                             "column_width_resize",
                             "row_select",
                             "column_width_resize",
                             "arrowkeys",
-                            "copy"))
+                            "copy"))     
+        
+        # grab data 
+        headers = ['Archive Number', 'State', 'Archived Date', 'Date To Be Destroyed', 'Location']
+        self.sheet.headers((f"{x}" for x in headers))
+        
+        gathered_data = db_conn.all_archived_state()
+        self.data = [[f"{a}",f"{b}",f"{c}",f"{d}",f"{e}"] for a,b,c,d,e in gathered_data]
+        self.sheet.data_reference(self.data)
+                
+        def click_this():
+            gathered_data = db_conn.all_archived_state()
+            self.data = [[f"{a}",f"{b}",f"{c}",f"{d}",f"{e}"] for a,b,c,d,e in gathered_data]
+            self.sheet.data_reference(self.data)
+            print("--> Updated Table")
+                
+        btn_refresh= customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("refresh"), fg_color="transparent", width=30, height=30, command= lambda: click_this())
+        btn_refresh.grid(row=0, column=10, padx=10, pady=10)
         
         
-        # grab drawn by data 
-        
+        # case drawn by     
         Label = customtkinter.CTkLabel(self.caseDrawnBy_panel, text="Case Drawn By", font=('Roboto', 24))
         Label.pack(side=tkinter.TOP, padx=10, pady=10) 
-        
-        def refresh_data_case_drawn_out():
-            return db_conn.all_case_drawn_by()
-            
-        headers = ['archive Number', 'employee ID', 'date Drawn Out']
-        self.data2 = [[f"{a}",f"{b}",f"{c}"] for a,b,c in refresh_data_case_drawn_out()]
+                     
         # Create table
-        self.sheet2 = tksheet.Sheet(self.caseDrawnBy_panel, data = self.data2, theme = "dark", height = 800, width = 500, show_row_index=False, show_top_left=False)
-        self.sheet2.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
-     
-        self.sheet2.headers((f" {x}" for x in headers))
-        
-        # table enable choices listed below:
-        self.sheet2.enable_bindings(("single_select",
+        self.sheet = tksheet.Sheet(self.caseDrawnBy_panel, theme = "dark", height = 800, width = 500, show_row_index=False, show_top_left=False)
+        self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+        self.sheet.enable_bindings(("single_select",
                             "double_click_column_resize",
                             "column_width_resize",
                             "row_select",
                             "column_width_resize",
                             "arrowkeys",
-                            "copy"))
+                            "copy"))     
+        
+        # grab data 
+        headers = ['archive Number', 'employee ID', 'date Drawn Out']
+        self.sheet.headers((f"{x}" for x in headers))
+        
+        gathered_data = db_conn.all_case_drawn_by()
+        self.data2 = [[f"{a}",f"{b}",f"{c}"] for a,b,c in gathered_data] 
+        self.sheet.data_reference(self.data2)
+                
+        def click_this():
+            gathered_data = db_conn.all_case_drawn_by()
+            self.data2 = [[f"{a}",f"{b}",f"{c}"] for a,b,c in gathered_data] 
+            self.sheet.data_reference(self.data2)
+            print("--> Updated Table")
+                
+        btn_refresh= customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("refresh"), fg_color="transparent", width=30, height=30, command= lambda: click_this())
+        btn_refresh.grid(row=0, column=10, padx=10, pady=10)
         
         
     def case(self):
@@ -447,17 +507,10 @@ class App(customtkinter.CTk):
         
         
         # Decorate inner right panel
-        # grab data 
-        gathered_data = db_conn.all_case_data()
-        headers = ['id', 'client', 'employee', 'Description', 'Department', 'Date of Open', 'Date of Upload']
-        self.data = [[f"{a}",f"{b} {c}",f"{d} {e}",f"{f}",f"{g}",f"{h}",f"{i}"] for a,b,c,d,e,f,g,h,i in gathered_data ]
-        # Create table
-        self.sheet = tksheet.Sheet(self.inner_right_panel, data = self.data, theme = "dark", height = 800, width = 1750, show_row_index=False, show_top_left=False)
-        self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
         
-        self.sheet.headers((f"{x}" for x in headers))
-               
-        # table enable choices listed below:
+        # Create table
+        self.sheet = tksheet.Sheet(self.inner_right_panel, theme = "dark", height = 800, width = 1750, show_row_index=False, show_top_left=False)
+        self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
         self.sheet.enable_bindings(("single_select",
                             "double_click_column_resize",
                             "column_width_resize",
@@ -465,6 +518,22 @@ class App(customtkinter.CTk):
                             "column_width_resize",
                             "arrowkeys",
                             "copy"))
+        
+        # grab data 
+        gathered_data = db_conn.all_case_data()
+        headers = ['id', 'client', 'employee', 'Description', 'Department', 'Date of Open', 'Date of Upload']
+        self.data = [[f"{a}",f"{b} {c}",f"{d} {e}",f"{f}",f"{g}",f"{h}",f"{i}"] for a,b,c,d,e,f,g,h,i in gathered_data ]
+        self.sheet.headers((f"{x}" for x in headers))
+        self.sheet.data_reference(self.data)   
+            
+        def click_this():
+            gathered_data = db_conn.all_case_data()
+            self.data = [[f"{a}",f"{b} {c}",f"{d} {e}",f"{f}",f"{g}",f"{h}",f"{i}"] for a,b,c,d,e,f,g,h,i in gathered_data ]
+            self.sheet.data_reference(self.data)
+            print("--> Updated Table")
+                
+        btn_refresh= customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("refresh"), fg_color="transparent", width=30, height=30, command= lambda: click_this())
+        btn_refresh.grid(row=0, column=10, padx=10, pady=10)
     
         
     def files(self):
@@ -501,18 +570,9 @@ class App(customtkinter.CTk):
         optionmenu.grid(row=0, column=11, padx=20, pady=(10, 10))
         
         
-        # grab data 
-        gathered_data = db_conn.all_file_upload_data()
-        headers = ['fileId', 'fileName', 'caseId', 'recievedDate', 'dateUploaded']
-        self.data = [[f"{a}", f"{b}", f"{c}", f"{d}", f"{e}"] for a,b,c,d,e in gathered_data ]
         # Create table
-        self.sheet = tksheet.Sheet(self.inner_right_panel,data = self.data, theme = "dark", height = 800, width = 1750, show_row_index=False, show_top_left=False)
+        self.sheet = tksheet.Sheet(self.inner_right_panel, theme = "dark", height = 800, width = 1750, show_row_index=False, show_top_left=False)
         self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
-        # self.sheet.grid(row=0, column =0, padx = 10, pady = 10)
-        
-        self.sheet.headers((f" {x}" for x in headers))
-        
-        # table enable choices listed below:
         self.sheet.enable_bindings(("single_select",
                             "double_click_column_resize",
                             "column_width_resize",
@@ -520,6 +580,22 @@ class App(customtkinter.CTk):
                             "column_width_resize",
                             "arrowkeys",
                             "copy"))
+        # grab data 
+        headers = ['fileId', 'fileName', 'caseId', 'recievedDate', 'dateUploaded']
+        self.sheet.headers((f"{x}" for x in headers))
+        
+        gathered_data = db_conn.all_file_upload_data()
+        self.data = [[f"{a}", f"{b}", f"{c}", f"{d}", f"{e}"] for a,b,c,d,e in gathered_data ]
+        self.sheet.data_reference(self.data)
+                
+        def click_this():
+            gathered_data = db_conn.all_file_upload_data()
+            self.data = [[f"{a}", f"{b}", f"{c}", f"{d}", f"{e}"] for a,b,c,d,e in gathered_data ]
+            self.sheet.data_reference(self.data)
+            print("--> Updated Table")
+                
+        btn_refresh= customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("refresh"), fg_color="transparent", width=30, height=30, command= lambda: click_this())
+        btn_refresh.grid(row=0, column=10, padx=10, pady=10)
 
 
     def client(self):
@@ -554,34 +630,35 @@ class App(customtkinter.CTk):
         optionmenu.grid(row=0, column=11, padx=20, pady=(10, 10))
         
         
-        # Decorate inner right panel
-        # grab data 
-        gathered_data = db_conn.all_client_information()
-        headers = ['id', 'Name', 'Surname', 'Gender', 'Date of Birth', 'Checked']
-        self.data = [[f"{a}", f"{b}",f"{c}",f"{d}",f"{e}"] for a,b,c,d,e in gathered_data ]
-        
+        # Decorate inner right panel      
         # Create table
-        self.sheet = tksheet.Sheet(self.inner_right_panel,  
-                                    data = self.data, 
-                                    theme = "dark", 
-                                    height = 800, 
-                                    width = 1750,
-                                    show_row_index=False, 
-                                    show_top_left=False)
-
-        self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10,)
-        
-        self.sheet.headers((f" {x}" for x in headers))
-        
-        # table enable choices listed below:
+        self.sheet = tksheet.Sheet(self.inner_right_panel, theme = "dark", height = 800, width = 1750, show_row_index=False, show_top_left=False)
+        self.sheet.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
         self.sheet.enable_bindings(("single_select",
                             "double_click_column_resize",
                             "column_width_resize",
                             "row_select",
                             "column_width_resize",
                             "arrowkeys",
-                            "copy"))
-
+                            "copy"))     
+        
+        # grab data 
+        headers = ['id', 'Name', 'Surname', 'Gender', 'Date of Birth', 'Checked']
+        self.sheet.headers((f"{x}" for x in headers))
+        
+        gathered_data = db_conn.all_client_information()
+        self.data = [[f"{a}", f"{b}",f"{c}",f"{d}",f"{e}"] for a,b,c,d,e in gathered_data]
+        self.sheet.data_reference(self.data)
+                
+        def click_this():
+            gathered_data = db_conn.all_client_information()
+            self.data = [[f"{a}", f"{b}",f"{c}",f"{d}",f"{e}"] for a,b,c,d,e in gathered_data]
+            self.sheet.data_reference(self.data)
+            print("--> Updated Table")
+                
+        btn_refresh= customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("refresh"), fg_color="transparent", width=30, height=30, command= lambda: click_this())
+        btn_refresh.grid(row=0, column=10, padx=10, pady=10)
+    
     
     def admin(self):
         self.clear_canvas()
@@ -719,21 +796,13 @@ class App(customtkinter.CTk):
         button = customtkinter.CTkButton(self.inner_right_panel, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= lambda: create_db.populate_database())
         button.grid(row=7, column=0, padx=5, pady=5) 
 
-        
-    #------------------------------------------------------------------     
-    
-    # Clear the page function                         
-    def clear_canvas(self):
-        """ Clears canvas from right_dashboard before loading the new canvas """
-        for widget in self.right_dashboard.winfo_children():
-            widget.destroy()
-    
-    
-    # -------------------------------------------- 
-    # Popup windows focus functions
-    # --------------------------------------------   
+
+    # ----------------------------------------------------------------------------------------  
+    # Popup windows focus function
+    # ----------------------------------------------------------------------------------------    
     
     def open_popup(self, popupName):
+        """Using a string input to indicate which popup window should be called"""
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
             if popupName == "role": # INSERTION Segment --------------------------
                 self.toplevel_window = popup.popup_add_to_employee_roles(self)  # create window if its None or destroyed
