@@ -78,7 +78,7 @@ class App(customtkinter.CTk):
     
     
     def load_main_page(self):    
-        self.title("Main Program")
+        self.title("Law Firm Management Software")
         # Dimensions relating to screen size
         self.geometry("{0}x{1}+0+0".format(self.winfo_screenwidth(), self.winfo_screenheight()-75))
         
@@ -115,7 +115,7 @@ class App(customtkinter.CTk):
         self.btn_case = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("case"), fg_color="transparent", width=45, text="", command=self.case)
         self.btn_case.grid(row=4, column=0, padx=20, pady=10)
         
-        if global_variables.get_id() != 2: # If not archivist
+        if global_variables.get_id() != 3: # If not archivist
             self.btn_files = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("files"), fg_color="transparent", width=45, text="", command=self.files)
             self.btn_files.grid(row=5, column=0, padx=20, pady=10)
         
@@ -176,7 +176,7 @@ class App(customtkinter.CTk):
 
         # Decorate inner panel        
         
-        if global_variables.get_id() != 3 and global_variables.get_id() != 2 and global_variables.get_id() != 1: # if not admin, manager, or archivist
+        if global_variables.get_role() == 4: # if Attorney
             self.my_cases_panel = customtkinter.CTkCanvas(self.right_dashboard,width=500, bg="#00253e")
             self.my_cases_panel.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
             
@@ -196,7 +196,7 @@ class App(customtkinter.CTk):
 
             # grab data 
             gathered_data = db_conn.case_data_of_employee(global_variables.get_id())
-            headers = ['id', 'client', 'employee', 'Description', 'Department', 'Date of Open', 'Date Closed']
+            headers = ['id', 'Client', 'Employee', 'Description', 'Department', 'Date of Open', 'Date Closed']
             self.data = [[f"{a}",f"{b} {c}",f"{d} {e}",f"{f}",f"{g}",f"{h}",f"{i}"] for a,b,c,d,e,f,g,h,i in gathered_data ]
             
             self.sheet.headers((f"{x}" for x in headers))
@@ -298,9 +298,61 @@ class App(customtkinter.CTk):
         optionmenu.grid(row=0, column=11, padx=20, pady=(10, 10))
         
         # if role is a attorney, show what archive requests they have. show their deletion requests. 
+        if global_variables.get_role() == 4:
+            self.archive_requests_panel = customtkinter.CTkCanvas(self.right_dashboard,width=500, bg="#00253e")
+            self.archive_requests_panel.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+            
+            Label = customtkinter.CTkLabel(self.archive_requests_panel, text="Archival Retrieval Requests", width=30, height=30, font=('Roboto', 24))
+            Label.pack(side=tkinter.TOP, anchor=tkinter.NW, padx=(10,10), pady=(10,10)) 
+
+            # Create table
+            self.sheet4 = tksheet.Sheet(self.archive_requests_panel, theme = "dark", height = 800, width = 500, show_row_index=False, show_top_left=False)
+            self.sheet4.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+            self.sheet4.enable_bindings(("single_select",
+                                "double_click_column_resize",
+                                "column_width_resize",
+                                "row_select",
+                                "column_width_resize",
+                                "arrowkeys",
+                                "copy"))     
+            
+            # grab data 
+            headers = ['Archive Number', 'Employee ID', 'Date Requested']
+            self.sheet4.headers((f"{x}" for x in headers))
+            
+            gathered_data4 = db_conn.my_archive_case_request(global_variables.get_id())
+            self.data4 = [[f"{a}",f"{b}", f"{c}"] for a,b,c in gathered_data4]
+            self.sheet4.data_reference(self.data4)   
+            
+            
+            self.my_deletion_requests_panel = customtkinter.CTkCanvas(self.right_dashboard,width=500, bg="#00253e")
+            self.my_deletion_requests_panel.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+            
+            Label = customtkinter.CTkLabel(self.my_deletion_requests_panel, text="My Deletion Requests", width=30, height=30, font=('Roboto', 24))
+            Label.pack(side=tkinter.TOP, anchor=tkinter.NW, padx=(10,10), pady=(10,10)) 
+
+            # Create table
+            self.sheet5 = tksheet.Sheet(self.my_deletion_requests_panel, theme = "dark", height = 800, width = 500, show_row_index=False, show_top_left=False)
+            self.sheet5.pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
+            self.sheet5.enable_bindings(("single_select",
+                                "double_click_column_resize",
+                                "column_width_resize",
+                                "row_select",
+                                "column_width_resize",
+                                "arrowkeys",
+                                "copy"))     
+            
+            # grab data 
+            headers = ['Case ID', 'Employee ID 1', 'Employee ID 2', 'Employee 1 Confirmed','Employee 2 Confirmed']
+            self.sheet5.headers((f"{x}" for x in headers))
+            
+            gathered_data5 = db_conn.my_deletion_requests(global_variables.get_id())
+            self.data5 = [[f"{a}",f"{b}", f"{c}", f"{d}", f"{e}"] for a,b,c,d,e in gathered_data5]
+            self.sheet5.data_reference(self.data5)
+        
         # Decorate Archival Retrieval Requests Notification Bar
         
-        if global_variables.get_id() == 2 or global_variables.get_id() == 1 or global_variables.get_id() == 3:
+        if global_variables.get_role() != 4:
             self.archival = customtkinter.CTkCanvas(self.right_dashboard,width=500, bg="#00253e")
             self.archival.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
             
@@ -308,8 +360,8 @@ class App(customtkinter.CTk):
             Label.pack(side=tkinter.TOP, anchor=tkinter.NW, padx=(10,10), pady=(10,10)) 
             # Label.grid(row=0, column=0, padx=20, pady=(10, 10))
             # TODO: fix location of filter button
-            btn_filter = customtkinter.CTkButton(self.archival, text="", image=self.load_image("filter"), fg_color="transparent", width=30, height=30, command= lambda: print("-->filter Not Implemented"))
-            btn_filter.pack(side=tkinter.TOP, anchor=tkinter.NE, padx=(10,10), pady=(10,10))
+            # btn_filter = customtkinter.CTkButton(self.archival, text="", image=self.load_image("filter"), fg_color="transparent", width=30, height=30, command= lambda: print("-->filter Not Implemented"))
+            # btn_filter.pack(side=tkinter.TOP, anchor=tkinter.NE, padx=(10,10), pady=(10,10))
             # btn_filter.grid(row=0, column=0, padx=20, pady=(10, 10))
 
             # Create table
@@ -324,7 +376,7 @@ class App(customtkinter.CTk):
                                 "copy"))     
             
             # grab data 
-            headers = ['archiveNumber', 'employee', 'employee ID', 'dateRequested', 'Location']
+            headers = ['Archive Number', 'Employee', 'Employee ID', 'Date Requested', 'Location']
             self.sheet.headers((f"{x}" for x in headers))
             
             gathered_data = db_conn.all_archived_case_request()
@@ -333,7 +385,7 @@ class App(customtkinter.CTk):
             
                    
         # Decorate Deletion Requests Notification Bar
-        if global_variables.get_id() == 2 or global_variables.get_id() == 1: # manager or admin role
+        if global_variables.get_role() == 2 or global_variables.get_role() == 1: # manager or admin role
             self.deletion = customtkinter.CTkCanvas(self.right_dashboard,width=500, bg="#00253e")
             self.deletion.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
             
@@ -352,7 +404,7 @@ class App(customtkinter.CTk):
                                 "copy"))     
             
             # grab data 
-            headers = ['caseId', 'employee requested']
+            headers = ['Case ID', 'Employee Requested']
             self.sheet2.headers((f"{x}" for x in headers))
             
             gathered_data2 = db_conn.all_deletion_confirmation()
@@ -362,7 +414,7 @@ class App(customtkinter.CTk):
             
             
         # Decorate Destruction Dates Notification Bar
-        if global_variables.get_id() == 2 or global_variables.get_id() == 1 or global_variables.get_id() == 3: # manager or admin or archival role
+        if global_variables.get_role() != 4: # manager or admin or archival role
             self.destruction = customtkinter.CTkCanvas(self.right_dashboard,width=500, bg="#00253e")
             self.destruction.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
             
@@ -381,7 +433,7 @@ class App(customtkinter.CTk):
                                 "copy"))     
             
             # grab data 
-            headers = ['ArchiveNumber', 'archived State',  'archivedDate', 'dateToBeDestroyed', 'Location']
+            headers = ['Archive Number', 'Archived State',  'Archived Date', 'Date To Be Destroyed', 'Location']
             self.sheet3.headers((f"{x}" for x in headers))
             
             gathered_data3 = db_conn.all_archived_state()
@@ -409,7 +461,24 @@ class App(customtkinter.CTk):
                 self.sheet3.data_reference(self.data3)  
                 print("--> Updated Table") 
             except:
-                print("--> Wrong user")               
+                print("--> Wrong user")      
+            try:
+                gathered_data4 = db_conn.my_archive_case_request()
+                self.data4 = [[f"{a}",f"{b}", f"{c}"] for a,b,c in gathered_data4]  
+                self.sheet4.data_reference(self.data4)  
+                print("--> Updated Table") 
+            except:
+                print("--> Wrong user")    
+            try:
+                gathered_data5 = db_conn.my_deletion_requests(global_variables.get_id())
+                self.data5 = [[f"{a}",f"{b}", f"{c}", f"{d}", f"{e}"] for a,b,c,d,e in gathered_data5]
+                self.sheet5.data_reference(self.data5) 
+                print("--> Updated Table") 
+            except:
+                print("--> Wrong user")     
+                  
+                
+                       
             
                 
         btn_refresh= customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("refresh"), fg_color="transparent", width=30, height=30, command= lambda: click_this())
@@ -498,7 +567,7 @@ class App(customtkinter.CTk):
                             "copy"))     
         
         # grab data 
-        headers = ['archive Number', 'employee ID', 'date Drawn Out']
+        headers = ['Archive Number', 'Employee ID', 'Date Drawn Out']
         self.sheet2.headers((f"{x}" for x in headers))
         
         gathered_data = db_conn.all_case_drawn_by()
@@ -565,7 +634,7 @@ class App(customtkinter.CTk):
         
         # grab data 
         gathered_data = db_conn.all_case_data()
-        headers = ['id', 'client', 'employee', 'Description', 'Department', 'Date of Open', 'Date Closed']
+        headers = ['ID', 'Client', 'Employee', 'Description', 'Department', 'Date of Open', 'Date Closed']
         self.data = [[f"{a}",f"{b} {c}",f"{d} {e}",f"{f}",f"{g}",f"{h}",f"{i}"] for a,b,c,d,e,f,g,h,i in gathered_data ]
         self.sheet.headers((f"{x}" for x in headers))
         self.sheet.data_reference(self.data)   
@@ -625,7 +694,7 @@ class App(customtkinter.CTk):
                             "arrowkeys",
                             "copy"))
         # grab data 
-        headers = ['fileId', 'fileName', 'caseId', 'recievedDate', 'dateUploaded']
+        headers = ['File ID', 'File Name', 'Case ID', 'Recieved Date', 'Date Uploaded']
         self.sheet.headers((f"{x}" for x in headers))
         
         gathered_data = db_conn.all_file_upload_data()
@@ -687,7 +756,7 @@ class App(customtkinter.CTk):
                             "copy"))     
         
         # grab data 
-        headers = ['id', 'Name', 'Surname', 'Gender', 'Date of Birth', 'Checked']
+        headers = ['ID', 'Name', 'Surname', 'Gender', 'Date of Birth']
         self.sheet.headers((f"{x}" for x in headers))
         
         gathered_data = db_conn.all_client_information()
@@ -827,18 +896,72 @@ class App(customtkinter.CTk):
         Label.grid(row=2, column=0, padx=20, pady=(10, 0))      
         optionmenu.grid(row=3, column=0, padx=20, pady=(10, 0))
         
+        
+        def optionmenu_update(choice):
+            if choice == "Employee Roles":
+                return self.open_popup("remove_role")
+            elif choice == "Employee Account":
+                return self.open_popup("remove_account")
+            elif choice == "User Login Data":
+                return self.open_popup("remove_login")
+            elif choice == "Client Information":
+                return self.open_popup("remove_client")
+            elif choice == "Case data":
+                return self.open_popup("remove_case")
+            elif choice == "Archived State":
+                return self.open_popup("remove_archiveState")
+            elif choice == "Case Location":
+                return self.open_popup("remove_CaseLocation")
+            elif choice == "Destruction State":
+                return self.open_popup("remove_destructionState")
+            elif choice == "File Upload Data":
+                return self.open_popup("remove_fileUpload")
+            elif choice == "Deletion Confirmation":
+                return self.open_popup("remove_DeletionConfirm")
+            elif choice == "Deletion Logging":
+                return self.open_popup("remove_DeletionLogging")
+            elif choice == "Case Request":
+                return self.open_popup("remove_archivedCaseRequest")
+            elif choice == "Case Drawn By":
+                return self.open_popup("remove_CaseDrawnBy")
+            elif choice == "Case Drawn History":
+                return self.open_popup("remove_CaseDrawnHistory")
+        
+         
+        optionmenu_var = customtkinter.StringVar(value="Update from")
+        optionmenu = customtkinter.CTkOptionMenu(self.inner_right_panel, values=["Employee Roles", 
+                                                                               "Employee Account", 
+                                                                               "User Login Data", 
+                                                                               "Client Information", 
+                                                                               "Case data", 
+                                                                               "Archived State", 
+                                                                               "Case Location", 
+                                                                               "Destruction State", 
+                                                                               "File Upload Data", 
+                                                                               "Deletion Confirmation", 
+                                                                               "Deletion Logging", 
+                                                                               "Case Request", 
+                                                                               "Case Drawn By", 
+                                                                               "Case Drawn History"],
+                                                command=optionmenu_update,
+                                                variable=optionmenu_var)
+
+        Label = customtkinter.CTkLabel(self.inner_right_panel, text="Update Database", font=('Roboto', 24))
+        Label.grid(row=4, column=0, padx=20, pady=(10, 0))      
+        optionmenu.grid(row=5, column=0, padx=20, pady=(10, 0))
+        
     
         Label = customtkinter.CTkLabel(self.inner_right_panel, text="Create/Clear New Database", font=('Roboto', 24))
-        Label.grid(row=4, column=0, padx=10, pady=10 )
-        
-        button = customtkinter.CTkButton(self.inner_right_panel, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= lambda: create_db.create_database())
-        button.grid(row=5, column=0, padx=5, pady=5) 
-        
-        Label = customtkinter.CTkLabel(self.inner_right_panel, text="Populate Database", font=('Roboto', 24))
         Label.grid(row=6, column=0, padx=10, pady=10 )
         
-        button = customtkinter.CTkButton(self.inner_right_panel, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= lambda: create_db.populate_database())
+        button = customtkinter.CTkButton(self.inner_right_panel, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= lambda: create_db.create_database())
         button.grid(row=7, column=0, padx=5, pady=5) 
+        
+        Label = customtkinter.CTkLabel(self.inner_right_panel, text="Populate Database", font=('Roboto', 24))
+        Label.grid(row=8, column=0, padx=10, pady=10 )
+        
+        button = customtkinter.CTkButton(self.inner_right_panel, text= "", image=self.load_image("add"), fg_color="transparent", width=30, height=30, command= lambda: create_db.populate_database())
+        button.grid(row=9, column=0, padx=5, pady=5) 
 
 
     # ----------------------------------------------------------------------------------------  

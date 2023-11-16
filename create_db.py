@@ -109,12 +109,26 @@ def populate_database():
         time.sleep(wait_time)
         
     # Employee Roles  
+    roleDescription= "Admin"
+    add.add_to_employee_roles(roleDescription)
+    print("success")
+    time.sleep(wait_time) 
+    
+    roleDescription= "Manager"
+    add.add_to_employee_roles(roleDescription)
+    print("success")
+    time.sleep(wait_time) 
+    
+    roleDescription= "Archivist"
+    add.add_to_employee_roles(roleDescription)
+    print("success")
+    time.sleep(wait_time) 
+    
+    roleDescription= "Attorney"
+    add.add_to_employee_roles(roleDescription)
+    print("success")
+    time.sleep(wait_time) 
 
-    for i in range(10):
-        roleDescription= "Role number {i}"
-        add.add_to_employee_roles(roleDescription)
-        print("success")
-        time.sleep(wait_time) 
         
     # Employee Account
     firstname= "admin"
@@ -127,27 +141,28 @@ def populate_database():
     time.sleep(wait_time)  
 
     firstname= "Ryan"
-    lastname = "Putzier"
+    lastname = "Putzier-Manager"
     gender = "M"
     dateOfBirth = "1999-06-06"
     roleId = 2
     add.add_to_employee_account( firstname, lastname, gender, dateOfBirth, roleId)
     print("success")
-    time.sleep(wait_time)  
+    time.sleep(wait_time) 
+     
+    firstname= "James"
+    lastname = "Putzier-Archivist"
+    gender = "M"
+    dateOfBirth = "1999-06-06"
+    roleId = 3
+    add.add_to_employee_account( firstname, lastname, gender, dateOfBirth, roleId)
+    print("success")
+    time.sleep(wait_time) 
 
-    for i in range(5):
-        firstname= f"Ryan {i}"
-        lastname = "Putzier"
-        gender = "M"
-        dateOfBirth = "1999-06-06"
-        roleId = 3
-        add.add_to_employee_account( firstname, lastname, gender, dateOfBirth, roleId)
-        print("success")
-        time.sleep(wait_time)  
+         
         
-    for i in range(5):
-        firstname= f"Ryan {i}"
-        lastname = "Putzier"
+    for i in range(10):
+        firstname= f"William {i}"
+        lastname = "Putzier-Attorney"
         gender = "M"
         dateOfBirth = "1999-06-06"
         roleId = 4
@@ -281,5 +296,6 @@ def populate_database():
     add.add_to_case_drawn_by(archiveNumber, employeeId, archivedDate)
     print("success")
     time.sleep(wait_time)    
+
 # create_database()
 # populate_database()

@@ -326,7 +326,7 @@ def add_to_archived_case_request(archiveNumber) -> None:
                
     # Insert into Db
     try:     
-        details = (archiveNumber, gv.get_id(), datetime.today().strftime('%Y-%m-%d'))
+        details = (archiveNumber, gv.get_id(), datetime.today().strftime('%Y-%m-%d %H:%M:%S'))
         mycursor.execute(sqlFormula, details)   
         mydb.commit()
         if messagebox_show == True: tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")

@@ -85,6 +85,20 @@ def case_data_by_id(caseId):
     return myresult
 
 
+def my_archive_case_request(employeeId):
+    mydb.cmd_refresh(1)
+    mycursor.execute(f"SELECT * FROM archived_case_request WHERE employeeId = '{employeeId}'")
+    myresult = mycursor.fetchall()
+    return myresult
+
+
+def my_deletion_requests(employeeId):
+    mydb.cmd_refresh(1)
+    mycursor.execute(f"SELECT * FROM deletion_confirmation WHERE employeeId1 = '{employeeId}'")
+    myresult = mycursor.fetchall()
+    return myresult
+
+
 def all_archived_state():
     mydb.cmd_refresh(1)
     mycursor.execute("SELECT archived_state.archiveNumber, archivedState, archivedDate, dateToBeDestroyed, case_location.location FROM archived_state LEFT JOIN case_location ON archived_state.archiveNumber=case_location.archiveNumber")

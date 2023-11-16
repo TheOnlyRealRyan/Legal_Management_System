@@ -1,6 +1,6 @@
 import mysql.connector
 import hashlib
-
+import tkinter.messagebox 
 
 # Conenct to database
 mydb = mysql.connector.connect(
@@ -35,7 +35,7 @@ def validate(username, password):
         # tkinter.messagebox.showinfo("Success",  "Welcome")
         return True
     else:
-        # tkinter.messagebox.showinfo("Failed",  "Incorrect login details")
+        tkinter.messagebox.showinfo("Failed",  "Incorrect login details")
         return False
     
     
