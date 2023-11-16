@@ -203,7 +203,7 @@ class App(customtkinter.CTk):
             self.sheet.data_reference(self.data)   
 
          
-        def click_this():
+        def refresh_table():
             try:
                 gathered_data = db_conn.case_data_of_employee(global_variables.get_id())
                 self.data = [[f"{a}",f"{b} {c}",f"{d} {e}",f"{f}",f"{g}",f"{h}",f"{i}"] for a,b,c,d,e,f,g,h,i in gathered_data ]
@@ -212,7 +212,7 @@ class App(customtkinter.CTk):
                 print("--> Wrong user")          
         
                 
-        btn_refresh= customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("refresh"), fg_color="transparent", width=30, height=30, command= lambda: click_this())
+        btn_refresh= customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("refresh"), fg_color="transparent", width=30, height=30, command= lambda: refresh_table())
         btn_refresh.grid(row=0, column=10, padx=10, pady=10)
          
             
@@ -440,7 +440,7 @@ class App(customtkinter.CTk):
             self.data3 = [[f"{a}",f"{b}",f"{c}",f"{d}",f"{e}"] for a,b,c,d,e in gathered_data3]
             self.sheet3.data_reference(self.data3)
                 
-        def click_this():
+        def refresh_table():
             try:
                 gathered_data = db_conn.all_archived_case_request()
                 self.data = [[f"{a}",f"{b} {c}",f"{d}",f"{e}",f"{f}"] for a,b,c,d,e,f in gathered_data]
@@ -481,7 +481,7 @@ class App(customtkinter.CTk):
                        
             
                 
-        btn_refresh= customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("refresh"), fg_color="transparent", width=30, height=30, command= lambda: click_this())
+        btn_refresh= customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("refresh"), fg_color="transparent", width=30, height=30, command= lambda: refresh_table())
         btn_refresh.grid(row=0, column=10, padx=10, pady=10)
     
     
@@ -574,7 +574,7 @@ class App(customtkinter.CTk):
         self.data2 = [[f"{a}",f"{b}",f"{c}"] for a,b,c in gathered_data] 
         self.sheet2.data_reference(self.data2)
                 
-        def click_this():
+        def refresh_table():
             gathered_data = db_conn.all_archived_state()
             self.data = [[f"{a}",f"{b}",f"{c}",f"{d}",f"{e}"] for a,b,c,d,e in gathered_data]
             self.sheet.data_reference(self.data)
@@ -584,7 +584,7 @@ class App(customtkinter.CTk):
             self.sheet2.data_reference(self.data2)
             print("--> Updated Table")
                 
-        btn_refresh= customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("refresh"), fg_color="transparent", width=30, height=30, command= lambda: click_this())
+        btn_refresh= customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("refresh"), fg_color="transparent", width=30, height=30, command= lambda: refresh_table())
         btn_refresh.grid(row=0, column=10, padx=10, pady=10)
         
         
@@ -639,13 +639,13 @@ class App(customtkinter.CTk):
         self.sheet.headers((f"{x}" for x in headers))
         self.sheet.data_reference(self.data)   
             
-        def click_this():
+        def refresh_table():
             gathered_data = db_conn.all_case_data()
             self.data = [[f"{a}",f"{b} {c}",f"{d} {e}",f"{f}",f"{g}",f"{h}",f"{i}"] for a,b,c,d,e,f,g,h,i in gathered_data ]
             self.sheet.data_reference(self.data)
             print("--> Updated Table")
                 
-        btn_refresh= customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("refresh"), fg_color="transparent", width=30, height=30, command= lambda: click_this())
+        btn_refresh= customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("refresh"), fg_color="transparent", width=30, height=30, command= lambda: refresh_table())
         btn_refresh.grid(row=0, column=10, padx=10, pady=10)
     
         
@@ -701,13 +701,13 @@ class App(customtkinter.CTk):
         self.data = [[f"{a}", f"{b}", f"{c}", f"{d}", f"{e}"] for a,b,c,d,e in gathered_data ]
         self.sheet.data_reference(self.data)
                 
-        def click_this():
+        def refresh_table():
             gathered_data = db_conn.all_file_upload_data()
             self.data = [[f"{a}", f"{b}", f"{c}", f"{d}", f"{e}"] for a,b,c,d,e in gathered_data ]
             self.sheet.data_reference(self.data)
             print("--> Updated Table")
                 
-        btn_refresh= customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("refresh"), fg_color="transparent", width=30, height=30, command= lambda: click_this())
+        btn_refresh= customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("refresh"), fg_color="transparent", width=30, height=30, command= lambda: refresh_table())
         btn_refresh.grid(row=0, column=10, padx=10, pady=10)
 
 
@@ -763,13 +763,13 @@ class App(customtkinter.CTk):
         self.data = [[f"{a}", f"{b}",f"{c}",f"{d}",f"{e}"] for a,b,c,d,e in gathered_data]
         self.sheet.data_reference(self.data)
                 
-        def click_this():
+        def refresh_table():
             gathered_data = db_conn.all_client_information()
             self.data = [[f"{a}", f"{b}",f"{c}",f"{d}",f"{e}"] for a,b,c,d,e in gathered_data]
             self.sheet.data_reference(self.data)
             print("--> Updated Table")
                 
-        btn_refresh= customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("refresh"), fg_color="transparent", width=30, height=30, command= lambda: click_this())
+        btn_refresh= customtkinter.CTkButton(self.heading_banner, text= "", image=self.load_image("refresh"), fg_color="transparent", width=30, height=30, command= lambda: refresh_table())
         btn_refresh.grid(row=0, column=10, padx=10, pady=10)
     
     

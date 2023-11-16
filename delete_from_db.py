@@ -1,6 +1,5 @@
 import mysql.connector
-from datetime import datetime, date
-
+import tkinter.messagebox 
 
 # Conenct to database
 mydb = mysql.connector.connect(
@@ -13,60 +12,148 @@ mydb = mysql.connector.connect(
 # Initialise cursor:
 mycursor = mydb.cursor()
 
-
+messagebox_show = True
 
 def remove_employee_role(id):
-    mycursor.execute(f"DELETE FROM employee_account WHERE employeeId = '{id}';")
-    mydb.commit()
+    try:     
+        mycursor.execute(f"DELETE FROM employee_account WHERE roleId = '{id}';")
+        mydb.commit()
+        if messagebox_show == True: tkinter.messagebox.showinfo("Success",  "Succesfully deleted from database")
+    except Exception as e:
+        if messagebox_show == True: tkinter.messagebox.showinfo("Failed",  "Failed to delete from database")
+        print(e)
+
 
 def remove_employee_account(id):
-    mycursor.execute(f"DELETE FROM employee_account WHERE employeeId = '{id}';")
-    mydb.commit()
+    try:     
+        mycursor.execute(f"DELETE FROM employee_account WHERE employeeId = '{id}';")
+        mydb.commit()
+        if messagebox_show == True: tkinter.messagebox.showinfo("Success",  "Succesfully deleted from database")
+    except Exception as e:
+        if messagebox_show == True: tkinter.messagebox.showinfo("Failed",  "Failed to delete from database")
+        print(e)
+    
+ 
     
 def remove_user_login_data(id):
-    mycursor.execute(f"DELETE FROM user_login_data WHERE roleId = '{id}';")
-    mydb.commit()
+    try:     
+        mycursor.execute(f"DELETE FROM user_login_data WHERE employeeId = '{id}';")
+        mydb.commit()
+        if messagebox_show == True: tkinter.messagebox.showinfo("Success",  "Succesfully deleted from database")
+    except Exception as e:
+        if messagebox_show == True: tkinter.messagebox.showinfo("Failed",  "Failed to delete from database")
+        print(e)
+    
+   
     
 def remove_client_information(id):
-    mycursor.execute(f"DELETE FROM client_information WHERE clientId = '{id}';")    
-    mydb.commit()
+    try:     
+        mycursor.execute(f"DELETE FROM client_information WHERE clientId = '{id}';")   
+        mydb.commit()
+        if messagebox_show == True: tkinter.messagebox.showinfo("Success",  "Succesfully deleted from database")
+    except Exception as e:
+        if messagebox_show == True: tkinter.messagebox.showinfo("Failed",  "Failed to delete from database")
+        print(e)
+     
+
 
 def remove_case_data(id):
-    mycursor.execute(f"DELETE FROM case_data WHERE caseId = '{id}';")
-    mydb.commit()
+    try:     
+        mycursor.execute(f"DELETE FROM case_data WHERE caseId = '{id}';")
+        mydb.commit()
+        if messagebox_show == True: tkinter.messagebox.showinfo("Success",  "Succesfully deleted from database")
+    except Exception as e:
+        if messagebox_show == True: tkinter.messagebox.showinfo("Failed",  "Failed to delete from database")
+        print(e)
+ 
     
 def remove_archived_state(id):
-    mycursor.execute(f"DELETE FROM archived_state WHERE archiveNumber = '{id}';")
-    mydb.commit()
+    try:     
+        mycursor.execute(f"DELETE FROM archived_state WHERE archiveNumber = '{id}';")
+        mydb.commit()
+        if messagebox_show == True: tkinter.messagebox.showinfo("Success",  "Succesfully deleted from database")
+    except Exception as e:
+        if messagebox_show == True: tkinter.messagebox.showinfo("Failed",  "Failed to delete from database")
+        print(e)
+
     
 def remove_case_location(id):
-    mycursor.execute(f"DELETE FROM case_location WHERE archiveNumber = '{id}';")    
-    mydb.commit()
+    try:     
+        mycursor.execute(f"DELETE FROM case_location WHERE archiveNumber = '{id}';")    
+        mydb.commit()
+        if messagebox_show == True: tkinter.messagebox.showinfo("Success",  "Succesfully deleted from database")
+    except Exception as e:
+        if messagebox_show == True: tkinter.messagebox.showinfo("Failed",  "Failed to delete from database")
+        print(e)
+
 
 def remove_destruction_state(id):
-    mycursor.execute(f"DELETE FROM destruction_state WHERE caseId = '{id}';")
-    mydb.commit()
+    try:     
+        mycursor.execute(f"DELETE FROM destruction_state WHERE archiveNumber = '{id}';")
+        mydb.commit()
+        if messagebox_show == True: tkinter.messagebox.showinfo("Success",  "Succesfully deleted from database")
+    except Exception as e:
+        if messagebox_show == True: tkinter.messagebox.showinfo("Failed",  "Failed to delete from database")
+        print(e)
+ 
     
 def remove_file_upload_data(id):
-    mycursor.execute(f"DELETE FROM file_upload_data WHERE fileId = '{id}';")
-    mydb.commit()
+    try:     
+        mycursor.execute(f"DELETE FROM file_upload_data WHERE fileId = '{id}';")
+        mydb.commit()
+        if messagebox_show == True: tkinter.messagebox.showinfo("Success",  "Succesfully deleted from database")
+    except Exception as e:
+        if messagebox_show == True: tkinter.messagebox.showinfo("Failed",  "Failed to delete from database")
+        print(e)
+    
     
 def remove_deletion_confirmation(id):
-    mycursor.execute(f"DELETE FROM deletion_confirmation WHERE caseId = '{id}';")
-    mydb.commit()
+    try:     
+        mycursor.execute(f"DELETE FROM deletion_confirmation WHERE caseId = '{id}';")
+        mydb.commit()
+        if messagebox_show == True: tkinter.messagebox.showinfo("Success",  "Succesfully deleted from database")
+    except Exception as e:
+        if messagebox_show == True: tkinter.messagebox.showinfo("Failed",  "Failed to delete from database")
+        print(e)
+
 
 def remove_deletion_logging(id):
-    # TODO: complete deletion logging
-    mycursor.execute(f"DELETE FROM deletion_logging WHERE employeeId = '{id}';")
-    mydb.commit()
+    try:     
+        mycursor.execute(f"DELETE FROM deletion_logging WHERE caseId = '{id}';")
+        mydb.commit()
+        if messagebox_show == True: tkinter.messagebox.showinfo("Success",  "Succesfully deleted from database")
+    except Exception as e:
+        if messagebox_show == True: tkinter.messagebox.showinfo("Failed",  "Failed to delete from database")
+        print(e)
+
 
 def remove_archived_case_request(archiveNumber, employeeId):
-    mycursor.execute(f"DELETE FROM archived_case_request WHERE archiveNumber = '{archiveNumber}' AND employeeId = '{employeeId}';")
-    mydb.commit()
+    try:     
+        mycursor.execute(f"DELETE FROM archived_case_request WHERE archiveNumber = '{archiveNumber}' AND employeeId = '{employeeId}';")
+        mydb.commit()
+        if messagebox_show == True: tkinter.messagebox.showinfo("Success",  "Succesfully deleted from database")
+    except Exception as e:
+        if messagebox_show == True: tkinter.messagebox.showinfo("Failed",  "Failed to delete from database")
+        print(e)
+  
+    
 def remove_case_drawn_by(id):
-    mycursor.execute(f"DELETE FROM case_drawn_by WHERE caseId = '{id}';")
-    mydb.commit()
+    try:     
+        mycursor.execute(f"DELETE FROM case_drawn_by WHERE archiveNumber = '{id}';")
+        mydb.commit()
+        if messagebox_show == True: tkinter.messagebox.showinfo("Success",  "Succesfully deleted from database")
+    except Exception as e:
+        if messagebox_show == True: tkinter.messagebox.showinfo("Failed",  "Failed to delete from database")
+        print(e)
+  
     
 def remove_case_drawn_history(id):
-    mycursor.execute(f"DELETE FROM case_drawn_history WHERE caseId = '{id}';")
-    mydb.commit()
+    try:     
+        mycursor.execute(f"DELETE FROM case_drawn_history WHERE archiveNumber = '{id}';")
+        mydb.commit()
+        if messagebox_show == True: tkinter.messagebox.showinfo("Success",  "Succesfully deleted from database")
+    except Exception as e:
+        if messagebox_show == True: tkinter.messagebox.showinfo("Failed",  "Failed to delete from database")
+        print(e)
+        
+        

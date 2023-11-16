@@ -408,6 +408,24 @@ class popup_add_to_case_drawn_history(customtkinter.CTkToplevel):
         # Submit Button
         customtkinter.CTkButton(self, text="Submit", command=lambda: db_conn.add_to_employee_account(txtAge.get(), txtName.get(), txtSurname.get(), txtGender.get(), txtBirth.get(), txtRoleId.get())).pack(pady=12, padx=10)
 
+
+class confirm_deletion(customtkinter.CTkToplevel):
+    """ Popup window to confirm deletion of a case"""
+    # TODO: Popup window to confirm deletion of a case
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.geometry("750x750")
+        self.title("DELETE Deletion Confirmation")
+
+        # Decorate here        
+        customtkinter.CTkLabel(self, text="Enter case Id", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtID = customtkinter.CTkEntry(self, placeholder_text="id")
+        txtID.pack(pady=12, padx=10)
+        
+        # Submit Button
+        customtkinter.CTkButton(self, text="Delete", command=lambda: db_delete.remove_deletion_confirmation(txtID.get())).pack(pady=12, padx=10)
+
+
 # --------------------------------------------------------------------------------------------------------------
 # DELETION POPUPS
 # --------------------------------------------------------------------------------------------------------------
@@ -418,7 +436,7 @@ class popup_remove_employee_role(customtkinter.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.geometry("750x750")
-        self.title("Employee Role")
+        self.title("DELETE Employee Role")
 
         # Decorate here
         customtkinter.CTkLabel(self, text="Enter Role ID", font=("Roboto", 24)).pack(padx=12, pady=10)
@@ -434,7 +452,7 @@ class popup_remove_employee_account(customtkinter.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.geometry("750x750")
-        self.title("Employee Account")
+        self.title("DELETE Employee Account")
 
         # Decorate here
         customtkinter.CTkLabel(self, text="Enter Employee ID", font=("Roboto", 24)).pack(padx=12, pady=10)
@@ -450,10 +468,10 @@ class popup_remove_user_login_data(customtkinter.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.geometry("750x750")
-        self.title("User Login Data")
+        self.title("DELETE User Login Data")
      
         # Decorate here
-        customtkinter.CTkLabel(self, text="Enter Role Id", font=("Roboto", 24)).pack(padx=12, pady=10)
+        customtkinter.CTkLabel(self, text="Enter Employee Id", font=("Roboto", 24)).pack(padx=12, pady=10)
         txtID = customtkinter.CTkEntry(self, placeholder_text="ID")
         txtID.pack(pady=12, padx=10)
 
@@ -466,7 +484,7 @@ class popup_remove_client_information(customtkinter.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.geometry("750x750")
-        self.title("Client Information Input")
+        self.title("DELETE Client Information")
      
         # Decorate here
         customtkinter.CTkLabel(self, text="Client ID", font=("Roboto", 24)).pack(padx=12, pady=10)
@@ -482,11 +500,11 @@ class popup_remove_case_data(customtkinter.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.geometry("750x1000")
-        self.title("Case Data")
+        self.title("DELETE Case Data")
      
         # Decorate here
-        customtkinter.CTkLabel(self, text="Enter client Id", font=("Roboto", 24)).pack(padx=12, pady=10)
-        txtID = customtkinter.CTkEntry(self, placeholder_text="clientId")
+        customtkinter.CTkLabel(self, text="Enter case ID", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtID = customtkinter.CTkEntry(self, placeholder_text="ID")
         txtID.pack(pady=12, padx=10)
    
         # Submit Button
@@ -498,16 +516,22 @@ class popup_remove_archived_state(customtkinter.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.geometry("750x750")
-        self.title("Archived State")
+        self.title("DELETE Archived State")
      
         # Decorate here
         customtkinter.CTkLabel(self, text="Enter archive Number", font=("Roboto", 24)).pack(padx=12, pady=10)
         txtID = customtkinter.CTkEntry(self, placeholder_text="Archive Number")
         txtID.pack(pady=12, padx=10)
-        #TODO: When deleting archive, should delete location as well 
         
-        # Submit Button
-        customtkinter.CTkButton(self, text="Delete", command=lambda: db_delete.remove_archived_state(txtID.get())).pack(pady=12, padx=10)
+        
+        def delete_from():
+            """Deletes from case_location and archived_state DB"""
+            db_delete.remove_case_location(txtID.get())
+            db_delete.remove_archived_state(txtID.get())
+            
+            
+        # Submit Button   
+        customtkinter.CTkButton(self, text="Delete", command=lambda: delete_from()).pack(pady=12, padx=10)
 
 
 class popup_remove_case_location(customtkinter.CTkToplevel):
@@ -515,7 +539,7 @@ class popup_remove_case_location(customtkinter.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.geometry("750x750")
-        self.title("Case Location")
+        self.title("DELETE Case Location")
      
         # Decorate here
         customtkinter.CTkLabel(self, text="Enter archive Number", font=("Roboto", 24)).pack(padx=12, pady=10)
@@ -530,7 +554,7 @@ class popup_remove_destruction_state(customtkinter.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.geometry("750x750")
-        self.title("Destruction State")
+        self.title("DELETE Destruction State")
      
         # Decorate here
         customtkinter.CTkLabel(self, text="Enter case Id", font=("Roboto", 24)).pack(padx=12, pady=10)
@@ -542,11 +566,11 @@ class popup_remove_destruction_state(customtkinter.CTkToplevel):
 
 
 class popup_remove_file_upload_data(customtkinter.CTkToplevel):
-    """ Popup window to add to employee_account database"""
+    """ Popup window to add to file_upload_data database"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.geometry("750x750")
-        self.title("File Upload")
+        self.title("DELETE File Upload")
      
         # Decorate here
         customtkinter.CTkLabel(self, text="Enter File ID", font=("Roboto", 24)).pack(padx=12, pady=10)
@@ -554,26 +578,25 @@ class popup_remove_file_upload_data(customtkinter.CTkToplevel):
         txtID.pack(pady=12, padx=10)
         
         
-        # Submit Button
-        customtkinter.CTkButton(self, text="Delete", command=lambda: delete_file()).pack(pady=12, padx=10)
-        
-        def delete_file():            
+        def delete_from():            
+            """Delete from file_upload_data and from the cloud"""
             # TODO: Delete file from the cloud as well
-
             db_delete.remove_file_upload_data(txtID.get())
+        
+        # Submit Button
+        customtkinter.CTkButton(self, text="Delete", command=lambda: delete_from()).pack(pady=12, padx=10)
  
-
 
 class popup_remove_deletion_confirmation(customtkinter.CTkToplevel):
     """ Popup window to add to deletion_confirmation database"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.geometry("750x750")
-        self.title("Deletion Confirmation")
+        self.title("DELETE Deletion Confirmation")
 
         # Decorate here        
         customtkinter.CTkLabel(self, text="Enter case Id", font=("Roboto", 24)).pack(padx=12, pady=10)
-        txtID = customtkinter.CTkEntry(self, placeholder_text="id")
+        txtID = customtkinter.CTkEntry(self, placeholder_text="ID")
         txtID.pack(pady=12, padx=10)
         
         # Submit Button
@@ -585,12 +608,15 @@ class popup_remove_deletion_logging(customtkinter.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.geometry("750x750")
-        self.title("Deletion Logging")
-        #TODO: deletion logging
+        self.title("DELETE Deletion Logging")
+
         # Decorate here
+        customtkinter.CTkLabel(self, text="Enter case Id", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtID = customtkinter.CTkEntry(self, placeholder_text="ID")
+        txtID.pack(pady=12, padx=10)
         
         # Submit Button
-        # customtkinter.CTkButton(self, text="Submit", command=lambda: db_conn.add_to_employee_account(txtAge.get(), txtName.get(), txtSurname.get(), txtGender.get(), txtBirth.get(), txtRoleId.get())).pack(pady=12, padx=10)
+        customtkinter.CTkButton(self, text="Submit", command=lambda: db_conn.remove_deletion_logging(txtID.get())).pack(pady=12, padx=10)
 
 
 class popup_remove_archived_case_request(customtkinter.CTkToplevel):
@@ -598,14 +624,14 @@ class popup_remove_archived_case_request(customtkinter.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.geometry("750x750")
-        self.title("Archive Case Request")
+        self.title("DELETE Archive Case Request")
      
         # Decorate here        
         customtkinter.CTkLabel(self, text="Enter Archive Number", font=("Roboto", 24)).pack(padx=12, pady=10)
         txtArchive = customtkinter.CTkEntry(self, placeholder_text="number")
         txtArchive.pack(pady=12, padx=10)
         
-        customtkinter.CTkLabel(self, text="Enter employee ID", font=("Roboto", 24)).pack(padx=12, pady=10)
+        customtkinter.CTkLabel(self, text="Enter Employee ID", font=("Roboto", 24)).pack(padx=12, pady=10)
         txtID = customtkinter.CTkEntry(self, placeholder_text="ID")
         txtID.pack(pady=12, padx=10)
         
@@ -618,10 +644,10 @@ class popup_remove_case_drawn_by(customtkinter.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.geometry("750x750")
-        self.title("Case Drawn By")
+        self.title("DELETE Case Drawn By")
      
         # Decorate here
-        customtkinter.CTkLabel(self, text="Enter case ID", font=("Roboto", 24)).pack(padx=12, pady=10)
+        customtkinter.CTkLabel(self, text="Enter Archive Number", font=("Roboto", 24)).pack(padx=12, pady=10)
         txtID = customtkinter.CTkEntry(self, placeholder_text="ID")
         txtID.pack(pady=12, padx=10)        
         
@@ -634,10 +660,11 @@ class popup_remove_case_drawn_history(customtkinter.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.geometry("750x750")
-        self.title("Case Drawn History")
+        self.title("DELETE Case Drawn History")
      
         # Decorate here
-        customtkinter.CTkLabel(self, text="Enter ID", font=("Roboto", 24)).pack(padx=12, pady=10)
+        # TODO: deleting case_drawn_history has to delete a specific date
+        customtkinter.CTkLabel(self, text="Enter Archive Number", font=("Roboto", 24)).pack(padx=12, pady=10)
         txtID = customtkinter.CTkEntry(self, placeholder_text="ID")
         txtID.pack(pady=12, padx=10)         
         
@@ -652,7 +679,7 @@ class popup_update_deletion_confirmation(customtkinter.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.geometry("750x750")
-        self.title("Deletion Confirmation")
+        self.title("DELETE Deletion Confirmation")
      
         # Decorate here
         customtkinter.CTkLabel(self, text="Enter Case ID", font=("Roboto", 24)).pack(padx=12, pady=10)

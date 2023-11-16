@@ -6,10 +6,6 @@ import grab_from_db as grab
 import global_variables as gv
 
 
-# TODO: Error handling of inputs
-# TODO: Fix auto-increment
-
-
 # Display messages upon successful or failed insertion
 messagebox_show = False
 
@@ -365,4 +361,7 @@ def add_to_case_drawn_history(archiveNumber, employeeId, dateDrawnOut, dateDrawn
     except Exception as e:
         if messagebox_show == True: tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
         print(e) 
+        
+
+
 
