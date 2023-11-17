@@ -166,9 +166,15 @@ class popup_add_to_archived_state(customtkinter.CTkToplevel):
         self.title("Archive State")
      
         # Decorate here
-        customtkinter.CTkLabel(self, text="Enter case Id", font=("Roboto", 24)).pack(padx=12, pady=10)
-        txtcaseId = customtkinter.CTkEntry(self, placeholder_text="caseId")
+        customtkinter.CTkLabel(self, text="Enter case Code", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtcaseId = customtkinter.CTkEntry(self, placeholder_text="case code")
         txtcaseId.pack(pady=12, padx=10)
+        
+        
+        customtkinter.CTkLabel(self, text="Enter Archive Code", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtArchiveNumber = customtkinter.CTkEntry(self, placeholder_text="Archive Code")
+        txtArchiveNumber.pack(pady=12, padx=10)
+        
         
         def optionmenu_insert(choice):
             print("Inserted")
@@ -177,7 +183,7 @@ class popup_add_to_archived_state(customtkinter.CTkToplevel):
            
         optionmenu_var = customtkinter.StringVar(value="Archive State")
         optionmenu = customtkinter.CTkOptionMenu(self, values=["Archived", 
-                                                                               "Live"],
+                                                                "Live"],
                                                 command=optionmenu_insert,
                                                 variable=optionmenu_var)
         optionmenu.pack(pady=12, padx=10)
@@ -189,7 +195,7 @@ class popup_add_to_archived_state(customtkinter.CTkToplevel):
         archive_date.pack(padx=12, pady=10)
         
         # Submit Button
-        customtkinter.CTkButton(self, text="Submit", command=lambda: db_conn.add_to_archived_state(txtcaseId.get(), optionmenu.get(), archive_date.get_date())).pack(pady=12, padx=10)
+        customtkinter.CTkButton(self, text="Submit", command=lambda: db_conn.add_to_archived_state(txtcaseId.get(), optionmenu.get(), txtArchiveNumber.get(), archive_date.get_date())).pack(pady=12, padx=10)
 
 
 class popup_add_to_case_location(customtkinter.CTkToplevel):
@@ -200,8 +206,8 @@ class popup_add_to_case_location(customtkinter.CTkToplevel):
         self.title("Case Location")
      
         # Decorate here
-        customtkinter.CTkLabel(self, text="Enter Archive Number", font=("Roboto", 24)).pack(padx=12, pady=10)
-        txtArchiveNumber = customtkinter.CTkEntry(self, placeholder_text="Archive Number")
+        customtkinter.CTkLabel(self, text="Enter Archive Code", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtArchiveNumber = customtkinter.CTkEntry(self, placeholder_text="Archive Code")
         txtArchiveNumber.pack(pady=12, padx=10)
         
         customtkinter.CTkLabel(self, text="Enter location", font=("Roboto", 24)).pack(padx=12, pady=10)
@@ -300,26 +306,25 @@ class popup_add_to_deletion_confirmation(customtkinter.CTkToplevel):
         super().__init__(*args, **kwargs)
         self.geometry("750x750")
         self.title("Deletion Confirmation")
-
-        # Decorate here        
-        customtkinter.CTkLabel(self, text="Enter caseId", font=("Roboto", 24)).pack(padx=12, pady=10)
-        txtcaseId = customtkinter.CTkEntry(self, placeholder_text="id")
-        txtcaseId.pack(pady=12, padx=10)
-
-        # Todo: grab the manager Id
-        employeeId2 = 1 # manager ID
         
-        # Submit Button
-        customtkinter.CTkButton(self, text="Submit", command=lambda: db_conn.add_to_deletion_confirmation(txtcaseId.get(), 
-                                                                                                          global_variables.get_id(),
-                                                                                                          employeeId2,
-                                                                                                          True,
-                                                                                                          False                                                                                                         
-                                                                                                          )).pack(pady=12, padx=10)
+        # Decorate here
+        customtkinter.CTkLabel(self, text="Select Case Code", font=("Roboto", 24)).pack(padx=12, pady=10)
+        optionmenu_var = customtkinter.StringVar(value="Select a Code")  # set initial value
 
-        
-        # Submit Button
-        # customtkinter.CTkButton(self, text="Submit", command=lambda: db_conn.add_to_employee_account(txtAge.get(), txtName.get(), txtSurname.get(), txtGender.get(), txtBirth.get(), txtRoleId.get())).pack(pady=12, padx=10)
+        def optionmenu_callback(choice):
+            db_conn.add_to_deletion_confirmation(choice, 2) # auto fill with manager employee ID 2
+
+        # convert a list of tuples to a list of strings
+        data = grab_from_db.all_archive_codes()
+        new_data = []
+        for i in data:
+            new_data.append(''.join(i))
+            
+        combobox = customtkinter.CTkOptionMenu(self,
+                                            values=new_data, # Select from database
+                                            command=optionmenu_callback,
+                                            variable=optionmenu_var)
+        combobox.pack(padx=20, pady=10)
 
 
 class popup_add_to_deletion_logging(customtkinter.CTkToplevel):
@@ -342,13 +347,26 @@ class popup_add_to_archived_case_request(customtkinter.CTkToplevel):
         self.geometry("750x750")
         self.title("Archive Case Request")
      
-        # Decorate here        
-        customtkinter.CTkLabel(self, text="Enter Archive Number", font=("Roboto", 24)).pack(padx=12, pady=10)
-        txtArchive = customtkinter.CTkEntry(self, placeholder_text="number")
-        txtArchive.pack(pady=12, padx=10)
-        
-        # Submit Button
-        customtkinter.CTkButton(self, text="Submit", command=lambda: db_conn.add_to_archived_case_request(txtArchive.get())).pack(pady=12, padx=10)
+        # Decorate here       
+        # Decorate here
+        customtkinter.CTkLabel(self, text="Select Archive Code", font=("Roboto", 24)).pack(padx=12, pady=10)
+        optionmenu_var = customtkinter.StringVar(value="Select a Code")  # set initial value
+
+        def optionmenu_callback(choice):
+            db_conn.add_to_archived_case_request(choice)
+
+        # convert a list of tuples to a list of strings
+        data = grab_from_db.all_archive_codes()
+        new_data = []
+        for i in data:
+            new_data.append(''.join(i))
+            
+        combobox = customtkinter.CTkOptionMenu(self,
+                                            values=new_data, # Select from database
+                                            command=optionmenu_callback,
+                                            variable=optionmenu_var)
+        combobox.pack(padx=20, pady=10)
+
 
 
 class popup_add_to_case_drawn_by(customtkinter.CTkToplevel):

@@ -174,9 +174,10 @@ def add_to_case_data(caseCode, clientId, employeeId, description, department, da
         print(e)  
 
 
-def add_to_archived_state(caseId, archivedState, archiveCode, archivedDate) -> None:
+def add_to_archived_state(caseCode, archivedState, archiveCode, archivedDate) -> None:
     """Inserts login details into archived_state database"""
     mydb.cmd_refresh(1)
+    caseId = grab.caseId_from_caseCode(caseCode)
     sqlFormula = "INSERT INTO archived_state (caseId, archivedState, archiveCode, archivedDate, dateToBeDestroyed) VALUE (%s, %s, %s, %s, %s)"
      
     # Determine when the file should be destroyed (7 years)
@@ -196,7 +197,6 @@ def add_to_archived_state(caseId, archivedState, archiveCode, archivedDate) -> N
     
 def add_to_case_location(archiveCode, location) -> None:
     """Inserts into case_location database"""
-    
     mydb.cmd_refresh(1)
     find = grab.case_location_by_id(archiveCode)
     print(find)

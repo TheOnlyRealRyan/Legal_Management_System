@@ -330,7 +330,7 @@ class App(customtkinter.CTk):
             self.archive_requests_panel = customtkinter.CTkCanvas(self.right_dashboard,width=500, bg="#00253e")
             self.archive_requests_panel.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True, padx=10, pady=10)
             
-            Label = customtkinter.CTkLabel(self.archive_requests_panel, text="Archival Retrieval Requests", width=30, height=30, font=('Roboto', 24))
+            Label = customtkinter.CTkLabel(self.archive_requests_panel, text="My Archival Retrieval Requests", width=30, height=30, font=('Roboto', 24))
             Label.pack(side=tkinter.TOP, anchor=tkinter.NW, padx=(10,10), pady=(10,10)) 
 
             # Create table

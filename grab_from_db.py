@@ -205,6 +205,13 @@ def all_case_codes():
     return myresult
 
 
+def all_archive_codes():
+    mydb.cmd_refresh(1)
+    mycursor.execute("SELECT archiveCode FROM archived_state")
+    myresult = mycursor.fetchall()
+    return myresult
+
+
 def grab_username(employeeId):
     mydb.cmd_refresh(1)
     mycursor.execute(f"SELECT firstName FROM employee_account WHERE employeeId = '{employeeId}'")
