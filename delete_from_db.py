@@ -1,6 +1,7 @@
 import mysql.connector
 import tkinter.messagebox 
 
+
 # Conenct to database
 mydb = mysql.connector.connect(
     host = "localhost",
@@ -9,10 +10,13 @@ mydb = mysql.connector.connect(
     database="projectdb"
 )
 
+
 # Initialise cursor:
 mycursor = mydb.cursor()
 
+# Display messages upon successful or failed deletion
 messagebox_show = True
+
 
 def remove_employee_role(id):
     try:     

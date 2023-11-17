@@ -92,7 +92,7 @@ class App(customtkinter.CTk):
         self.left_side_panel.pack(side=tkinter.LEFT, fill=tkinter.Y, expand=False, padx=5, pady=5)
        
         # Configure the weights of rows in left_side_panel
-        self.left_side_panel.grid_rowconfigure((7,8), weight=3)
+        self.left_side_panel.grid_rowconfigure((7), weight=6)
         
         # right_dashboard creation
         self.right_dashboard = customtkinter.CTkCanvas(self.main_container, bg="#003356")
@@ -121,7 +121,17 @@ class App(customtkinter.CTk):
         
         self.btn_client = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("customer"), fg_color="transparent", width=45, text="", command=self.client)
         self.btn_client.grid(row=6, column=0, padx=20, pady=10)
-             
+        
+        
+        self.btn_logout = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("logout"), fg_color="transparent", width=45, text="", command=lambda: logout())
+        self.btn_logout.grid(row=8, column=0, padx=20, pady=10)
+        
+        def logout():
+            for widget in self.main_container.winfo_children():
+                widget.destroy()
+            self.main_container.destroy()
+            self.login()
+        
         if global_variables.get_id() == 1: # If admin        
             self.btn_admin = customtkinter.CTkButton(self.left_side_panel, image=self.load_image("admin"), fg_color="transparent", width=45, text="", command=self.admin)
             self.btn_admin.grid(row=9, column=0, padx=20, pady=10)
@@ -135,6 +145,8 @@ class App(customtkinter.CTk):
         # Layout        
         self.title("Login Page")
         self.geometry("500x350")
+        
+        
         
         # root page
         self.login_page = customtkinter.CTkCanvas(self, bg="#00253e")
