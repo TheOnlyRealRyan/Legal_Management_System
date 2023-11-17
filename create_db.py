@@ -72,16 +72,16 @@ def create_database():
         mycursor.execute("CREATE TABLE employee_account(employeeId INTEGER(10) NOT NULL AUTO_INCREMENT, firstName VARCHAR(50),  lastName VARCHAR(50), gender VARCHAR(2),  dateOfBirth DATE, roleId INTEGER(10), PRIMARY KEY (employeeId), FOREIGN KEY (roleId) REFERENCES employee_roles(roleId))")
         mycursor.execute("CREATE TABLE user_login_data(employeeId INTEGER, username VARCHAR(50), passwordHash VARCHAR(250), PRIMARY KEY (employeeId), FOREIGN KEY (employeeId) REFERENCES employee_account(employeeId))")
         mycursor.execute("CREATE TABLE client_information(clientId INTEGER(10) NOT NULL AUTO_INCREMENT, firstName VARCHAR(50), lastName VARCHAR(50), gender VARCHAR(1), dateOfBirth DATE, PRIMARY KEY (clientId))")
-        mycursor.execute("CREATE TABLE case_data(caseId INTEGER(10), clientId INTEGER(10), employeeId INTEGER(10), description VARCHAR(250), department VARCHAR(30), dateOfCaseOpen DATE, dateClosed DATE, PRIMARY KEY (caseId), FOREIGN KEY (employeeId) REFERENCES employee_account(employeeId), FOREIGN KEY (clientId) REFERENCES client_information(clientId))")
-        mycursor.execute("CREATE TABLE archived_state(caseId INTEGER(10), archivedState VARCHAR(10), archiveNumber INTEGER(10), archivedDate DATE, dateToBeDestroyed DATE, UNIQUE (caseId), PRIMARY KEY (archiveNumber), FOREIGN KEY (caseId) REFERENCES case_data(caseId))")
-        mycursor.execute("CREATE TABLE deletion_logging(caseId INTEGER(10), employeeId INTEGER, deletionDate DATE, deletionConfirmed BOOLEAN, PRIMARY KEY (caseId), FOREIGN KEY (caseId) REFERENCES case_data(caseId), FOREIGN KEY (employeeId) REFERENCES employee_account(employeeId))")
+        mycursor.execute("CREATE TABLE case_data(caseId INTEGER(10), caseCode VARCHAR(10), clientId INTEGER(10), employeeId INTEGER(10), description VARCHAR(250), department VARCHAR(30), dateOfCaseOpen DATE, dateClosed DATE, PRIMARY KEY (caseId), FOREIGN KEY (employeeId) REFERENCES employee_account(employeeId), FOREIGN KEY (clientId) REFERENCES client_information(clientId))")
+        mycursor.execute("CREATE TABLE archived_state(caseId INTEGER(10), archivedState VARCHAR(10), archiveCode VARCHAR(10), archivedDate DATE, dateToBeDestroyed DATE, UNIQUE (caseId), PRIMARY KEY (archiveCode), FOREIGN KEY (caseId) REFERENCES case_data(caseId))")
+        mycursor.execute("CREATE TABLE deletion_logging(caseId INTEGER(10), employeeId1 INTEGER, employeeId2 INTEGER, deletionDate DATE, deletionConfirmed BOOLEAN, PRIMARY KEY (caseId), FOREIGN KEY (employeeId1) REFERENCES employee_account(employeeId), FOREIGN KEY (employeeId2) REFERENCES employee_account(employeeId))")
         mycursor.execute("CREATE TABLE deletion_confirmation(caseId INTEGER(10), employeeId1 INTEGER, employeeId2 INTEGER, employee1Confirmed BOOLEAN, employee2Confirmed BOOLEAN, PRIMARY KEY (caseId), FOREIGN KEY (employeeId1) REFERENCES employee_account(employeeId),  FOREIGN KEY (employeeId2) REFERENCES employee_account(employeeId))")
-        mycursor.execute("CREATE TABLE destruction_state(archiveNumber INTEGER(10), destructionState VARCHAR(50), PRIMARY KEY (archiveNumber), FOREIGN KEY (archiveNumber) REFERENCES archived_state(archiveNumber))")
-        mycursor.execute("CREATE TABLE case_location(archiveNumber INTEGER(10), location VARCHAR(50), PRIMARY KEY (archiveNumber), FOREIGN KEY (archiveNumber) REFERENCES archived_state(archiveNumber))")
-        mycursor.execute("CREATE TABLE case_drawn_by(archiveNumber INTEGER(10), employeeId INTEGER, dateDrawnOut DATE, PRIMARY KEY (archiveNumber), FOREIGN KEY (archiveNumber) REFERENCES archived_state(archiveNumber), FOREIGN KEY (employeeId) REFERENCES employee_account(employeeId))")
-        mycursor.execute("CREATE TABLE case_drawn_history(archiveNumber INTEGER(10), employeeId INTEGER(10), dateDrawnOut DATE, dateDrawnIn DATE, PRIMARY KEY (archiveNumber), FOREIGN KEY (archiveNumber) REFERENCES archived_state(archiveNumber), FOREIGN KEY (employeeId) REFERENCES employee_account(employeeId))")
+        mycursor.execute("CREATE TABLE destruction_state(archiveCode VARCHAR(10), destructionState VARCHAR(50), PRIMARY KEY (archiveCode), FOREIGN KEY (archiveCode) REFERENCES archived_state(archiveCode))")
+        mycursor.execute("CREATE TABLE case_location(archiveCode VARCHAR(10), location VARCHAR(50), PRIMARY KEY (archiveCode), FOREIGN KEY (archiveCode) REFERENCES archived_state(archiveCode))")
+        mycursor.execute("CREATE TABLE case_drawn_by(archiveCode VARCHAR(10), employeeId INTEGER, dateDrawnOut DATE, PRIMARY KEY (archiveCode), FOREIGN KEY (archiveCode) REFERENCES archived_state(archiveCode), FOREIGN KEY (employeeId) REFERENCES employee_account(employeeId))")
+        mycursor.execute("CREATE TABLE case_drawn_history(archiveCode VARCHAR(10), employeeId INTEGER(10), dateDrawnOut DATE, dateDrawnIn DATE, PRIMARY KEY (archiveCode), FOREIGN KEY (archiveCode) REFERENCES archived_state(archiveCode), FOREIGN KEY (employeeId) REFERENCES employee_account(employeeId))")
         mycursor.execute("CREATE TABLE file_upload_data(fileId INTEGER(10), fileName VARCHAR(100), caseId INTEGER(10), recievedDate DATE, dateUploaded DATETIME, PRIMARY KEY (fileId), FOREIGN KEY (caseId) REFERENCES case_data(caseId))")
-        mycursor.execute("CREATE TABLE archived_case_request(archiveNumber INTEGER(10), employeeId INTEGER(10), dateRequested DATETIME, PRIMARY KEY (archiveNumber, employeeId), FOREIGN KEY (employeeId) REFERENCES employee_account(employeeId), FOREIGN KEY (archiveNumber) REFERENCES archived_state(archiveNumber))")
+        mycursor.execute("CREATE TABLE archived_case_request(archiveCode VARCHAR(10), employeeId INTEGER(10), dateRequested DATETIME, PRIMARY KEY (archiveCode, employeeId), FOREIGN KEY (employeeId) REFERENCES employee_account(employeeId), FOREIGN KEY (archiveCode) REFERENCES archived_state(archiveCode))")
         print("--> Successfuly Created Tables")
     except Exception as e:
         print(e)    
@@ -171,13 +171,14 @@ def populate_database():
         time.sleep(wait_time) 
 
     # Case Data
-    for i in range(10):
+    for i in range(20):
         clientId = 1
         employeeId = 1
         description = "awesome"
         department = "Tax"
         dateOfCaseOpen = "2020-06-06"
-        add.add_to_case_data(clientId, employeeId, description, department, dateOfCaseOpen)
+        caseCode = f"newCode{i}"
+        add.add_to_case_data(caseCode, clientId, employeeId, description, department, dateOfCaseOpen)
         print("success")
         time.sleep(wait_time) 
 
@@ -229,8 +230,9 @@ def populate_database():
     for i in range(5):
         caseId = i
         archivedState = "Archived"
+        archiveCode = f"archive{i}"
         archivedDate = "2001-06-06"
-        add.add_to_archived_state(caseId, archivedState, archivedDate)
+        add.add_to_archived_state(caseId, archivedState, archiveCode, archivedDate)
         print("success")
         time.sleep(wait_time)   
 
@@ -239,30 +241,34 @@ def populate_database():
         archivedState = "Archived"
 
         archivedDate = f"200{i}-06-06"
+        archiveCode = f"archive{i}"
         roleId = 1
-        add.add_to_archived_state(id, archivedState, archivedDate)
+        add.add_to_archived_state(id, archivedState, archiveCode, archivedDate)
         print("success")
         time.sleep(wait_time)  
         
     id= 10
     archivedState = "Archived"
     archivedDate = "2016-11-06"
-    add.add_to_archived_state(id, archivedState, archivedDate)
+    archiveCode = f"archive{id}"
+    add.add_to_archived_state(id, archivedState, archiveCode, archivedDate)
     print("success")
     time.sleep(wait_time)
 
     id= 11
     archivedState = "Archived"
     archivedDate = "2016-09-06"
-    add.add_to_archived_state(id, archivedState, archivedDate)
+    archiveCode = f"archive{id}"
+    add.add_to_archived_state(id, archivedState,archiveCode, archivedDate)
     print("success")
     time.sleep(wait_time)
 
 
     # Case Location
-    archiveNumber = 0
+    # archiveCode = 0
     location = "Cupboard 12"
-    add.add_to_case_location(archiveNumber, location)
+    archiveCode = "archive0"
+    add.add_to_case_location(archiveCode, location)
     print("success")
     time.sleep(wait_time)
     
@@ -275,13 +281,13 @@ def populate_database():
 
     # Archive Case Request
     # for i in range(10):
-    archiveNumber = 0
-    add.add_to_archived_case_request(archiveNumber)
-    print("success")
-    time.sleep(wait_time)
+    # archiveCode = f"archive{0}"
+    # add.add_to_archived_case_request(archiveCode)
+    # print("success")
+    # time.sleep(wait_time)
 
-    archiveNumber = 1
-    add.add_to_archived_case_request(archiveNumber)
+    archiveCode = "archive1"
+    add.add_to_archived_case_request(archiveCode)
     print("success")
     time.sleep(wait_time)
 
@@ -291,11 +297,21 @@ def populate_database():
         print("success")
         time.sleep(wait_time)
     
-    archiveNumber = 1
+    archiveCode = "archive1"
     archivedDate = "2016-09-06"
-    add.add_to_case_drawn_by(archiveNumber, employeeId, archivedDate)
+    add.add_to_case_drawn_by(archiveCode, employeeId, archivedDate)
     print("success")
     time.sleep(wait_time)    
 
+    # case data
+    clientId = 1
+    employeeId = 4
+    description = "awesome"
+    department = "Tax"
+    dateOfCaseOpen = "2020-06-06"
+    caseCode = "newCode23"
+    add.add_to_case_data(caseCode, clientId, employeeId, description, department, dateOfCaseOpen)
+    print("success")
+    time.sleep(wait_time) 
 # create_database()
 # populate_database()

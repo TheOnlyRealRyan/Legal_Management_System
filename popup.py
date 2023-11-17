@@ -132,6 +132,10 @@ class popup_add_to_case_data(customtkinter.CTkToplevel):
         txtclientId = customtkinter.CTkEntry(self, placeholder_text="clientId")
         txtclientId.pack(pady=12, padx=10)
         
+        customtkinter.CTkLabel(self, text="Enter Case Code", font=("Roboto", 24)).pack(padx=12, pady=10)
+        txtCaseCode = customtkinter.CTkEntry(self, placeholder_text="Case Code")
+        txtCaseCode.pack(pady=12, padx=10)
+        
         customtkinter.CTkLabel(self, text="Enter employee Id", font=("Roboto", 24)).pack(padx=12, pady=10)
         txtemployeeId = customtkinter.CTkEntry(self, placeholder_text="employeeId")
         txtemployeeId.pack(pady=12, padx=10)
@@ -151,7 +155,7 @@ class popup_add_to_case_data(customtkinter.CTkToplevel):
         case_open.pack(padx=12, pady=10)
         
         # Submit Button
-        customtkinter.CTkButton(self, text="Submit", command=lambda: db_conn.add_to_case_data(txtclientId.get(), txtemployeeId.get(), txtdescription.get(), txtDepartment.get(), case_open.get_date())).pack(pady=12, padx=10)
+        customtkinter.CTkButton(self, text="Submit", command=lambda: db_conn.add_to_case_data(txtCaseCode.get(), txtclientId.get(), txtemployeeId.get(), txtdescription.get(), txtDepartment.get(), case_open.get_date())).pack(pady=12, padx=10)
 
 
 class popup_add_to_archived_state(customtkinter.CTkToplevel):
@@ -503,12 +507,25 @@ class popup_remove_case_data(customtkinter.CTkToplevel):
         self.title("DELETE Case Data")
      
         # Decorate here
-        customtkinter.CTkLabel(self, text="Enter case ID", font=("Roboto", 24)).pack(padx=12, pady=10)
-        txtID = customtkinter.CTkEntry(self, placeholder_text="ID")
-        txtID.pack(pady=12, padx=10)
-   
-        # Submit Button
-        customtkinter.CTkButton(self, text="Delete", command=lambda: db_delete.remove_case_data(txtID.get())).pack(pady=12, padx=10)
+        customtkinter.CTkLabel(self, text="Select Case", font=("Roboto", 24)).pack(padx=12, pady=10)
+        optionmenu_var = customtkinter.StringVar(value="Select a case")  # set initial value
+
+        def optionmenu_callback(choice):
+            #download here
+            db_delete.remove_case_data(choice)
+
+        # convert a list of tuples to a list of strings
+        data = grab_from_db.all_case_codes()
+        new_data = []
+        for i in data:
+            new_data.append(''.join(i))
+            
+        combobox = customtkinter.CTkOptionMenu(self,
+                                            values=new_data, # Select from database
+                                            command=optionmenu_callback,
+                                            variable=optionmenu_var)
+        combobox.pack(padx=20, pady=10)
+
 
 
 class popup_remove_archived_state(customtkinter.CTkToplevel):
@@ -595,7 +612,7 @@ class popup_remove_deletion_confirmation(customtkinter.CTkToplevel):
         self.title("DELETE Deletion Confirmation")
 
         # Decorate here        
-        customtkinter.CTkLabel(self, text="Enter case Id", font=("Roboto", 24)).pack(padx=12, pady=10)
+        customtkinter.CTkLabel(self, text="Enter Case Code", font=("Roboto", 24)).pack(padx=12, pady=10)
         txtID = customtkinter.CTkEntry(self, placeholder_text="ID")
         txtID.pack(pady=12, padx=10)
         
@@ -690,4 +707,32 @@ class popup_update_deletion_confirmation(customtkinter.CTkToplevel):
         
         # Submit Button
         customtkinter.CTkButton(self, text="Confirm Deletion", command=lambda: db_update.update_deletion_confirmation_employee2(txtCaseId.get(), confirm)).pack(pady=12, padx=10)
+
+
+class popup_update_date_closed(customtkinter.CTkToplevel):
+    """ Popup window to add to case_drawn_history database"""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.geometry("750x750")
+        self.title("DELETE Deletion Confirmation")
+     
+        # Decorate here
+        customtkinter.CTkLabel(self, text="Select Case", font=("Roboto", 24)).pack(padx=12, pady=10)
+        optionmenu_var = customtkinter.StringVar(value="Select a case")  # set initial value
+
+        def optionmenu_callback(choice):
+            db_update.update_case_data_date_closed(choice)
+
+        # convert a list of tuples to a list of strings
+        data = grab_from_db.all_case_codes()
+        new_data = []
+        for i in data:
+            new_data.append(''.join(i))
+            
+        combobox = customtkinter.CTkOptionMenu(self,
+                                            values=new_data, # Select from database
+                                            command=optionmenu_callback,
+                                            variable=optionmenu_var)
+        combobox.pack(padx=20, pady=10)
+
 

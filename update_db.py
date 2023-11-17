@@ -3,7 +3,7 @@ import tkinter.messagebox
 from datetime import datetime
 import global_variables as gv
 import hashlib
-
+from grab_from_db import caseId_from_caseCode
 
 # Display messages upon successful or failed updation
 messagebox_show = True
@@ -92,6 +92,18 @@ def update_client_information(id):
 def update_case_data(id):
     try:     
         mycursor.execute(f"UPDATE case_data WHERE caseId = '{id}';")
+        mydb.commit()
+        if messagebox_show == True: tkinter.messagebox.showinfo("Success",  "Succesfully updated database")
+    except Exception as e:
+        if messagebox_show == True: tkinter.messagebox.showinfo("Failed",  "Failed to update database")
+        print(e)
+        
+
+def update_case_data_date_closed(caseCode):
+    try:     
+        caseId = caseId_from_caseCode(caseCode)[0][0]
+        dateClosed = datetime.today().strftime('%Y-%m-%d')
+        mycursor.execute(f"UPDATE case_data SET dateClosed = '{dateClosed}' WHERE caseId = '{caseId}';")
         mydb.commit()
         if messagebox_show == True: tkinter.messagebox.showinfo("Success",  "Succesfully updated database")
     except Exception as e:

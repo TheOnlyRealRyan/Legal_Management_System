@@ -66,14 +66,14 @@ def all_client_information():
 
 def case_data_of_employee(employeeId):
     mydb.cmd_refresh(1)
-    mycursor.execute(f"SELECT case_data.caseId, client_information.firstName, client_information.lastName, employee_account.firstName, employee_account.lastName, description, department, dateOfCaseOpen, dateClosed FROM case_data LEFT JOIN employee_account ON case_data.employeeId=employee_account.employeeId LEFT JOIN client_information ON case_data.clientId=client_information.clientId WHERE case_data.employeeId = '{employeeId}'")
+    mycursor.execute(f"SELECT case_data.caseCode, client_information.firstName, client_information.lastName, employee_account.firstName, employee_account.lastName, description, department, dateOfCaseOpen, dateClosed FROM case_data LEFT JOIN employee_account ON case_data.employeeId=employee_account.employeeId LEFT JOIN client_information ON case_data.clientId=client_information.clientId WHERE case_data.employeeId = '{employeeId}'")
     myresult = mycursor.fetchall()
     return myresult
 
 
 def all_case_data():
     mydb.cmd_refresh(1)
-    mycursor.execute("SELECT case_data.caseId, client_information.firstName, client_information.lastName, employee_account.firstName, employee_account.lastName, description, department, dateOfCaseOpen, dateClosed FROM case_data LEFT JOIN employee_account ON case_data.employeeId=employee_account.employeeId LEFT JOIN client_information ON case_data.clientId=client_information.clientId")
+    mycursor.execute("SELECT case_data.caseCode, client_information.firstName, client_information.lastName, employee_account.firstName, employee_account.lastName, description, department, dateOfCaseOpen, dateClosed FROM case_data LEFT JOIN employee_account ON case_data.employeeId=employee_account.employeeId LEFT JOIN client_information ON case_data.clientId=client_information.clientId")
     myresult = mycursor.fetchall()
     return myresult
 
@@ -82,6 +82,7 @@ def case_data_by_id(caseId):
     mydb.cmd_refresh(1)
     mycursor.execute(f"SELECT * FROM case_data LEFT JOIN employee_account ON case_data.employeeId=employee_account.employeeId LEFT JOIN client_information ON case_data.clientId=client_information.clientId WHERE caseId = '{caseId}'")
     myresult = mycursor.fetchall()
+    
     return myresult
 
 
@@ -94,21 +95,21 @@ def my_archive_case_request(employeeId):
 
 def my_deletion_requests(employeeId):
     mydb.cmd_refresh(1)
-    mycursor.execute(f"SELECT * FROM deletion_confirmation WHERE employeeId1 = '{employeeId}'")
+    mycursor.execute(f"SELECT case_data.caseCode, deletion_confirmation.employee2Confirmed FROM deletion_confirmation LEFT JOIN case_data ON case_data.caseId=deletion_confirmation.caseId WHERE employeeId1 = '{employeeId}'")
     myresult = mycursor.fetchall()
     return myresult
 
 
 def all_archived_state():
     mydb.cmd_refresh(1)
-    mycursor.execute("SELECT archived_state.archiveNumber, archivedState, archivedDate, dateToBeDestroyed, case_location.location FROM archived_state LEFT JOIN case_location ON archived_state.archiveNumber=case_location.archiveNumber")
+    mycursor.execute("SELECT archived_state.archiveCode, case_data.caseCode, archivedState, archivedDate, dateToBeDestroyed, case_location.location FROM archived_state LEFT JOIN case_data ON case_data.caseId=archived_state.caseId LEFT JOIN case_location ON archived_state.archiveCode=case_location.archiveCode")
     myresult = mycursor.fetchall()
     return myresult
 
 
-def case_location_by_id(archiveNumber):
+def case_location_by_id(archiveCode):
     mydb.cmd_refresh(1)
-    mycursor.execute(f"SELECT * FROM case_location WHERE archiveNumber = '{archiveNumber}'")
+    mycursor.execute(f"SELECT * FROM case_location WHERE archiveCode = '{archiveCode}'")
     myresult = mycursor.fetchone()
     return myresult
     
@@ -130,17 +131,30 @@ def all_destruction_state():
 
 def all_file_upload_data():
     mydb.cmd_refresh(1)
-    mycursor.execute("SELECT * FROM file_upload_data")
+    mycursor.execute("SELECT case_data.caseCode, file_upload_data.fileName, file_upload_data.recievedDate, file_upload_data.dateUploaded FROM file_upload_data LEFT JOIN case_data ON case_data.caseId = file_upload_data.caseId")
     myresult = mycursor.fetchall()
     return myresult
 
 
 def all_deletion_confirmation():
     mydb.cmd_refresh(1)
-    mycursor.execute("SELECT caseId, firstName, lastName FROM deletion_confirmation LEFT JOIN employee_account ON employee_account.employeeId=deletion_confirmation.employeeId1 WHERE deletion_confirmation.employee1Confirmed = 1 AND deletion_confirmation.employee2Confirmed = 0")
+    mycursor.execute("SELECT case_data.caseCode, firstName, lastName FROM deletion_confirmation LEFT JOIN case_data ON case_data.caseId = deletion_confirmation.caseId LEFT JOIN employee_account ON employee_account.employeeId=deletion_confirmation.employeeId1 WHERE deletion_confirmation.employee1Confirmed = 1 AND deletion_confirmation.employee2Confirmed = 0")
     myresult = mycursor.fetchall()
     return myresult
 
+
+def deletion_confirmation_by_id(id):
+    mydb.cmd_refresh(1)
+    mycursor.execute(f"SELECT employeeId1, employeeId2 FROM deletion_confirmation LEFT JOIN case_data ON case_data.caseId = deletion_confirmation.caseId LEFT JOIN employee_account ON employee_account.employeeId=deletion_confirmation.employeeId1 WHERE deletion_confirmation.employee1Confirmed = 1 AND deletion_confirmation.employee2Confirmed = 0 AND case_data.caseId = '{id}' ")
+    myresult = mycursor.fetchall()
+    return myresult
+
+
+def caseId_from_caseCode(caseCode):
+    mydb.cmd_refresh(1)
+    mycursor.execute(f"SELECT caseId FROM case_data WHERE caseCode = '{caseCode}' ")
+    myresult = mycursor.fetchall()
+    return myresult
 
 def all_deletion_logging():
     mydb.cmd_refresh(1)
@@ -151,14 +165,14 @@ def all_deletion_logging():
 
 def all_archived_case_request():
     mydb.cmd_refresh(1)
-    mycursor.execute("SELECT archived_case_request.archiveNumber, firstName, lastName, archived_case_request.employeeId, dateRequested, Location FROM archived_case_request LEFT JOIN case_location ON archived_case_request.archiveNumber=case_location.archiveNumber LEFT JOIN employee_account ON archived_case_request.employeeId=employee_account.employeeId")
+    mycursor.execute("SELECT archived_case_request.archiveCode, firstName, lastName, archived_case_request.employeeId, dateRequested, Location FROM archived_case_request LEFT JOIN case_location ON archived_case_request.archiveCode=case_location.archiveCode LEFT JOIN employee_account ON archived_case_request.employeeId=employee_account.employeeId")
     myresult = mycursor.fetchall()
     return myresult
 
 
 def all_case_drawn_by():
     mydb.cmd_refresh(1)
-    mycursor.execute("SELECT * FROM case_drawn_by")
+    mycursor.execute("SELECT archiveCode, employee_account.firstName, employee_account.lastName, dateDrawnOut FROM case_drawn_by LEFT JOIN employee_account ON employee_account.employeeId = case_drawn_by.employeeId")
     myresult = mycursor.fetchall()
     return myresult
 
@@ -184,6 +198,13 @@ def all_cloud_files():
     return myresult
 
 
+def all_case_codes():
+    mydb.cmd_refresh(1)
+    mycursor.execute("SELECT caseCode FROM case_data")
+    myresult = mycursor.fetchall()
+    return myresult
+
+
 def grab_username(employeeId):
     mydb.cmd_refresh(1)
     mycursor.execute(f"SELECT firstName FROM employee_account WHERE employeeId = '{employeeId}'")
@@ -196,7 +217,7 @@ def case_to_be_destroyed_this_month():
     current_year = date.today().year
     current_month = date.today().month
     # Grab all items that need to be destoyed
-    mycursor.execute(f"SELECT archived_state.archiveNumber, archivedState, archivedDate, dateToBeDestroyed, Location FROM archived_state LEFT JOIN case_location ON archived_state.archiveNumber=case_location.archiveNumber WHERE (MONTH(dateToBeDestroyed) <= {current_month} AND YEAR(dateToBeDestroyed) = {current_year}) OR (YEAR(dateToBeDestroyed) < {current_year})")
+    mycursor.execute(f"SELECT archived_state.archiveCode, archivedState, archivedDate, dateToBeDestroyed, Location FROM archived_state LEFT JOIN case_location ON archived_state.archiveCode=case_location.archiveCode WHERE (MONTH(dateToBeDestroyed) <= {current_month} AND YEAR(dateToBeDestroyed) = {current_year}) OR (YEAR(dateToBeDestroyed) < {current_year})")
     myresult = mycursor.fetchall()
     
     myresult2 = list()
@@ -204,7 +225,7 @@ def case_to_be_destroyed_this_month():
     
     # Grab all cases that have already been destroyed
     for a,b,c,d,e in myresult:
-        mycursor.execute(f"SELECT archiveNumber FROM destruction_state WHERE archiveNumber = {a} AND destructionState = 'Destroyed'")
+        mycursor.execute(f"SELECT archiveCode FROM destruction_state WHERE archiveCode = {a} AND destructionState = 'Destroyed'")
         myresult2.append(mycursor.fetchone())
   
     # convert (1,) to 1 if not None from already Destroyed list

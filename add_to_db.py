@@ -7,7 +7,7 @@ import global_variables as gv
 
 
 # Display messages upon successful or failed insertion
-messagebox_show = True
+messagebox_show = False
 
 
 # Conenct to database
@@ -149,10 +149,10 @@ def add_to_client_information(firstName, lastName, gender, dateOfBirth) -> None:
         print(e)    
     
 
-def add_to_case_data(clientId, employeeId, description, department, dateOfCaseOpen) -> None:
+def add_to_case_data(caseCode, clientId, employeeId, description, department, dateOfCaseOpen) -> None:
     """Inserts login details into case_data database"""
     mydb.cmd_refresh(1)
-    sqlFormula = "INSERT INTO case_data (caseId, clientId, employeeId, description, department, dateOfCaseOpen) VALUE (%s, %s, %s, %s, %s, %s)"
+    sqlFormula = "INSERT INTO case_data (caseId, caseCode, clientId, employeeId, description, department, dateOfCaseOpen) VALUE (%s, %s, %s, %s, %s, %s, %s)"
     
     # Manual auto-increment
     mycursor.execute("SELECT caseId FROM case_data ORDER BY caseId DESC LIMIT 1") 
@@ -165,7 +165,7 @@ def add_to_case_data(clientId, employeeId, description, department, dateOfCaseOp
             
     # Insert into Db    
     try:  
-        details = (caseId, clientId, employeeId, description, department, dateOfCaseOpen)
+        details = (caseId, caseCode, clientId, employeeId, description, department, dateOfCaseOpen)
         mycursor.execute(sqlFormula, details)   
         mydb.commit()
         if messagebox_show == True: tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
@@ -174,27 +174,18 @@ def add_to_case_data(clientId, employeeId, description, department, dateOfCaseOp
         print(e)  
 
 
-def add_to_archived_state(caseId, archivedState, archivedDate) -> None:
+def add_to_archived_state(caseId, archivedState, archiveCode, archivedDate) -> None:
     """Inserts login details into archived_state database"""
     mydb.cmd_refresh(1)
-    sqlFormula = "INSERT INTO archived_state (caseId, archivedState, archiveNumber, archivedDate, dateToBeDestroyed) VALUE (%s, %s, %s, %s, %s)"
+    sqlFormula = "INSERT INTO archived_state (caseId, archivedState, archiveCode, archivedDate, dateToBeDestroyed) VALUE (%s, %s, %s, %s, %s)"
      
     # Determine when the file should be destroyed (7 years)
     dateToBeDeestroyed = add_years(archivedDate)
 
-    # Create Archive Number
-    # TODO: Make this more creative IE: {departmentCode}0001
-    mycursor.execute("SELECT archiveNumber FROM archived_state ORDER BY archiveNumber DESC LIMIT 1") 
-    myresult = mycursor.fetchall()
-    if len(myresult) == 0:
-        archiveNumber = 0
-    else:    
-        for x in myresult:
-            archiveNumber = x[0]+1
             
     # Insert into Db 
     try:    
-        details = (caseId, archivedState, archiveNumber, archivedDate, dateToBeDeestroyed)
+        details = (caseId, archivedState, archiveCode, archivedDate, dateToBeDeestroyed)
         mycursor.execute(sqlFormula, details)   
         mydb.commit()
         if messagebox_show == True: tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
@@ -203,16 +194,15 @@ def add_to_archived_state(caseId, archivedState, archivedDate) -> None:
         print(e)  
   
     
-def add_to_case_location(archiveNumber, location) -> None:
+def add_to_case_location(archiveCode, location) -> None:
     """Inserts into case_location database"""
-    # Todo: Fix add to case Location ( Duplicate entry '0' for key 'case_location.PRIMARY')
-    # TODO: combine update and add to case location
+    
     mydb.cmd_refresh(1)
-    find = grab.case_location_by_id(archiveNumber)
+    find = grab.case_location_by_id(archiveCode)
     print(find)
     
     if find != None:
-        sqlFormula = f"UPDATE case_location SET location = '{location}' WHERE archiveNumber = '{archiveNumber}'"  
+        sqlFormula = f"UPDATE case_location SET location = '{location}' WHERE archiveCode = '{archiveCode}'"  
         # Insert into Db  
         try: 
             mycursor.execute(sqlFormula)       
@@ -224,8 +214,8 @@ def add_to_case_location(archiveNumber, location) -> None:
     else:
         # Insert into Db  
         try:   
-            sqlFormula = "INSERT INTO case_location (archiveNumber, location) VALUE (%s, %s)"
-            details = (archiveNumber, location)
+            sqlFormula = "INSERT INTO case_location (archiveCode, location) VALUE (%s, %s)"
+            details = (archiveCode, location)
             mycursor.execute(sqlFormula, details)   
             mydb.commit()
             if messagebox_show == True: tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
@@ -235,8 +225,8 @@ def add_to_case_location(archiveNumber, location) -> None:
 
     # Insert into Db  
     try:   
-        sqlFormula = "INSERT INTO case_location (archiveNumber, location) VALUE (%s, %s)"
-        details = (archiveNumber, location)
+        sqlFormula = "INSERT INTO case_location (archiveCode, location) VALUE (%s, %s)"
+        details = (archiveCode, location)
         mycursor.execute(sqlFormula, details)   
         mydb.commit()
         if messagebox_show == True: tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
@@ -244,14 +234,14 @@ def add_to_case_location(archiveNumber, location) -> None:
         if messagebox_show == True: tkinter.messagebox.showinfo("Failed",  "Failed to insert into Database")
         print(e) 
 
-def add_to_destruction_state(archiveNumber, destructionState) -> None:
+def add_to_destruction_state(archiveCode, destructionState) -> None:
     """Inserts login details into destruction_state database"""
     mydb.cmd_refresh(1)
-    sqlFormula = "INSERT INTO destruction_state (archiveNumber, destructionState) VALUE (%s, %s)"
+    sqlFormula = "INSERT INTO destruction_state (archiveCode, destructionState) VALUE (%s, %s)"
                 
     # Insert into Db     
     try:
-        details = (archiveNumber, destructionState)
+        details = (archiveCode, destructionState)
         mycursor.execute(sqlFormula, details)   
         mydb.commit()
         if messagebox_show == True: tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
@@ -300,14 +290,14 @@ def add_to_deletion_confirmation(caseId, employeeId1, employeeId2, employee1Conf
         print(e) 
     
 
-def add_to_deletion_logging(caseId, employeeId1, employeeId2, deletionDate, deletionConfirmed) -> None:
+def add_to_deletion_logging(caseId, employeeId1, employeeId2, deletionDate) -> None:
     """Inserts login details into deletion_logging database"""
     mydb.cmd_refresh(1)
     sqlFormula = "INSERT INTO deletion_logging (caseId, employeeId1, employeeId2, deletionDate, deletionConfirmed) VALUE (%s, %s, %s, %s, %s)"
                 
     # Insert into Db
     try:     
-        details = (caseId, employeeId1, employeeId2, deletionDate, deletionConfirmed)
+        details = (caseId, employeeId1, employeeId2, deletionDate, 1)
         mycursor.execute(sqlFormula, details)   
         mydb.commit()
         if messagebox_show == True: tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
@@ -316,14 +306,14 @@ def add_to_deletion_logging(caseId, employeeId1, employeeId2, deletionDate, dele
         print(e) 
 
 
-def add_to_archived_case_request(archiveNumber) -> None:
+def add_to_archived_case_request(archiveCode) -> None:
     """Inserts login details into archived_case_request database"""
     mydb.cmd_refresh(1)
-    sqlFormula = "INSERT INTO archived_case_request (archiveNumber, employeeId, dateRequested) VALUE (%s, %s, %s)" 
+    sqlFormula = "INSERT INTO archived_case_request (archiveCode, employeeId, dateRequested) VALUE (%s, %s, %s)" 
                
     # Insert into Db
     try:     
-        details = (archiveNumber, gv.get_id(), datetime.today().strftime('%Y-%m-%d %H:%M:%S'))
+        details = (archiveCode, gv.get_id(), datetime.today().strftime('%Y-%m-%d %H:%M:%S'))
         mycursor.execute(sqlFormula, details)   
         mydb.commit()
         if messagebox_show == True: tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
@@ -332,14 +322,14 @@ def add_to_archived_case_request(archiveNumber) -> None:
         print(e) 
     
     
-def add_to_case_drawn_by(archiveNumber, employeeId, dateDrawnOut) -> None:
+def add_to_case_drawn_by(archiveCode, employeeId, dateDrawnOut) -> None:
     """Inserts login details into case_drawn_by database"""
     mydb.cmd_refresh(1)
-    sqlFormula = "INSERT INTO case_drawn_by (archiveNumber, employeeId, dateDrawnOut) VALUE (%s, %s, %s)"
+    sqlFormula = "INSERT INTO case_drawn_by (archiveCode, employeeId, dateDrawnOut) VALUE (%s, %s, %s)"
                 
     # Insert into Db
     try:     
-        details = (archiveNumber, employeeId, dateDrawnOut)
+        details = (archiveCode, employeeId, dateDrawnOut)
         mycursor.execute(sqlFormula, details)   
         mydb.commit()
         if messagebox_show == True: tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
@@ -348,14 +338,14 @@ def add_to_case_drawn_by(archiveNumber, employeeId, dateDrawnOut) -> None:
         print(e) 
     
     
-def add_to_case_drawn_history(archiveNumber, employeeId, dateDrawnOut, dateDrawnIn) -> None:
+def add_to_case_drawn_history(archiveCode, employeeId, dateDrawnOut, dateDrawnIn) -> None:
     """Inserts login details into case_drawn_history database"""
     mydb.cmd_refresh(1)
-    sqlFormula = "INSERT INTO case_drawn_history (archiveNumber, employeeId, dateDrawnOut, dateDrawnIn) VALUE (%s, %s, %s, %s)"
+    sqlFormula = "INSERT INTO case_drawn_history (archiveCode, employeeId, dateDrawnOut, dateDrawnIn) VALUE (%s, %s, %s, %s)"
                 
     # Insert into Db
     try:     
-        details = (archiveNumber, employeeId, dateDrawnOut, dateDrawnIn)
+        details = (archiveCode, employeeId, dateDrawnOut, dateDrawnIn)
         mycursor.execute(sqlFormula, details)   
         mydb.commit()
         if messagebox_show == True: tkinter.messagebox.showinfo("Success",  "Succesfully Inserted into Database")
