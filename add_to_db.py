@@ -7,7 +7,7 @@ import global_variables as gv
 
 
 # Display messages upon successful or failed insertion
-messagebox_show = False
+messagebox_show = True
 
 
 # Conenct to database
